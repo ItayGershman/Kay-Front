@@ -33,13 +33,13 @@
      -i -L \
      -H "Authorization: Bearer $TOKEN" \
      -H "Content-Type: audio/wav" \
-     --data-binary "54X6WOZPQ4I2ZBH5XOZTWS4F3IZT7X7I"
+     --data-binary "XXXXXXXXXXXXXXXXXXXXXXXXXXXx"
  */
 
 
 const witaiSpeech = require('./lib/WitaiASR');
 
-const ACCESS_TOKEN = '54X6WOZPQ4I2ZBH5XOZTWS4F3IZT7X7I';
+const ACCESS_TOKEN = process.env.WIT_AI_TOKEN;
 
 const witai = new witaiSpeech({token: ACCESS_TOKEN});
 

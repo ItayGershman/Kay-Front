@@ -1,12 +1,10 @@
-var rec = require('node-mic-record');
-var request = require('request');
+const rec = require('node-mic-record');
+const request = require('request');
 
-var witToken = process.env.WIT_AI_TOKEN; // get one from wit.ai!
+const witToken = process.env.WIT__AI_TOKEN; // get one from wit.ai!
 
-// exports.parseResult = function (err, resp, body) {
-//   console.log(`body:${body}`);
-// };
-const sendResult = (err,resp,body){
+
+const sendResult = (err,resp,body) => {
   console.log(body);
 }
 console.log('Listening...');
@@ -18,11 +16,11 @@ rec
         url: 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
         headers: {
           Accept: 'application/vnd.wit.20160202+json',
-          Authorization: 'Bearer ' + `${witToken}`,
+          Authorization: `Bearer ${witToken}`,
           'Content-Type': 'audio/wav',
         },
       },
-      (err, resp, body) => sendResult(err,resp,body);
+      (err, resp, body) => sendResult(err,resp,body)
     )
   )
   .on('data', (data) => {

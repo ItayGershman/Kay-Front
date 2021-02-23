@@ -5,6 +5,7 @@ const sound = require('sound-play');
 const path = require('path');
 var rec = require('node-mic-record');
 var request = require('request');
+const witToken = process.env.WIT_AI_TOKEN;
 
 const speak = (text) => {
   const gtts = new gTTS(text, 'en');
@@ -22,27 +23,26 @@ const speak = (text) => {
     console.error(error);
   }
 };
-const greetings = ["Hey, how's it going?", "What's good with you?"]
-const jokes =  [
+const greetings = ["Hey, how's it going?", "What's good with you?"];
+const jokes = [
   'Do I lose when the police officer says papers and I say scissors?',
   'I have clean conscience. I haven’t used it once till now.',
   'Did you hear about the crook who stole a calendar? He got twelve months.',
-]
+];
 
 const WitAISpeechRecognition = async () => {
   console.log('Listening...');
-  const sendResult = (err,resp,body) => {
+  const sendResult = (err, resp, body) => {
     console.log(body);
-    let intent = JSON.parse(body).intents[0].name
+    let intent = JSON.parse(body).intents[0].name;
     console.log(JSON.parse(body).intents[0].name);
     //Need to send the intent to the server and get a response from the DB
-    if(intent === 'wit_greetings') {
+    if (intent === 'wit_greetings') {
       speak(greetings[1]);
+    } else if (intent === 'wit_getJoke') {
+      speak(jokes[2]);
     }
-    else if(intent === 'wit_getJoke'){
-      speak(jokes[2])
-    }
-  }
+  };
   // To record we need to download SoX for the Raspberry Pi
   rec.start().pipe(
     request.post(
@@ -50,11 +50,11 @@ const WitAISpeechRecognition = async () => {
         url: 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
         headers: {
           Accept: 'application/vnd.wit.20160202+json',
-          Authorization: 'Bearer ' + '54X6WOZPQ4I2ZBH5XOZTWS4F3IZT7X7I',
+          Authorization: `Bearer ${witToken}`,
           'Content-Type': 'audio/wav',
         },
       },
-      (err, resp, body) => sendResult(err,resp,body)
+      (err, resp, body) => sendResult(err, resp, body)
     )
   );
   setTimeout(function () {
@@ -65,8 +65,6 @@ const WitAISpeechRecognition = async () => {
 try {
   WitAISpeechRecognition();
 } catch (error) {}
-
-
 
 // const pusher = new Pusher('5f319b32e392688bf456', {
 //   cluster: 'ap2',
