@@ -1,1 +1,0 @@
-const parseResult = require('./witaiSpeech');
