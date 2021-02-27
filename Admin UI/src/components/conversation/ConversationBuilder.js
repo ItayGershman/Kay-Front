@@ -2,6 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import useStyles from './conversationStyle';
 import SideDrawer from './Drawer';
 import ConversationHeader from './ConversationHeader';
+import InputIcon from '@material-ui/icons/Input';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import ListIcon from '@material-ui/icons/List';
+import MovieIcon from '@material-ui/icons/Movie';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import BrushIcon from '@material-ui/icons/Brush';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import PeopleIcon from '@material-ui/icons/People';
 
 import ReactFlow, {
   isEdge,
@@ -96,36 +104,84 @@ const CustomNodeFlow = () => {
     [reactflowInstance]
   );
   const leftButtons = [
-    { key: 'Input Node', value: onAdd },
-    { key: 'Output Node', value: onAdd },
+    { name: 'input', title: 'Input Node', handler: onAdd, icon: <InputIcon /> },
+    {
+      name: 'output',
+      title: 'Output Node',
+      handler: onAdd,
+      icon: <InputIcon />,
+    },
   ];
-
-  const handleLeftDrawerOpen = () => {
-    setOpenLeft(true);
-    setLeftDrawerWidth(240);
+  const actions = [
+    {
+      name: 'calendar',
+      title: 'Calendar',
+      handler: () => {
+        console.log('handler');
+      },
+      icon: <CalendarTodayIcon />,
+    },
+    {
+      name: 'laser',
+      title: 'Laser Pointer',
+      handler: () => {
+        console.log('handler');
+      },
+      icon: <BrushIcon />,
+    },
+    {
+      name: 'equipment',
+      title: 'Equipment List',
+      handler: () => {
+        console.log('handler');
+      },
+      icon: <ListIcon />,
+    },
+    {
+      name: 'video',
+      title: 'Video Library',
+      handler: () => {
+        console.log('handler');
+      },
+      icon: <MovieIcon />,
+    },
+    {
+      name: 'locations',
+      title: 'Location of Positions',
+      handler: () => {
+        console.log('handler');
+      },
+      icon: <LocationOnIcon />,
+    },
+  ];
+  const rightButtons = [
+    { name: 'intents', title: 'Intents', handler: ()=>{console.log('intent')}, icon: <AccountCircleIcon /> },
+    { name: 'entities', title: 'Entities', handler: ()=>{console.log('entities')}, icon: <PeopleIcon /> },
+  ];
+  const handleDrawerOpen = (side) => {
+    if (side === 'left') {
+      setOpenLeft(true);
+      setLeftDrawerWidth(240);
+      setLeftDrawerSize(2);
+    } else {
+      setOpenRight(true);
+      setRightDrawerWidth(240);
+      setRightDrawerSize(2);
+    }
     setConversationBuilderSize((prevState) => prevState - 1);
-    setLeftDrawerSize(2);
   };
 
-  const handleLeftDrawerClose = () => {
-    setOpenLeft(false);
-    setLeftDrawerWidth(0);
+  const handleDrawerClose = (side) => {
+    if (side === 'left') {
+      setOpenLeft(false);
+      setLeftDrawerWidth(0);
+      setLeftDrawerSize(1);
+    } else {
+      setOpenRight(false);
+      setRightDrawerWidth(0);
+      setRightDrawerSize(1);
+    }
     setConversationBuilderSize((prevState) => prevState + 1);
-    setLeftDrawerSize(1);
-  };
-
-  const handleRightDrawerOpen = () => {
-    setOpenRight(true);
-    setRightDrawerWidth(240);
-    setConversationBuilderSize((prevState) => prevState - 1);
-    setRightDrawerSize(2);
-  };
-
-  const handleRightDrawerClose = () => {
-    setOpenRight(false);
-    setRightDrawerWidth(0);
-    setConversationBuilderSize((prevState) => prevState + 1);
-    setRightDrawerSize(1);
   };
 
   return (
@@ -134,8 +190,8 @@ const CustomNodeFlow = () => {
         classes={classes}
         openLeft={openLeft}
         openRight={openRight}
-        handleLeftDrawerOpen={handleLeftDrawerOpen}
-        handleRightDrawerOpen={handleRightDrawerOpen}
+        handleLeftDrawerOpen={() => handleDrawerOpen('left')}
+        handleRightDrawerOpen={() => handleDrawerOpen('right')}
       />
       <Grid container spacing={3}>
         <Grid xs={leftDrawerSize}>
@@ -143,16 +199,15 @@ const CustomNodeFlow = () => {
             open={openLeft}
             drawerOpen={classes.drawerLeftOpen}
             drawerClose={classes.drawerLeftClose}
-            handleDrawerClose={handleLeftDrawerClose}
-            handleDrawerOpen={handleLeftDrawerOpen}
+            handleDrawerClose={() => handleDrawerClose('left')}
+            handleDrawerOpen={() => handleDrawerOpen('left')}
             buttons={leftButtons}
-            actions={[]}
+            actions={actions}
             classes={classes}
             side='left'
           />
         </Grid>
         <Grid item xs={conversationBuilderSize}>
-          {/* <Grid item> */}
           <main className={classes.content}>
             <Paper className={classes.conversation}></Paper>
             <ReactFlow
@@ -185,16 +240,15 @@ const CustomNodeFlow = () => {
               />
             </ReactFlow>
           </main>
-          {/* </Grid> */}
         </Grid>
         <Grid xs={rightDrawerSize}>
           <SideDrawer
             open={openRight}
             drawerOpen={classes.drawerRightOpen}
             drawerClose={classes.drawerRightClose}
-            handleDrawerClose={handleRightDrawerClose}
-            handleDrawerOpen={handleRightDrawerOpen}
-            buttons={[]}
+            handleDrawerClose={() => handleDrawerClose('right')}
+            handleDrawerOpen={() => handleDrawerOpen('right')}
+            buttons={rightButtons}
             actions={[]}
             classes={classes}
             side='right'

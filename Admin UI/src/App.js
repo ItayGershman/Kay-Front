@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import ScenarioBuilder from './components/ScenarioBuilder';
 import MediaCard from './components/dashboard/ScenarioCard';
 import CustomNodeFlow from './components/conversation/ConversationBuilder';
+import Dashboard from './components/dashboard/Dashboard'
 
 function App() {
   const [page, setPage] = useState();
@@ -26,7 +27,8 @@ function App() {
           </Route>
           <Route path='/dashboard'>
             {/* <MediaCard /> */}
-            <CustomNodeFlow />
+            {/* <CustomNodeFlow /> */}
+            <Dashboard />
           </Route>
           <Route path='/login'>
             <SignIn />

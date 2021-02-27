@@ -52,23 +52,19 @@ const SideDrawer = ({
       </div>
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
+        {buttons.map((button, index) => (
+          <ListItem button key={index} onClick={()=>{button.handler(button.name)}}>
+            <ListItemIcon>{button.icon}</ListItemIcon>
+            <ListItemText primary={button.title} />
           </ListItem>
         ))}
       </List>
       <Divider />
       <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
+        {actions.map((action, index) => (
+          <ListItem button key={index} onClick={()=>{action.handler(action.name)}}>
+            <ListItemIcon>{action.icon}</ListItemIcon>
+            <ListItemText primary={action.title} />
           </ListItem>
         ))}
       </List>
