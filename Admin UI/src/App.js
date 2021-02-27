@@ -1,39 +1,39 @@
 import React, { useState } from 'react';
-import Container from './components/ScenarioBuilder';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import Header from './components/Header';
+import { BrowserRouter as Router, Redirect, Route, Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Header from './components/header/Header';
 import SignIn from './components/registration/SignIn';
-import Grid from '@material-ui/core/Grid';
+import Register from './components/registration/Register';
 import ScenarioBuilder from './components/ScenarioBuilder';
-import MediaCard from './components/dashboard/ScenarioCard';
-import CustomNodeFlow from './components/conversation/ConversationBuilder';
-import Dashboard from './components/dashboard/Dashboard'
+import Dashboard from './components/dashboard/Dashboard';
+import History from './components/history/History'
+
 
 function App() {
-  const [page, setPage] = useState();
+  const userSignin = useSelector((state) => state.userSignin);
+  const { userInfo } = userSignin;
   return (
     <Router>
       <div>
-        <Header />
-        <Switch>
-          <Route path='/conversation'>
-            <ScenarioBuilder />
-          </Route>
-          {/* <Route path=''>
-            <div>Home</div>
-          </Route> */}
-          <Route path='/history'>
-            <div>history</div>
-          </Route>
-          <Route path='/dashboard'>
-            {/* <MediaCard /> */}
-            {/* <CustomNodeFlow /> */}
-            <Dashboard />
-          </Route>
-          <Route path='/login'>
-            <SignIn />
-          </Route>
-        </Switch>
+        <Header/>
+        <Route path='/'>
+          {userInfo ? <Redirect to='/dashboard' /> : <Redirect to='/login' />}
+        </Route>
+        <Route path='/conversation'>
+          <ScenarioBuilder />
+        </Route>
+        <Route path='/history'>
+          <History />
+        </Route>
+        <Route path='/dashboard'>
+          <Dashboard />
+        </Route>
+        <Route path='/login'>
+          <SignIn />
+        </Route>
+        <Route path='/register'>
+          <Register />
+        </Route>
       </div>
     </Router>
   );
