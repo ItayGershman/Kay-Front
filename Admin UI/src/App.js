@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import Container from './components/Container';
+import Container from './components/ScenarioBuilder';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Header from './components/Header';
 import SignIn from './components/registration/SignIn';
 import Grid from '@material-ui/core/Grid';
-
-const pages = ['conversation', 'history', 'login', 'dashboard'];
+import ScenarioBuilder from './components/ScenarioBuilder';
+import MediaCard from './components/dashboard/ScenarioCard';
+import CustomNodeFlow from './components/conversation/ConversationBuilder';
 
 function App() {
   const [page, setPage] = useState();
@@ -15,19 +16,20 @@ function App() {
         <Header />
         <Switch>
           <Route path='/conversation'>
-            <div>conversation</div>
+            <ScenarioBuilder />
           </Route>
-          <Route path=''>
+          {/* <Route path=''>
             <div>Home</div>
-          </Route>
+          </Route> */}
           <Route path='/history'>
             <div>history</div>
           </Route>
           <Route path='/dashboard'>
-            <div>dashboard</div>
+            {/* <MediaCard /> */}
+            <CustomNodeFlow />
           </Route>
           <Route path='/login'>
-            <div>login</div>
+            <SignIn />
           </Route>
         </Switch>
       </div>
@@ -36,10 +38,3 @@ function App() {
 }
 
 export default App;
-
-{
-  /* <SignIn /> */
-}
-{
-  /* <Container page={pages[2]} /> */
-}
