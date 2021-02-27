@@ -3,8 +3,11 @@ import { BrowserRouter as Router, Redirect, Route, Link } from 'react-router-dom
 import { useSelector } from 'react-redux';
 import Header from './components/header/Header';
 import SignIn from './components/registration/SignIn';
+import Register from './components/registration/Register';
 import ScenarioBuilder from './components/ScenarioBuilder';
 import Dashboard from './components/dashboard/Dashboard';
+import History from './components/history/History'
+
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);
@@ -20,13 +23,16 @@ function App() {
           <ScenarioBuilder />
         </Route>
         <Route path='/history'>
-          <div>history</div>
+          <History />
         </Route>
         <Route path='/dashboard'>
           <Dashboard />
         </Route>
         <Route path='/login'>
           <SignIn />
+        </Route>
+        <Route path='/register'>
+          <Register />
         </Route>
       </div>
     </Router>
