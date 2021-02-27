@@ -4,7 +4,9 @@ import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Avatar from '@material-ui/core/Avatar';
+
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -50,7 +52,8 @@ export default function Header() {
       <Paper className={classes.header}>
         <div className={classes.headerContent}>
           <Link to='/'>
-            <Button>Kay Logo</Button>
+            <Typography >Kay Logo</Typography>
+            {/* <Button>Kay Logo</Button> */}
           </Link>
 
           <div className={classes.nav}>

@@ -15,9 +15,9 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 const useStyles = makeStyles((theme) => ({
   menu: {
     maxHeight: '100vh',
-    minHeight:'30vh',
-    overflowY:'auto',
-    overflowX:'hidden',
+    minHeight: '30vh',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   },
   list: {
     width: '100%',
@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Menu() {
+export default function Menu({ buttons }) {
   const classes = useStyles();
   const [state, setState] = useState({
     left: false,
@@ -41,16 +41,18 @@ export default function Menu() {
   const [openComponents, setOpenComponents] = useState(false);
   const [openActions, setOpenActions] = useState(false);
   const [openMenu, setOpenMenu] = React.useState(false);
-  const components = [
-    'Add Node',
-    'Add Input',
-    'Add Output',
-    'Add Scenario Name',
-    'Add Intent',
-    'Add Entity',
-    'Speak',
-    'Train Kay',
-  ];
+  const components = buttons;
+  // const components = [
+  //   'Add Node',
+  //   'Add Input',
+  //   'Add Output',
+  //   'Add Scenario Name',
+  //   'Add Intent',
+  //   'Add Entity',
+  //   'Speak',
+  //   'Train Kay',
+  // ];
+  console.log(buttons);
   const actions = [
     'Calendar',
     'Laser Pointer',
@@ -89,21 +91,23 @@ export default function Menu() {
         </ListItem>
         <Collapse in={openComponents} timeout='auto' unmountOnExit>
           <List>
-            {components.map((text, index) => {
+            {components.map((comp, index) => {
+              console.log(comp);
+              console.log(Object.values(comp)[0]);
               return (
                 <ListItem
                   button
-                  key={text}
-                  onClick={() =>
-                    console.log(
-                      'send index or text to handler and add that component to conversation grid'
-                    )
-                  }
+                  key={comp.key}
+                  onClick={() => {
+                    comp.key.includes('Input')
+                      ? comp.value('input')
+                      : comp.value('output');
+                  }}
                 >
                   <ListItemIcon>
                     {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                   </ListItemIcon>
-                  <ListItemText primary={text} />
+                  <ListItemText primary={comp.key} />
                 </ListItem>
               );
             })}

@@ -6,6 +6,14 @@ const { sendResult } = require('./Speak.js');
 const { Timer } = require('./Timer');
 
 const witToken = process.env.WIT_ACCESS_TOKEN;
+const reqData = {
+  url: 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
+  headers: {
+    Accept: 'application/vnd.wit.20160202+json',
+    Authorization: `Bearer ${witToken}`,
+    'Content-Type': 'audio/wav',
+  },
+};
 
 const WitAISpeechRecognition = async () => {
   let response = false;
@@ -13,31 +21,20 @@ const WitAISpeechRecognition = async () => {
   const startRecording = (timer) => {
     console.log('start recording');
     rec.start().pipe(
-      request.post(
-        {
-          url:
-            'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
-          headers: {
-            Accept: 'application/vnd.wit.20160202+json',
-            Authorization: `Bearer ${witToken}`,
-            'Content-Type': 'audio/wav',
-          },
-        },
-        async (err, resp, body) => {
-          const data = JSON.parse(body);
-          if (data._text === '') {
-            response = false;
-          } else {
-            timer.stop();
-            response = await sendResult(err, resp, data);
-            console.log('res: ', response);
-            response = false;
-            timer.reset(5000);
-          }
+      request.post(reqData, async (err, resp, body) => {
+        const data = JSON.parse(body);
+        if (data._text === '') {
+          response = false;
+        } else {
+          timer.stop();
+          response = await sendResult(err, resp, data);
+          console.log('res: ', response);
+          response = false;
+          timer.reset(5000);
         }
-      )
+      })
     );
-    //Every 5 seconds Kay stop recording
+    //After 5 seconds Kay stop recording
     setTimeout(function () {
       rec.stop();
     }, 5000);
