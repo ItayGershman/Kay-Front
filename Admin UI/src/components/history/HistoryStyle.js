@@ -192,6 +192,17 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white',
     overflow: 'scroll',
   },
+  trashIcon: {
+    right: 15,
+    top: 15,
+    position: 'absolute',
+    padding: 2,
+    '&:hover': {
+      backgroundColor: '#ef5350',
+      borderRadius: '5px',
+      color: 'white',
+    },
+  },
 }));
 
 export default useStyles;

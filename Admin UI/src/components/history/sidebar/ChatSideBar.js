@@ -1,6 +1,6 @@
 import React from 'react';
 // import './Sidebar.css';
-import useStyles from '../HistoryStyle'
+import useStyles from '../HistoryStyle';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -8,7 +8,7 @@ import { SearchOutlined } from '@material-ui/icons';
 import { Avatar, IconButton } from '@material-ui/core';
 import SidebarList from './SidebarList';
 
-const Sidebar = () => {
+const Sidebar = ({ conversations }) => {
   const classes = useStyles();
   return (
     <div className={classes.sidebar}>
@@ -33,15 +33,20 @@ const Sidebar = () => {
         </div>
       </div>
       <div className={classes.sidebarChats}>
-          {/* Should be map over an array of conversations with props */}
+        {/* Should be map over an array of conversations with props */}
+        {conversations.map((conversation) => (
+          <SidebarList
+            conversation={conversation}
+          />
+        ))}
+        {/* <SidebarList />
         <SidebarList />
         <SidebarList />
         <SidebarList />
         <SidebarList />
         <SidebarList />
         <SidebarList />
-        <SidebarList />
-        <SidebarList />
+        <SidebarList /> */}
       </div>
     </div>
   );
