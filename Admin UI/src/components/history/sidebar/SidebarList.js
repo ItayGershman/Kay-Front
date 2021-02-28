@@ -1,12 +1,13 @@
 import React from 'react';
-import './Sidebar.css';
+import useStyles from '../HistoryStyle'
 import { Avatar } from '@material-ui/core';
 
 const SidebarList = () => {
+  const classes = useStyles();
   return (
-    <div className='sidebarChat'>
+    <div className={classes.sidebarChat}>
       {/* <Avatar /> */}
-      <div className='sidebarChat__info'>
+      <div className={classes.sidebarChatInfo}>
           {/* Should get from redux */}
         <h2>Room name</h2>
         <p>This is the last message</p>

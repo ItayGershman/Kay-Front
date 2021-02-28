@@ -95,10 +95,10 @@ const ScenarioDialog = ({ openDialog, handleClickClose }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClickClose} color='secondary'>
+        <Button onClick={handleClickClose} color='secondary' variant="contained">
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color='primary'>
+        <Button onClick={handleSubmit} color='primary' variant="contained">
           Submit
         </Button>
       </DialogActions>

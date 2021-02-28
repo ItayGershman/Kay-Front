@@ -1,12 +1,40 @@
-
-export const USER_REGISTER_FAIL = 'USER_REGISTER_FAIL';
+//User
 export const USER_REGISTER_REQUEST = 'USER_REGISTER_REQUEST';
 export const USER_REGISTER_SUCCESS = 'USER_REGISTER_SUCCESS';
+export const USER_REGISTER_FAIL = 'USER_REGISTER_FAIL';
 
-export const USER_SIGNIN_FAIL = 'USER_SIGNIN_FAIL';
 export const USER_SIGNIN_REQUEST = 'USER_SIGNIN_REQUEST';
 export const USER_SIGNIN_SUCCESS = 'USER_SIGNIN_SUCCESS';
+export const USER_SIGNIN_FAIL = 'USER_SIGNIN_FAIL';
 
-export const USER_LOGIN_FAIL = 'USER_LOGIN_FAIL';
 export const USER_LOGIN_REQUEST = 'USER_LOGIN_REQUEST';
 export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS';
+export const USER_LOGIN_FAIL = 'USER_LOGIN_FAIL';
+
+//History
+export const HISTORY_GET_ALL_REQUEST = 'HISTORY_GET__ALL_REQUEST';// Get all conversations
+export const HISTORY_GET_ALL_SUCCESS = 'HISTORY_GET_ALL_SUCCESS';
+export const HISTORY_GET_ALL_FAIL = 'HISTORY_GET_ALL_FAIL';
+export const HISTORY_GET_REQUEST = 'HISTORY_GET_REQUEST';// Get a single conversation history
+export const HISTORY_GET_SUCCESS = 'HISTORY_GET_SUCCESS';
+export const HISTORY_GET_FAIL = 'HISTORY_GET_FAIL';
+export const HISTORY_DELETE_REQUEST = 'HISTORY_DELETE_REQUEST'; // Delete a conversation (optional)
+export const HISTORY_DELETE_SUCCESS = 'HISTORY_DELETE_SUCCESS';
+export const HISTORY_DELETE_FAIL = 'HISTORY_DELETE_FAIL';
+
+//Conversation
+export const SCENARIOS_GET_REQUEST = 'SCENARIOS_GET_REQUEST'; //Get all scenarios -> for dashboard
+export const SCENARIOS_GET_SUCCESS = 'SCENARIOS_GET_SUCCESS';
+export const SCENARIOS_GET_FAIL = 'SCENARIOS_GET_FAIL';
+export const SCENARIO_GET_REQUEST = 'SCENARIO_GET_REQUEST'; //Get specific scenario -> for conversationBuilder
+export const SCENARIO_GET_SUCCESS = 'SCENARIO_GET_SUCCESS';
+export const SCENARIO_GET_FAIL = 'SCENARIO_GET_FAIL';
+export const SCENARIO_CREATE_REQUEST = 'SCENARIO_CREATE_REQUEST'; //Create new scenario -> for conversationBuilder
+export const SCENARIO_CREATE_SUCCESS = 'SCENARIO_CREATE_SUCCESS';
+export const SCENARIO_CREATE_FAIL = 'SCENARIO_CREATE_FAIL';
+export const SCENARIO_UPDATE_REQUEST = 'SCENARIO_UPDATE_REQUEST'; //Update an existing scenario -> for conversationBuilder
+export const SCENARIO_UPDATE_SUCCESS = 'SCENARIO_UPDATE_SUCCESS';
+export const SCENARIO_UPDATE_FAIL = 'SCENARIO_UPDATE_FAIL';
+export const SCENARIO_DELETE_REQUEST = 'SCENARIO_DELETE_REQUEST'; //Delete an existing scenario -> for conversationBuilder
+export const SCENARIO_DELETE_SUCCESS = 'SCENARIO_DELETE_SUCCESS';
+export const SCENARIO_DELETE_FAIL = 'SCENARIO_DELETE_FAIL';

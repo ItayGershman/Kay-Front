@@ -1,68 +1,69 @@
 import React from 'react';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import './HistoryStyle.css';
+// import makeStyles from '@material-ui/core/styles/makeStyles';
+// import './HistoryStyle.css';
 import { Typography } from '@material-ui/core';
 
 import { Avatar, IconButton } from '@material-ui/core';
 import { AttachFile, InsertEmoticon, SearchOutlined } from '@material-ui/icons';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import MicIcon from '@material-ui/icons/Mic';
-import './Chat.css';
+import useStyles from './HistoryStyle';
+// import './Chat.css';
 import ChatSideBar from './sidebar/ChatSideBar';
 
-const useStyles = makeStyles((theme) => ({
-  container: {
-    bottom: 0,
-    width: '70%',
-    margin: '50px auto',
-    background: 'blue',
-    borderRadius: '50px',
-    padding: '20px',
-    backgroundImage: `url('https://static.vecteezy.com/system/resources/thumbnails/000/097/736/small/abstract-robot-background-vector.jpg')`,
-    opacity: '0.9',
+// const useStyles = makeStyles((theme) => ({
+//   container: {
+//     bottom: 0,
+//     width: '70%',
+//     margin: '50px auto',
+//     background: 'blue',
+//     borderRadius: '50px',
+//     padding: '20px',
+//     backgroundImage: `url('https://static.vecteezy.com/system/resources/thumbnails/000/097/736/small/abstract-robot-background-vector.jpg')`,
+//     opacity: '0.9',
 
-    // position: "fixed" // remove this so we can apply flex design
-  },
-  bubbleContainer: {
-    width: '100%',
-    display: 'flex', //new added flex so we can put div at left and right side
-  },
-  leftBubble: {
-    borderRadius: '0px 30px',
-    margin: '5px',
-    padding: '10px',
-    display: 'inline-block',
-    backgroundColor: '#5c6bc0',
-    color: 'white',
-  },
-  rightBubble: {
-    borderRadius: '30px 0px',
-    margin: '5px',
-    padding: '10px',
-    display: 'inline-block',
-    backgroundColor: '#eeeeee',
-    color: 'black',
-  },
-  right: {
-    justifyContent: 'flex-end ',
-  },
-  left: {
-    justifyContent: 'flex-start ',
-  },
-  userColor: {
-    color: '#283593',
-  },
-  kayColor: {
-    color: 'black',
-  },
-}));
+//     // position: "fixed" // remove this so we can apply flex design
+//   },
+//   bubbleContainer: {
+//     width: '100%',
+//     display: 'flex', //new added flex so we can put div at left and right side
+//   },
+//   leftBubble: {
+//     borderRadius: '0px 30px',
+//     margin: '5px',
+//     padding: '10px',
+//     display: 'inline-block',
+//     backgroundColor: '#5c6bc0',
+//     color: 'white',
+//   },
+//   rightBubble: {
+//     borderRadius: '30px 0px',
+//     margin: '5px',
+//     padding: '10px',
+//     display: 'inline-block',
+//     backgroundColor: '#eeeeee',
+//     color: 'black',
+//   },
+//   right: {
+//     justifyContent: 'flex-end ',
+//   },
+//   left: {
+//     justifyContent: 'flex-start ',
+//   },
+//   userColor: {
+//     color: '#283593',
+//   },
+//   kayColor: {
+//     color: 'black',
+//   },
+// }));
 
 const History = () => {
   const classes = useStyles();
   const dummyData = [
     {
       name: 'Kay',
-      message: 'This should be in left',
+      message: 'This should be in left ',
       direction: 'left',
     },
     {
@@ -141,14 +142,14 @@ const History = () => {
       }}
     >
       <ChatSideBar />
-      <div className='chat'>
-        <div className='chat__header'>
+      <div className={classes.chat}>
+        <div className={classes.chatHeader}>
           <Avatar />
-          <div className='chat__headerInfo'>
+          <div className={classes.chatHeaderInfo}>
             <h3>Room name</h3>
             <p>Last seen at...</p>
           </div>
-          <div className='chat__headerRight'>
+          <div className={classes.chatHeaderRight}>
             <IconButton>
               <SearchOutlined />
             </IconButton>
@@ -160,19 +161,19 @@ const History = () => {
             </IconButton>
           </div>
         </div>
-        <div className='chat__body'>
+        <div className={classes.chatBody}>
           {dummyData.map((message) =>
             message.direction === 'left' ? (
-              <p className={`chat__message `}>
-                <span className='chat__name'>{message.name}</span>
+              <p className={classes.chatMessage}>
+                <span className={classes.chatName}>{message.name}</span>
                 {message.message}
-                <span className='chat__timestamp'>message.timestamp</span>
+                <span className={classes.chatTimestamp}>message.timestamp</span>
               </p>
             ) : (
-              <p className={`chat__message chat__receiver`}>
-                <span className='chat__name'>{message.name}</span>
+              <p className={`${classes.chatMessage} ${classes.chatReceiver}`}>
+                <span className={classes.chatName}>{message.name}</span>
                 {message.message}
-                <span className='chat__timestamp'>message.timestamp</span>
+                <span className={classes.chatTimestamp}>message.timestamp</span>
               </p>
             )
           )}
