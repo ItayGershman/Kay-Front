@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     '& > h2': {
       fontSize: '16px',
       marginBottom: '8px',
-    },
+    }
   },
   sidebar: {
     display: 'flex',
@@ -197,9 +197,10 @@ const useStyles = makeStyles((theme) => ({
     top: 15,
     position: 'absolute',
     padding: 2,
+    color:'#ef5350',
+    borderRadius: '5px',
     '&:hover': {
       backgroundColor: '#ef5350',
-      borderRadius: '5px',
       color: 'white',
     },
   },

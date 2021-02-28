@@ -1,12 +1,12 @@
 import React from 'react';
-import { BrowserRouter as Router, Redirect, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from './components/header/Header';
 import SignIn from './components/registration/SignIn';
 import Register from './components/registration/Register';
 import Dashboard from './components/dashboard/Dashboard';
 import History from './components/history/History'
-
+import ConversationBuilder from './components/conversation/ConversationBuilder'
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);
@@ -29,6 +29,9 @@ function App() {
         </Route>
         <Route path='/register'>
           <Register />
+        </Route>
+        <Route path='/conversation'>
+          <ConversationBuilder />
         </Route>
       </div>
     </Router>

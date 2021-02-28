@@ -26,7 +26,7 @@ const getConversation = (id) => async (dispatch) => {
   console.log(id);
   dispatch({ type: HISTORY_GET_REQUEST });
   try {
-      //need to send to the server.
+    //need to send to the server.
     dispatch({ type: HISTORY_GET_SUCCESS, payload: id });
   } catch (error) {
     dispatch({ type: HISTORY_GET_FAIL, payload: error.message });
@@ -37,7 +37,7 @@ const deleteConversation = (id) => async (dispatch) => {
   console.log(id);
   dispatch({ type: HISTORY_DELETE_REQUEST });
   try {
-      //need to send to the server
+    //need to send to the server
     dispatch({ type: HISTORY_DELETE_SUCCESS, payload: id });
   } catch (error) {
     dispatch({ type: HISTORY_DELETE_FAIL, payload: error.message });

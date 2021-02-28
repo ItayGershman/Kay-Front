@@ -13,6 +13,7 @@ import ChatSideBar from './sidebar/ChatSideBar';
 const History = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  
   const dummyData = [
     {
       name: 'Kay',

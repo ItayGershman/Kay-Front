@@ -79,62 +79,6 @@ const Dashboard = () => {
         openDialog={openDialog}
         handleClickClose={handleClickClose}
       />
-      {/* <Dialog
-        open={openDialog}
-        onClose={handleClickClose}
-        aria-labelledby='form-dialog-title'
-      >
-        <DialogTitle id='form-dialog-title'>Subscribe</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
-          <TextField
-            // margin='dense'
-            id='title'
-            label='Scenario Title'
-            type='title'
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            style={{marginTop:'20px'}}
-            id='description'
-            label='Scenario Description'
-            type='textarea'
-            variant="outlined"
-            fullWidth
-          />
-          <input
-            accept='image/*'
-            style={{ display: 'none' }}
-            id='contained-button-file'
-            multiple
-            type='file'
-          />
-          <label htmlFor='contained-button-file'>
-            <Button
-              variant='contained'
-              color='primary'
-              component='span'
-              startIcon={<CloudUploadIcon />}
-              style={{ marginTop: '20px' }}
-            >
-              Upload Image
-            </Button>
-          </label>
-        </DialogContent>
-        <Divider />
-        <DialogActions>
-          <Button onClick={handleClickClose} color='primary'>
-            Cancel
-          </Button>
-          <Button onClick={handleClickClose} color='primary'>
-            Subscribe
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </div>
   );
 };

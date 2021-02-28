@@ -39,11 +39,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     position: 'relative',
-    padding:'20px'
+    padding:'20px',
+
   },
   appBar: {
     position: 'absolute',
-    
+    backgroundColor:'orange',    
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -85,7 +86,7 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
   },
   drawerLeftOpen: {
-    top: 58,
+    top: 65,
     width: 240,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -93,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   drawerLeftClose: {
-    top: 58,
+    top: 65,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -107,7 +108,7 @@ const useStyles = makeStyles((theme) => ({
   drawerRightOpen: {
     right: 0,
     left: 'auto',
-    top: 58,
+    top: 65,
     width: 240,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -117,7 +118,7 @@ const useStyles = makeStyles((theme) => ({
   drawerRightClose: {
     right: 0,
     left: 'auto',
-    top: 58,
+    top: 65,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -133,7 +134,6 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
   toolbarRight: {
@@ -141,13 +141,12 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     justifyContent: 'flex-start',
     padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
   },
   content: {
     marginTop: '5%',
     flexGrow: 1,
-    padding: theme.spacing(5),
+    padding: '40px 0px',
   },
 }));
 

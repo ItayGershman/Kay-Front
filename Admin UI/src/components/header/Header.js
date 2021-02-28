@@ -67,6 +67,9 @@ export default function MenuAppBar() {
                 <Link to='/dashboard' className={classes.link}>
                   <Typography variant='h6'>Dashboard</Typography>
                 </Link>
+                <Link to='/conversation' className={classes.link}>
+                  <Typography variant='h6'>Conversation</Typography>
+                </Link>
               </div>
               {/* </div> */}
               <div className={classes.navItem}>
@@ -79,7 +82,8 @@ export default function MenuAppBar() {
                 >
                   <AccountCircle />
                 </IconButton>
-                <div>Hi Michal</div>
+
+                <Typography variant='h6'>Hi Michal</Typography>
                 <Menu
                   id='menu-appbar'
                   anchorEl={anchorEl}
