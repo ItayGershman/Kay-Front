@@ -12,6 +12,10 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PeopleIcon from '@material-ui/icons/People';
 import SaveIcon from '@material-ui/icons/Save';
 import RestoreIcon from '@material-ui/icons/Restore';
+import WidgetsIcon from '@material-ui/icons/Widgets';
+import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
+import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
+
 
 import ReactFlow, {
   isEdge,
@@ -20,7 +24,8 @@ import ReactFlow, {
   MiniMap,
   Controls,
   Background,
-  useZoomPanHelper
+  useZoomPanHelper,
+  isNode,
 } from 'react-flow-renderer';
 import InputNode from '../conversationFlow/InputNode';
 import {
@@ -28,6 +33,7 @@ import {
   createInputNode,
   createOutputNode,
   initialElements,
+  getLayoutedElements,
 } from '../conversationFlow/conversation-utils';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -109,8 +115,16 @@ const CustomNodeFlow = () => {
     [reactflowInstance]
   );
 
+  const onLayout = useCallback(
+    (direction) => {
+      const layoutedElements = getLayoutedElements(elements, direction, isNode);
+      setElements(layoutedElements);
+    },
+    [elements]
+  );
+
   const onDragOver = (event) => {
-    console.log(event)
+    console.log(event);
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   };
@@ -155,27 +169,37 @@ const CustomNodeFlow = () => {
   // }, [setElements, transform]);
 
   const leftButtons = [
-    { name: 'input', title: 'Input Node', handler: onAdd, icon: <InputIcon />,isDraggable:true },
+    {
+      name: 'input',
+      title: 'Input Node',
+      handler: onAdd,
+      icon: <WidgetsIcon />,
+      isDraggable: true,
+    },
     {
       name: 'output',
       title: 'Output Node',
       handler: onAdd,
-      icon: <InputIcon />,
-      isDraggable:true 
+      icon: <WidgetsIcon />,
+      isDraggable: true,
     },
     {
       name: 'save',
       title: 'Save Layout',
-      handler: ()=>{console.log('should be onSave')},
+      handler: () => {
+        console.log('onSave');
+      },
       icon: <SaveIcon />,
-      isDraggable:false 
+      isDraggable: false,
     },
     {
       name: 'restore',
       title: 'Restore',
-      handler: ()=>{console.log('should be onRestore')},
+      handler: () => {
+        console.log('should be onRestore');
+      },
       icon: <RestoreIcon />,
-      isDraggable:false 
+      isDraggable: false,
     },
   ];
   const actions = [
@@ -218,6 +242,22 @@ const CustomNodeFlow = () => {
         console.log('handler');
       },
       icon: <LocationOnIcon />,
+    },
+  ];
+  const utils = [
+    {
+      name: 'vertical layout',
+      title: 'Vertical Layout',
+      handler: onLayout,
+      icon: <SwapVerticalCircleIcon />,
+      isDraggable: false,
+    },
+    {
+      name: 'horizontal layout',
+      title: 'Horizontal Layout',
+      handler: onLayout,
+      icon: <SwapHorizontalCircleIcon />,
+      isDraggable: false,
     },
   ];
   const rightButtons = [
@@ -284,6 +324,7 @@ const CustomNodeFlow = () => {
             buttons={leftButtons}
             actions={actions}
             classes={classes}
+            utils={utils}
             side='left'
           />
         </Grid>
@@ -333,6 +374,7 @@ const CustomNodeFlow = () => {
             buttons={rightButtons}
             actions={[]}
             classes={classes}
+            utils={[]}
             side='right'
           />
         </Grid>
