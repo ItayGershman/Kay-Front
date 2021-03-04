@@ -50,6 +50,7 @@ const WitAISpeechRecognition = async () => {
 };
 
 try {
+  // send request for welcoming scenario
   WitAISpeechRecognition();
 } catch (error) {
   console.log(error);

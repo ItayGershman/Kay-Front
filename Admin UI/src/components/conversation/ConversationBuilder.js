@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useStyles from './conversationStyle';
 import SideDrawer from './Drawer';
 import ConversationHeader from './ConversationHeader';
-import InputIcon from '@material-ui/icons/Input';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import ListIcon from '@material-ui/icons/List';
 import MovieIcon from '@material-ui/icons/Movie';
@@ -15,7 +14,6 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
-
 
 import ReactFlow, {
   isEdge,
@@ -33,7 +31,7 @@ import {
   createInputNode,
   createOutputNode,
   initialElements,
-  getLayoutedElements,
+  getLayoutElements,
 } from '../conversationFlow/conversation-utils';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -48,7 +46,7 @@ const onNodeDragStop = (event, node) => console.log('drag stop', node);
 const onElementClick = (event, element) => console.log('click', element);
 const initBgColor = 'white';
 const connectionLineStyle = { stroke: '#fff' };
-const snapGrid = [30, 20];
+const snapGrid = [20, 20];
 const nodeTypes = {
   selectorInputNode: InputNode,
 };
@@ -107,8 +105,10 @@ const CustomNodeFlow = () => {
   );
   const onLoad = useCallback(
     (rfi) => {
+      console.log(rfi)
       if (!reactflowInstance) {
         setReactflowInstance(rfi);
+        rfi.fitView();
         console.log('flow loaded:', rfi);
       }
     },
@@ -117,8 +117,8 @@ const CustomNodeFlow = () => {
 
   const onLayout = useCallback(
     (direction) => {
-      const layoutedElements = getLayoutedElements(elements, direction, isNode);
-      setElements(layoutedElements);
+      const layoutElements = getLayoutElements(elements, direction, isNode);
+      setElements(layoutElements);
     },
     [elements]
   );
@@ -130,6 +130,7 @@ const CustomNodeFlow = () => {
   };
   const onDrop = (event) => {
     event.preventDefault();
+    reactflowInstance.fitView();
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
     const type = event.dataTransfer.getData('application/reactflow');
     const position = reactflowInstance.project({
@@ -329,7 +330,10 @@ const CustomNodeFlow = () => {
           />
         </Grid>
         <Grid item xs={conversationBuilderSize}>
-          <main className={classes.content} ref={reactFlowWrapper}>
+          <main
+            className={`${classes.content} reactflow-wrapper`}
+            ref={reactFlowWrapper}
+          >
             <Paper className={classes.conversation}></Paper>
             <ReactFlow
               elements={elements}
@@ -345,22 +349,24 @@ const CustomNodeFlow = () => {
               connectionLineStyle={connectionLineStyle}
               snapToGrid={true}
               snapGrid={snapGrid}
-              // defaultZoom={1.5}
+              defaultZoom={0}
               style={graphStyles}
             >
               <Controls />
-              <Background color='#aaa' gap={16} />
               <MiniMap
                 nodeStrokeColor={(n) => {
+                  if (n.style?.background) return n.style.background;
                   if (n.type === 'input') return '#0041d0';
-                  if (n.type === 'selectorNode') return bgColor;
+                  if (n.type === 'selectorInputNode') return '#0041d0';
                   if (n.type === 'output') return '#ff0072';
                 }}
                 nodeColor={(n) => {
-                  if (n.type === 'selectorNode') return bgColor;
+                  if (n.type === 'selectorInputNode') return bgColor;
                   return '#fff';
                 }}
+                nodeBorderRadius={2}
               />
+              <Background color='#aaa' gap={16} />
             </ReactFlow>
           </main>
         </Grid>

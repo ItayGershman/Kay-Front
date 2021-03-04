@@ -71,7 +71,6 @@ export default function MenuAppBar() {
                   <Typography variant='h6'>Conversation</Typography>
                 </Link>
               </div>
-              {/* </div> */}
               <div className={classes.navItem}>
                 <IconButton
                   aria-label='account of current user'
@@ -82,7 +81,6 @@ export default function MenuAppBar() {
                 >
                   <AccountCircle />
                 </IconButton>
-
                 <Typography variant='h6'>Hi Michal</Typography>
                 <Menu
                   id='menu-appbar'

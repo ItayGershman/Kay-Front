@@ -2,8 +2,6 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import dagre from 'dagre';
 
-
-
 export const createEdge = (source, target, sourceHandle) => {
   return {
     id: `e${source}${sourceHandle}-${target}`,
@@ -124,7 +122,7 @@ export const initialElements = [
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-export const getLayoutedElements = (elements, direction = 'TB',isNode) => {
+export const getLayoutElements = (elements, direction = 'TB',isNode) => {
   const isHorizontal = direction === 'LR';
   dagreGraph.setGraph({ rankdir: direction });
   elements.forEach((el) => {

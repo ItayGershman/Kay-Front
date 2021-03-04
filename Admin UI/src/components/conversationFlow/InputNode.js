@@ -22,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default memo(({ data }) => {
-  console.log(data);
   const [intents, setIntents] = useState([
     <TextField label='Intent' variant='outlined' />,
   ]);

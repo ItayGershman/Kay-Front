@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     position: 'relative',
-    padding:'20px',
 
   },
   appBar: {
