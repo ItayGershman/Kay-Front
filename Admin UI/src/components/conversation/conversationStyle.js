@@ -145,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
     marginTop: '5%',
     flexGrow: 1,
-    padding: '40px 0px',
+    padding: '20px 0px',
   },
 }));
 

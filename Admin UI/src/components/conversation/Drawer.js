@@ -12,6 +12,9 @@ import MailIcon from '@material-ui/icons/Mail';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
+import LeftDrawer from './LeftDrawer';
+import RightDrawer from './RightDrawer';
+import { useStoreActions } from 'react-flow-renderer';
 
 const SideDrawer = ({
   open,
@@ -24,6 +27,9 @@ const SideDrawer = ({
   classes,
   utils,
   side,
+  node,
+  elements,
+  setElements,
 }) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -57,6 +63,12 @@ const SideDrawer = ({
         )}
       </div>
       <Divider />
+      {side === 'left' ? (
+        <LeftDrawer actions={actions} utils={utils} />
+      ) : (
+        <RightDrawer node={node} elements={elements} setElements={setElements} />
+      )}
+      <Divider />
       <List>
         {buttons.map((button, index) => (
           <ListItem
@@ -72,40 +84,11 @@ const SideDrawer = ({
           >
             <ListItemIcon>{button.icon}</ListItemIcon>
             <ListItemText primary={button.title} />
-            {button.isDraggable && <DragIndicatorIcon color='action'/>}
+            {button.isDraggable && <DragIndicatorIcon color='action' />}
           </ListItem>
         ))}
       </List>
       <Divider />
-      <List>
-        {actions.map((action, index) => (
-          <ListItem
-            button
-            key={index}
-            onClick={() => {
-              action.handler(action.name);
-            }}
-          >
-            <ListItemIcon>{action.icon}</ListItemIcon>
-            <ListItemText primary={action.title} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {utils.map((util, index) => (
-          <ListItem
-            button
-            key={index}
-            onClick={() => {
-              util.handler(util.name);
-            }}
-          >
-            <ListItemIcon>{util.icon}</ListItemIcon>
-            <ListItemText primary={util.title} />
-          </ListItem>
-        ))}
-      </List>
     </Drawer>
   );
 };

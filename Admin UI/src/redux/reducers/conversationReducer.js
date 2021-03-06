@@ -18,7 +18,8 @@ const {
 
 const initialState = {
   loading: false,
-  scenario: {},
+  elements:[],
+  selectedNode:{}
 };
 
 function scenarioReducer(state = initialState, action) {

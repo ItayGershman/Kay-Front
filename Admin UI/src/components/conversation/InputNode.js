@@ -21,31 +21,43 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default memo(({ data }) => {
-  const [intents, setIntents] = useState([
-    <TextField label='Intent' variant='outlined' />,
-  ]);
-  const [entity, setEntities] = useState([
-    <TextField label='Entity' variant='outlined' />,
-  ]);
+export default memo(({ data, id }) => {
+  console.log(data);
+  console.log(id);
+  // const [intents, setIntents] = useState([
+  //   <TextField label='Intent' variant='outlined' />,
+  // ]);
+  // const [entity, setEntities] = useState([
+  //   <TextField label='Entity' variant='outlined' />,
+  // ]);
   const classes = useStyles();
   return (
     <div>
       <Handle
         type='target'
         position='left'
-        style={{ backgroundColor: 'white' }}
+        style={{ backgroundColor: 'white', bottom: 0 }}
         onConnect={(params) => console.log('handle onConnect', params)}
       />
-      <div>Welcome</div>
-      <div>
+      {data && data.name ? <div>Name: {data.name}</div> : <div>Scenario name</div>}
+      {data && data.intent ? (
+        <div>Intent: "{data.intent}"</div>
+      ) : (
+        <div>"Intent name"</div>
+      )}
+      {data && data.entity ? (
+        <div>Entity: "{data.name}"</div>
+      ) : (
+        <div>"Entity name"</div>
+      )}
+      {/* <div>
         {intents.map((intent) => {
           return <div className={classes.input}>{intent}</div>;
         })}
         <Button
           onClick={() =>
             setIntents((prevState) => [
-              ...prevState,
+              prevState,
               <TextField label='Intent' variant='outlined' />,
             ])
           }
@@ -54,7 +66,7 @@ export default memo(({ data }) => {
             <Button
               onClick={() => {
                 setIntents((prevState) => {
-                  return [...prevState.pop()];
+                  return prevState.pop();
                 });
               }}
             >
@@ -72,26 +84,26 @@ export default memo(({ data }) => {
         <Button
           onClick={() =>
             setEntities((prevState) => [
-              ...prevState,
+              prevState,
               <TextField label='Entity' variant='outlined' />,
             ])
           }
         >
-          {entity.length > 1 && (
-            <Button
-              onClick={() => {
-                setEntities((prevState) => {
-                  return [...prevState.pop()];
-                });
-              }}
-            >
-              <RemoveCircleIcon color='secondary' />
-            </Button>
-          )}
           <AddCircleIcon color='primary' />
         </Button>
-      </div>
-      <div className={classes.button}>
+        {entity.length > 1 && (
+          <Button
+            onClick={() => {
+              setEntities((prevState) => {
+                return prevState.splice(prevState.length - 1, 1);
+              });
+            }}
+          >
+            <RemoveCircleIcon color='secondary' />
+          </Button>
+        )}
+      </div> */}
+      {/* <div className={classes.button}>
         <Button variant='contained' color='primary'>
           Train Kay
         </Button>
@@ -106,19 +118,13 @@ export default memo(({ data }) => {
         <Button variant='contained' color='primary'>
           Add Entity
         </Button>
-      </div>
+      </div> */}
 
       <Handle
         type='source'
         position='right'
         id='a'
-        style={{ top: 10, background: '#555' }}
-      />
-      <Handle
-        type='source'
-        position='right'
-        id='b'
-        style={{ bottom: 10, top: 'auto', background: '#555' }}
+        style={{ background: '#555' }}
       />
     </div>
   );

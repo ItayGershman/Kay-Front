@@ -25,55 +25,60 @@ import ReactFlow, {
   useZoomPanHelper,
   isNode,
 } from 'react-flow-renderer';
-import InputNode from '../conversationFlow/InputNode';
+import InputNode from './InputNode';
+import OutputNode from './OutputNode';
 import {
   createEdge,
   createInputNode,
   createOutputNode,
   initialElements,
   getLayoutElements,
-} from '../conversationFlow/conversation-utils';
+} from './conversation-utils';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-
-const graphStyles = {
-  width: '100%',
-  height: '100vh',
-  background: 'rgb(26, 25, 43)',
-};
-const getNodeId = () => `randomnode_${+new Date()}`;
-const onNodeDragStop = (event, node) => console.log('drag stop', node);
-const onElementClick = (event, element) => console.log('click', element);
-const initBgColor = 'white';
-const connectionLineStyle = { stroke: '#fff' };
-const snapGrid = [20, 20];
-const nodeTypes = {
-  selectorInputNode: InputNode,
-};
+import {
+  graphStyles,
+  handleNodeStrokeColor,
+  onNodeDragStop,
+  onElementClick,
+  initBgColor,
+  connectionLineStyle,
+  snapGrid,
+  nodeTypes,
+  handleOnDrop,
+  handleOnAdd,
+} from './conversation-utils';
 
 const CustomNodeFlow = () => {
-  const reactFlowWrapper = useRef(null);
-  const [leftDrawerWidth, setLeftDrawerWidth] = useState(0);
-  const [rightDrawerWidth, setRightDrawerWidth] = useState(0);
-  const classes = useStyles({ left: leftDrawerWidth, right: rightDrawerWidth });
-  const [openLeft, setOpenLeft] = useState(false);
-  const [openRight, setOpenRight] = useState(false);
+  const [mainElementsSize, setMainElementsSize] = useState({
+    leftDrawer: 1,
+    rightDrawer: 1,
+    conversationBuilder: 10,
+    openLeft: false,
+    openRight: false,
+    leftDrawerWidth: 0,
+    rightDrawerWidth: 0,
+  });
   const [reactflowInstance, setReactflowInstance] = useState(null);
   const [elements, setElements] = useState([]);
   const [bgColor, setBgColor] = useState(initBgColor);
-  const [conversationBuilderSize, setConversationBuilderSize] = useState(10);
-  const [leftDrawerSize, setLeftDrawerSize] = useState(1);
-  const [rightDrawerSize, setRightDrawerSize] = useState(1);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const reactFlowWrapper = useRef(null);
+  const classes = useStyles({
+    left: mainElementsSize.leftDrawerWidth,
+    right: mainElementsSize.rightDrawerWidth,
+  });
   // const { transform } = useZoomPanHelper();
 
-  useEffect(() => {
-    setElements(initialElements);
-  }, []);
+  // useEffect(() => {
+  //   setElements(initialElements);
+  // }, []);
   useEffect(() => {
     if (reactflowInstance && elements.length > 0) {
       reactflowInstance.fitView();
     }
   }, [reactflowInstance, elements.length]);
+
   const onElementsRemove = useCallback(
     (elementsToRemove) =>
       setElements((els) => removeElements(elementsToRemove, els)),
@@ -81,21 +86,11 @@ const CustomNodeFlow = () => {
   );
   const onAdd = useCallback(
     (node) => {
-      console.log(node);
-      const position = {
-        x: Math.random() * window.innerWidth - 100,
-        y: Math.random() * window.innerHeight,
-      };
-      let id = getNodeId();
-      let newNode;
-      console.log(position);
-      if (node === 'input') newNode = createInputNode(id, position);
-      if (node === 'output') newNode = createOutputNode(id, position, 'Right');
+      const newNode = handleOnAdd(node);
       setElements((els) => els.concat(newNode));
     },
     [setElements]
   );
-
   const onConnect = useCallback(
     (params) =>
       setElements((els) =>
@@ -105,7 +100,6 @@ const CustomNodeFlow = () => {
   );
   const onLoad = useCallback(
     (rfi) => {
-      console.log(rfi)
       if (!reactflowInstance) {
         setReactflowInstance(rfi);
         rfi.fitView();
@@ -114,7 +108,6 @@ const CustomNodeFlow = () => {
     },
     [reactflowInstance]
   );
-
   const onLayout = useCallback(
     (direction) => {
       const layoutElements = getLayoutElements(elements, direction, isNode);
@@ -124,29 +117,18 @@ const CustomNodeFlow = () => {
   );
 
   const onDragOver = (event) => {
-    console.log(event);
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   };
   const onDrop = (event) => {
     event.preventDefault();
     reactflowInstance.fitView();
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const type = event.dataTransfer.getData('application/reactflow');
-    const position = reactflowInstance.project({
-      x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
-    let newNode;
-    if (type === 'input') newNode = createInputNode(getNodeId(), position);
-    if (type === 'output') newNode = createOutputNode(getNodeId(), position);
-    if (type === 'default')
-      newNode = {
-        id: getNodeId(),
-        type,
-        position,
-        data: { label: `${type} node` },
-      };
+    const newNode = handleOnDrop(
+      event,
+      reactflowInstance,
+      reactFlowWrapper,
+      elements
+    );
     setElements((es) => es.concat(newNode));
   };
   // const onSave = useCallback(() => {
@@ -279,49 +261,75 @@ const CustomNodeFlow = () => {
       icon: <PeopleIcon />,
     },
   ];
-  const handleDrawerOpen = (side) => {
+  const onDrawerOpen = (side) => {
+    console.log(side);
     if (side === 'left') {
-      setOpenLeft(true);
-      setLeftDrawerWidth(240);
-      setLeftDrawerSize(2);
+      setMainElementsSize((prevState) => {
+        console.log(prevState.conversationBuilder);
+        return {
+          ...prevState,
+          openLeft: true,
+          leftDrawerWidth: 240,
+          leftDrawer: 2,
+          // conversationBuilder: prevState.conversationBuilder - 1,
+        };
+      });
     } else {
-      setOpenRight(true);
-      setRightDrawerWidth(240);
-      setRightDrawerSize(2);
+      setMainElementsSize((prevState) => ({
+        ...prevState,
+        openRight: true,
+        rightDrawerWidth: 240,
+        rightDrawer: 2,
+        // conversationBuilder: prevState.conversationBuilder - 1,
+      }));
     }
-    setConversationBuilderSize((prevState) => prevState - 1);
+    setMainElementsSize((prevState) => ({
+      ...prevState,
+      conversationBuilder: prevState.conversationBuilder - 1,
+    }));
   };
 
-  const handleDrawerClose = (side) => {
+  const onDrawerClose = (side) => {
     if (side === 'left') {
-      setOpenLeft(false);
-      setLeftDrawerWidth(0);
-      setLeftDrawerSize(1);
+      setMainElementsSize((prevState) => ({
+        ...prevState,
+        openLeft: false,
+        leftDrawerWidth: 0,
+        leftDrawer: 1,
+        // conversationBuilder: prevState.conversationBuilder + 1,
+      }));
     } else {
-      setOpenRight(false);
-      setRightDrawerWidth(0);
-      setRightDrawerSize(1);
+      setMainElementsSize((prevState) => ({
+        ...prevState,
+        openRight: false,
+        rightDrawerWidth: 0,
+        rightDrawer: 1,
+        // conversationBuilder: prevState.conversationBuilder + 1,
+      }));
     }
-    setConversationBuilderSize((prevState) => prevState + 1);
+    setMainElementsSize((prevState) => ({
+      ...prevState,
+      conversationBuilder: prevState.conversationBuilder + 1,
+    }));
   };
 
   return (
     <div className={classes.root}>
       <ConversationHeader
         classes={classes}
-        openLeft={openLeft}
-        openRight={openRight}
-        handleLeftDrawerOpen={() => handleDrawerOpen('left')}
-        handleRightDrawerOpen={() => handleDrawerOpen('right')}
+        openLeft={mainElementsSize.openLeft}
+        openRight={mainElementsSize.openRight}
+        handleLeftDrawerOpen={() => onDrawerOpen('left')}
+        handleRightDrawerOpen={() => onDrawerOpen('right')}
       />
       <Grid container spacing={3}>
-        <Grid xs={leftDrawerSize}>
+        <Grid xs={mainElementsSize.leftDrawer}>
           <SideDrawer
-            open={openLeft}
+            open={mainElementsSize.openLeft}
             drawerOpen={classes.drawerLeftOpen}
             drawerClose={classes.drawerLeftClose}
-            handleDrawerClose={() => handleDrawerClose('left')}
-            handleDrawerOpen={() => handleDrawerOpen('left')}
+            handleDrawerClose={() => onDrawerClose('left')}
+            onDrawerOpen={() => onDrawerOpen('left')}
             buttons={leftButtons}
             actions={actions}
             classes={classes}
@@ -329,7 +337,7 @@ const CustomNodeFlow = () => {
             side='left'
           />
         </Grid>
-        <Grid item xs={conversationBuilderSize}>
+        <Grid item xs={mainElementsSize.conversationBuilder}>
           <main
             className={`${classes.content} reactflow-wrapper`}
             ref={reactFlowWrapper}
@@ -337,7 +345,9 @@ const CustomNodeFlow = () => {
             <Paper className={classes.conversation}></Paper>
             <ReactFlow
               elements={elements}
-              onElementClick={onElementClick}
+              onElementClick={(event, element) =>
+                onElementClick(event, element, setSelectedNode)
+              }
               onElementsRemove={onElementsRemove}
               onConnect={onConnect}
               onNodeDragStop={onNodeDragStop}
@@ -354,33 +364,29 @@ const CustomNodeFlow = () => {
             >
               <Controls />
               <MiniMap
-                nodeStrokeColor={(n) => {
-                  if (n.style?.background) return n.style.background;
-                  if (n.type === 'input') return '#0041d0';
-                  if (n.type === 'selectorInputNode') return '#0041d0';
-                  if (n.type === 'output') return '#ff0072';
-                }}
-                nodeColor={(n) => {
-                  if (n.type === 'selectorInputNode') return bgColor;
-                  return '#fff';
-                }}
+                nodeStrokeColor={(n) => handleNodeStrokeColor(n)}
+                nodeColor={(n) =>
+                  n.type === 'selectorInputNode' ? bgColor : '#fff'
+                }
                 nodeBorderRadius={2}
               />
               <Background color='#aaa' gap={16} />
             </ReactFlow>
           </main>
         </Grid>
-        <Grid xs={rightDrawerSize}>
+        <Grid xs={mainElementsSize.rightDrawer}>
           <SideDrawer
-            open={openRight}
+            open={mainElementsSize.openRight}
             drawerOpen={classes.drawerRightOpen}
             drawerClose={classes.drawerRightClose}
-            handleDrawerClose={() => handleDrawerClose('right')}
-            handleDrawerOpen={() => handleDrawerOpen('right')}
+            handleDrawerClose={() => onDrawerClose('right')}
+            handleDrawerOpen={() => onDrawerOpen('right')}
             buttons={rightButtons}
-            actions={[]}
             classes={classes}
-            utils={[]}
+            defaultZoom={1}
+            node={selectedNode}
+            elements={elements}
+            setElements={setElements}
             side='right'
           />
         </Grid>
