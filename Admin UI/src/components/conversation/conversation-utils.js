@@ -19,11 +19,6 @@ const createInputNode = (id, position, elements) => {
   return {
     id,
     type: 'selectorInputNode',
-    style: {
-      border: '1px solid #777',
-      padding: 10,
-      backgroundColor: 'white',
-    },
     position,
     data: elements,
   };
@@ -42,36 +37,94 @@ const createOutputNode = (id, position, sourcePosition, targetPosition) => {
 export const initialElements = [
   {
     id: '1',
-    type: 'selectorOutputNode',
+    type: 'selectorInputNode',
     data: {
-      label: (
-        <div>
-          <div>Welcome</div>
-          <TextField
-            id='outlined-textarea'
-            label='Speak'
-            placeholder='Placeholder'
-            multiline
-            variant='outlined'
-          />
-        </div>
-      ),
+      name: 'Welcoming',
+      intent: 'welcoming_greetings',
+      speak: [
+        "Hey, I'm - a robotic assistant for this center, what is your name? ",
+        'Hello there, how are you doing today? do you mind tell me your name?',
+        "Hey, welcome to Kadar design and technology center, I'd love to hear your name to get to know you better",
+      ],
     },
     position: { x: 0, y: 50 },
-    // sourcePosition: 'left',
-    // targetPosition:'right'
   },
   {
     id: '2',
     type: 'selectorInputNode',
-    style: {
-      border: '1px solid #777',
-      padding: 10,
-      backgroundColor: 'white',
+    data: {
+      name: 'Welcoming',
+      intent: 'welcoming_getName',
+      speak: [
+        'Hey {{name}}! let me share a little background about me',
+        'Nice to meet you {{name}}, would you like to hear a little background about me?',
+        'That is a beautiful name! Let me tell you a little bit about the center',
+      ],
     },
-    position: { x: 300, y: 50 },
-    targetPosition: 'left',
+    position: { x: 300, y: 0 },
   },
+  {
+    id: '3',
+    type: 'selectorInputNode',
+    data: {
+      name: 'Welcoming',
+      intent: 'welcoming_purpose',
+      entities: ['soldering', 'schedule', 'projects', 'study'],
+      speak: [
+        'Do you know how to solder? rank yourself from 1 to 10',
+        'The center schedule for today is {{entity=schedule}}',
+        'Take me to {{position-with laser}} and I will display our projects',
+        'Feel comfortable in the center, for any assistance please fell free to talk to me',
+      ],
+    },
+    position: { x: 600, y: 0 },
+  },
+  {
+    id: 'e1-2',
+    source: '1',
+    target: '2',
+    animated: true,
+    style: { stroke: '#fff' },
+  },
+  {
+    id: 'e2-3',
+    source: '2',
+    target: '3',
+    animated: true,
+    style: { stroke: '#fff' },
+  },
+  // {
+  //   id: '1',
+  //   type: 'selectorOutputNode',
+  //   data: {
+  //     label: (
+  //       <div>
+  //         <div>Welcome</div>
+  //         <TextField
+  //           id='outlined-textarea'
+  //           label='Speak'
+  //           placeholder='Placeholder'
+  //           multiline
+  //           variant='outlined'
+  //         />
+  //       </div>
+  //     ),
+  //   },
+  //   position: { x: 0, y: 50 },
+  //   // sourcePosition: 'left',
+  //   // targetPosition:'right'
+  // },
+  // {
+  //   id: '2',
+  //   type: 'selectorInputNode',
+  //   style: {
+  //     border: '1px solid #777',
+  //     padding: 10,
+  //     backgroundColor: 'white',
+  //   },
+  //   position: { x: 300, y: 50 },
+  //   targetPosition: 'left',
+  // },
   // {
   //   id: '3',
   //   type: 'output',
@@ -172,7 +225,12 @@ export const nodeTypes = {
   selectorOutputNode: OutputNode,
 };
 
-export const handleOnDrop = (event, reactflowInstance, reactFlowWrapper,elements) => {
+export const handleOnDrop = (
+  event,
+  reactflowInstance,
+  reactFlowWrapper,
+  elements
+) => {
   reactflowInstance.fitView();
   const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
   const type = event.dataTransfer.getData('application/reactflow');

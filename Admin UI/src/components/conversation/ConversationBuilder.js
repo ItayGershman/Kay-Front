@@ -70,9 +70,9 @@ const CustomNodeFlow = () => {
   });
   // const { transform } = useZoomPanHelper();
 
-  // useEffect(() => {
-  //   setElements(initialElements);
-  // }, []);
+  useEffect(() => {
+    setElements(initialElements);
+  }, []);
   useEffect(() => {
     if (reactflowInstance && elements.length > 0) {
       reactflowInstance.fitView();
@@ -155,14 +155,18 @@ const CustomNodeFlow = () => {
     {
       name: 'input',
       title: 'Input Node',
-      handler: onAdd,
+      handler: () => {
+        console.log('onAdd');
+      },
       icon: <WidgetsIcon />,
       isDraggable: true,
     },
     {
       name: 'output',
       title: 'Output Node',
-      handler: onAdd,
+      handler: () => {
+        console.log('onAdd');
+      },
       icon: <WidgetsIcon />,
       isDraggable: true,
     },
@@ -266,27 +270,32 @@ const CustomNodeFlow = () => {
     if (side === 'left') {
       setMainElementsSize((prevState) => {
         console.log(prevState.conversationBuilder);
-        return {
+        if (prevState.leftDrawer === 2) return prevState;
+        else return {
           ...prevState,
           openLeft: true,
           leftDrawerWidth: 240,
           leftDrawer: 2,
-          // conversationBuilder: prevState.conversationBuilder - 1,
+          conversationBuilder: prevState.conversationBuilder - 1,
         };
       });
     } else {
-      setMainElementsSize((prevState) => ({
-        ...prevState,
-        openRight: true,
-        rightDrawerWidth: 240,
-        rightDrawer: 2,
-        // conversationBuilder: prevState.conversationBuilder - 1,
-      }));
+      setMainElementsSize((prevState) => {
+        console.log(prevState);
+        if (prevState.rightDrawer === 2) return prevState;
+        else return {
+          ...prevState,
+          openRight: true,
+          rightDrawerWidth: 240,
+          rightDrawer: 2,
+          conversationBuilder: prevState.conversationBuilder - 1,
+        };
+      });
     }
-    setMainElementsSize((prevState) => ({
-      ...prevState,
-      conversationBuilder: prevState.conversationBuilder - 1,
-    }));
+    // setMainElementsSize((prevState) => ({
+    //   ...prevState,
+    //   conversationBuilder: prevState.conversationBuilder - 1,
+    // }));
   };
 
   const onDrawerClose = (side) => {
@@ -312,7 +321,6 @@ const CustomNodeFlow = () => {
       conversationBuilder: prevState.conversationBuilder + 1,
     }));
   };
-
   return (
     <div className={classes.root}>
       <ConversationHeader
@@ -345,9 +353,10 @@ const CustomNodeFlow = () => {
             <Paper className={classes.conversation}></Paper>
             <ReactFlow
               elements={elements}
-              onElementClick={(event, element) =>
-                onElementClick(event, element, setSelectedNode)
-              }
+              onElementClick={(event, element) => {
+                onElementClick(event, element, setSelectedNode);
+                onDrawerOpen('right');
+              }}
               onElementsRemove={onElementsRemove}
               onConnect={onConnect}
               onNodeDragStop={onNodeDragStop}

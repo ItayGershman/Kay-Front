@@ -6,13 +6,16 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import useStyles from './RegistrationStyle';
-
+import { useForm } from 'react-hook-form';
 
 export default function Login() {
   const classes = useStyles();
-
+  const { register, handleSubmit, watch, errors } = useForm();
+  const onSubmit = (data) => {
+    console.log(data);
+  };
   return (
-    <form className={classes.form} noValidate>
+    <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
       <TextField
         variant='outlined'
         margin='normal'
@@ -23,6 +26,7 @@ export default function Login() {
         name='email'
         autoComplete='email'
         autoFocus
+        inputRef={register({ required: true })}
       />
       <TextField
         variant='outlined'
@@ -34,6 +38,7 @@ export default function Login() {
         type='password'
         id='password'
         autoComplete='current-password'
+        inputRef={register({ required: true })}
       />
       <FormControlLabel
         control={<Checkbox value='remember' color='primary' />}
@@ -55,7 +60,7 @@ export default function Login() {
           </Link>
         </Grid>
         <Grid item>
-          <Link href='#' variant='body2'>
+          <Link href='/register' variant='body2'>
             {"Don't have an account? Sign Up"}
           </Link>
         </Grid>

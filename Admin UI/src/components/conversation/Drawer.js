@@ -66,7 +66,7 @@ const SideDrawer = ({
       {side === 'left' ? (
         <LeftDrawer actions={actions} utils={utils} />
       ) : (
-        <RightDrawer node={node} elements={elements} setElements={setElements} />
+        <RightDrawer node={node} elements={elements} setElements={setElements} drawerState={open}/>
       )}
       <Divider />
       <List>

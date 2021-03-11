@@ -34,6 +34,8 @@ const speak = async (text) => {
 };
 
 const sendResult = async (err, resp, data) => {
+  // Get Utterances from DB 
+  
   let { intents } = data;
   let intent;
   if (intents.length > 0) {

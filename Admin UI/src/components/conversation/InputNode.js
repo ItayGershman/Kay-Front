@@ -5,13 +5,23 @@ import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import Typography from '@material-ui/core/Typography';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ChatIcon from '@material-ui/icons/Chat';
 
 const useStyles = makeStyles((theme) => ({
   input: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'column',
+    backgroundColor: 'white',
+    borderRadius: '5px',
     padding: '5px',
+    margin: 5,
+    boxShadow: '0 0 5px',
+    width: '220px',
+    display: 'flex',
+    alignItems: 'center',
   },
   button: {
     marginTop: '10px',
@@ -19,113 +29,132 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     flexDirection: 'column',
   },
+  node: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  card: {
+    minWidth: 200,
+    backgroundColor: '#e8eaf6',
+    borderRadius: 5,
+    padding: 5,
+  },
+  title: { fontSize: 18 },
+  name: {
+    borderRadius: 5,
+  },
+  icon: {
+    marginRight: 20,
+  },
+  placeholder: {
+    color: 'gray',
+    opacity: '0.5',
+    fontSize: 24,
+  },
+  // cardcontent: {
+  //   padding: 0,
+  //   "&:last-child": {
+  //     paddingBottom: 0
+  //   }
+  // }
 }));
 
 export default memo(({ data, id }) => {
   console.log(data);
-  console.log(id);
-  // const [intents, setIntents] = useState([
-  //   <TextField label='Intent' variant='outlined' />,
-  // ]);
-  // const [entity, setEntities] = useState([
-  //   <TextField label='Entity' variant='outlined' />,
-  // ]);
+  const { name, intent, entities, speak } = data;
+  console.log(entities);
+  console.log(speak);
   const classes = useStyles();
   return (
-    <div>
+    <>
       <Handle
         type='target'
         position='left'
         style={{ backgroundColor: 'white', bottom: 0 }}
         onConnect={(params) => console.log('handle onConnect', params)}
       />
-      {data && data.name ? <div>Name: {data.name}</div> : <div>Scenario name</div>}
-      {data && data.intent ? (
-        <div>Intent: "{data.intent}"</div>
-      ) : (
-        <div>"Intent name"</div>
-      )}
-      {data && data.entity ? (
-        <div>Entity: "{data.name}"</div>
-      ) : (
-        <div>"Entity name"</div>
-      )}
-      {/* <div>
-        {intents.map((intent) => {
-          return <div className={classes.input}>{intent}</div>;
-        })}
-        <Button
-          onClick={() =>
-            setIntents((prevState) => [
-              prevState,
-              <TextField label='Intent' variant='outlined' />,
-            ])
-          }
-        >
-          {intents.length > 1 && (
-            <Button
-              onClick={() => {
-                setIntents((prevState) => {
-                  return prevState.pop();
-                });
-              }}
-            >
-              <RemoveCircleIcon color='secondary' />
-            </Button>
+      <Card variant='outlined' className={classes.card}>
+        <CardContent className={classes.node}>
+          <div className={classes.name}>
+            {data && data.name ? (
+              <Typography
+                variant='caption'
+                display='block'
+                gutterBottom
+                className={classes.title}
+                color='textSecondary'
+                multiline
+              >
+                {name}
+              </Typography>
+            ) : (
+              <Typography variant='h5'>Scenario name</Typography>
+            )}
+          </div>
+          {data ? (
+            <div>
+              {intent && (
+                <div className={classes.input}>
+                  <AccountCircleIcon className={classes.icon} />
+                  {intent && (
+                    <Typography variant='caption'>Intent: {intent}</Typography>
+                  )}
+                </div>
+              )}
+              {console.log(entities)}
+              {entities &&
+                entities.map((entity) => {
+                  console.log(entity);
+                  return (
+                    <div className={classes.input}>
+                      <AccountCircleIcon className={classes.icon} />
+                      <Typography variant='caption'>Entity: {entity}</Typography>
+                    </div>
+                  );
+                })}
+              <div className={classes.speak}>
+                {speak &&
+                  speak.map((text) => {
+                    return (
+                      <div className={`${classes.input}`}>
+                        <ChatIcon className={classes.icon} />
+                        <Typography variant='caption'>{text}</Typography>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div className={classes.input}>
+                <AccountCircleIcon className={classes.icon} />
+                <Typography className={classes.placeholder}>
+                  "Intent name"
+                </Typography>
+              </div>
+              <div className={`${classes.input}`}>
+                <AccountCircleIcon className={classes.icon} />
+                <Typography className={classes.placeholder}>
+                  "Entity name"
+                </Typography>
+              </div>
+              <div className={`${classes.input}`}>
+                <ChatIcon className={classes.icon} />
+                <Typography variant='caption' className={classes.placeholder}>
+                  "Speak"
+                </Typography>
+              </div>
+            </div>
           )}
-          <AddCircleIcon color='primary' />
-        </Button>
-      </div>
-
-      <div>
-        {entity.map((entity) => {
-          return <div className={classes.input}>{entity}</div>;
-        })}
-        <Button
-          onClick={() =>
-            setEntities((prevState) => [
-              prevState,
-              <TextField label='Entity' variant='outlined' />,
-            ])
-          }
-        >
-          <AddCircleIcon color='primary' />
-        </Button>
-        {entity.length > 1 && (
-          <Button
-            onClick={() => {
-              setEntities((prevState) => {
-                return prevState.splice(prevState.length - 1, 1);
-              });
-            }}
-          >
-            <RemoveCircleIcon color='secondary' />
-          </Button>
-        )}
-      </div> */}
-      {/* <div className={classes.button}>
-        <Button variant='contained' color='primary'>
-          Train Kay
-        </Button>
-      </div>
-
-      <div className={classes.button}>
-        <Button variant='contained' color='primary'>
-          Add Intent
-        </Button>
-      </div>
-      <div className={classes.button}>
-        <Button variant='contained' color='primary'>
-          Add Entity
-        </Button>
-      </div> */}
-
+        </CardContent>
+      </Card>
       <Handle
         type='source'
         position='right'
         id='a'
         style={{ background: '#555' }}
       />
-    </div>
+    </>
   );
 });
