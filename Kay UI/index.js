@@ -1,6 +1,8 @@
 require('dotenv').config();
 const rec = require('node-mic-record');
 const request = require('request');
+const axios = require('axios');
+const fetch = require('node-fetch');
 const { resolve } = require('path');
 const { sendResult } = require('./Speak.js');
 const { Timer } = require('./Timer');
@@ -17,23 +19,48 @@ const reqData = {
 
 const WitAISpeechRecognition = async () => {
   let response = false;
-
   const startRecording = (timer) => {
-    console.log('start recording');
-    rec.start().pipe(
-      request.post(reqData, async (err, resp, body) => {
-        const data = JSON.parse(body);
+    axios
+      .post(reqData.url, rec.start(), {
+        headers: {
+          Accept: 'application/vnd.wit.20160202+json',
+          Authorization: `Bearer ${witToken}`,
+          'Content-Type': 'audio/wav',
+        },
+      })
+      .then(async (res) => {
+        console.log(res.data);
+        const { data } = res;
         if (data._text === '') {
           response = false;
         } else {
           timer.stop();
-          response = await sendResult(err, resp, data);
+          response = await sendResult(data);
           console.log('res: ', response);
           response = false;
           timer.reset(5000);
         }
       })
-    );
+      .catch((e) => console.log(e));
+    // }
+    // axios
+    //   .post(reqData.url, { headers: reqData.headers })
+    //   .then((res) => console.log(res))
+    //   .catch((e) => console.log(e))
+    // );
+    //   request.post(reqData, async (err, resp, body) => {
+    //     const data = JSON.parse(body);
+    // if (data._text === '') {
+    //   response = false;
+    // } else {
+    //   timer.stop();
+    //   response = await sendResult(err, resp, data);
+    //   console.log('res: ', response);
+    //   response = false;
+    //   timer.reset(5000);
+    // }
+    //   })
+    // );
     //After 5 seconds Kay stop recording
     setTimeout(function () {
       rec.stop();

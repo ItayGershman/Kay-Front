@@ -33,7 +33,7 @@ const speak = async (text) => {
   }
 };
 
-const sendResult = async (err, resp, data) => {
+const sendResult = async (data) => {
   // Get Utterances from DB 
   
   let { intents } = data;
