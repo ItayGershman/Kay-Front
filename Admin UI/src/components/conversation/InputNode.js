@@ -11,6 +11,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChatIcon from '@material-ui/icons/Chat';
+import CategoryIcon from '@material-ui/icons/Category';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -52,19 +53,19 @@ const useStyles = makeStyles((theme) => ({
     opacity: '0.5',
     fontSize: 24,
   },
-  // cardcontent: {
-  //   padding: 0,
-  //   "&:last-child": {
-  //     paddingBottom: 0
-  //   }
-  // }
+  intentIcon:{
+    color:'#0091ea'
+  },
+  entityIcon:{
+    color:'#ffd180'
+  },
+  speakIcon:{
+    color:'#757575'
+  },
 }));
 
 export default memo(({ data, id }) => {
-  console.log(data);
   const { name, intent, entities, speak } = data;
-  console.log(entities);
-  console.log(speak);
   const classes = useStyles();
   return (
     <>
@@ -96,20 +97,20 @@ export default memo(({ data, id }) => {
             <div>
               {intent && (
                 <div className={classes.input}>
-                  <AccountCircleIcon className={classes.icon} />
+                  <AccountCircleIcon className={`${classes.icon} ${classes.intentIcon}`} />
                   {intent && (
                     <Typography variant='caption'>Intent: {intent}</Typography>
                   )}
                 </div>
               )}
-              {console.log(entities)}
               {entities &&
                 entities.map((entity) => {
-                  console.log(entity);
                   return (
                     <div className={classes.input}>
-                      <AccountCircleIcon className={classes.icon} />
-                      <Typography variant='caption'>Entity: {entity}</Typography>
+                      <CategoryIcon className={`${classes.icon} ${classes.entityIcon}`} />
+                      <Typography variant='caption'>
+                        Entity: {entity}
+                      </Typography>
                     </div>
                   );
                 })}
@@ -118,7 +119,7 @@ export default memo(({ data, id }) => {
                   speak.map((text) => {
                     return (
                       <div className={`${classes.input}`}>
-                        <ChatIcon className={classes.icon} />
+                        <ChatIcon className={`${classes.icon} ${classes.speakIcon}`} />
                         <Typography variant='caption'>{text}</Typography>
                       </div>
                     );
@@ -134,7 +135,7 @@ export default memo(({ data, id }) => {
                 </Typography>
               </div>
               <div className={`${classes.input}`}>
-                <AccountCircleIcon className={classes.icon} />
+                <CategoryIcon className={classes.icon} />
                 <Typography className={classes.placeholder}>
                   "Entity name"
                 </Typography>

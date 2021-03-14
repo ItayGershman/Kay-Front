@@ -166,7 +166,6 @@ function historyReducer(state = initialState, action) {
     case HISTORY_GET_ALL_REQUEST:
       return { ...state, loading: true };
     case HISTORY_GET_ALL_SUCCESS:
-      console.log('get all reducer');
       return {
         ...state,
         loading: false,

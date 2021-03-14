@@ -29,14 +29,12 @@ const WitAISpeechRecognition = async () => {
         },
       })
       .then(async (res) => {
-        console.log(res.data);
         const { data } = res;
         if (data._text === '') {
           response = false;
         } else {
           timer.stop();
           response = await sendResult(data);
-          console.log('res: ', response);
           response = false;
           timer.reset(5000);
         }

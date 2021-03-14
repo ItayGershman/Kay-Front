@@ -24,7 +24,6 @@ function userSigninReducer(state = {}, action) {
 }
 
 function userRegisterReducer(state = {}, action) {
-  console.log(state);
   switch (action.type) {
     case USER_REGISTER_REQUEST:
       return { loading: true };

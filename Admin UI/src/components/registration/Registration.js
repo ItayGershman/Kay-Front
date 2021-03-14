@@ -11,6 +11,7 @@ import Copyright from './registration-utils';
 import { useLocation } from 'react-router-dom';
 import Login from './Login';
 import Register from './Register';
+import Fade from 'react-reveal/Fade';
 
 export default function RegisterInSide() {
   const classes = useStyles();
@@ -28,7 +29,7 @@ export default function RegisterInSide() {
           <Typography component='h1' variant='h5'>
             {location === 'login' ? 'Login' : 'Register'}
           </Typography>
-          {location === 'login' ? <Login /> : <Register />}
+          <Fade top>{location === 'login' ? <Login /> : <Register />}</Fade>
           <Box mt={5}>
             <Copyright />
           </Box>

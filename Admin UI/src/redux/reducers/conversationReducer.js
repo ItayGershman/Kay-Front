@@ -14,12 +14,21 @@ const {
   SCENARIO_DELETE_REQUEST,
   SCENARIO_DELETE_SUCCESS,
   SCENARIO_DELETE_FAIL,
+  CONFIGURATION_GET_REQUEST,
+  CONFIGURATION_GET_SUCCESS,
+  CONFIGURATION_GET_FAIL,
+  CONFIGURATION_CREATE_REQUEST,
+  CONFIGURATION_CREATE_SUCCESS,
+  CONFIGURATION_CREATE_FAIL,
 } = require('../constants/actionTypes');
 
 const initialState = {
   loading: false,
-  elements:[],
-  selectedNode:{}
+  elements: [],
+  selectedNode: {},
+  conversationID:'',
+  conversationImage:'',
+  conversationDescription:''
 };
 
 function scenarioReducer(state = initialState, action) {
@@ -69,6 +78,23 @@ function scenarioReducer(state = initialState, action) {
     case SCENARIO_DELETE_FAIL:
       return { loading: false, error: action.payload };
 
+    case CONFIGURATION_GET_REQUEST:
+      return { loading: true };
+    case CONFIGURATION_GET_SUCCESS:
+      return {
+        loading: false,
+      };
+    case CONFIGURATION_GET_FAIL:
+      return { loading: false, error: action.payload };
+
+    case CONFIGURATION_CREATE_REQUEST:
+      return { loading: true };
+    case CONFIGURATION_CREATE_SUCCESS:
+      return {
+        loading: false,
+      };
+    case CONFIGURATION_CREATE_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

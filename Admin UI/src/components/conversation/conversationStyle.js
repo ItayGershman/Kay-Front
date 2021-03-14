@@ -38,12 +38,11 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     display: 'flex',
-    position: 'relative',
-
+    position: 'relative',    
   },
   appBar: {
     position: 'absolute',
-    backgroundColor:'orange',    
+    backgroundColor: 'orange',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
@@ -61,7 +60,6 @@ const useStyles = makeStyles((theme) => ({
   appBarRightShift: {
     marginRight: (props) => props.right,
     width: (props) => {
-      console.log(props);
       return `calc(100% - ${props.right}px - ${props.left}px)`;
     },
     transition: theme.transitions.create(['width', 'margin'], {

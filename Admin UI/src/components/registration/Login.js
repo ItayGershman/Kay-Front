@@ -8,11 +8,11 @@ import Grid from '@material-ui/core/Grid';
 import useStyles from './RegistrationStyle';
 import { useForm } from 'react-hook-form';
 
+
 export default function Login() {
   const classes = useStyles();
   const { register, handleSubmit, watch, errors } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
   };
   return (
     <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>

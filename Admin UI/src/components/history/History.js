@@ -59,40 +59,10 @@ const History = () => {
   const { conversations, conversation } = useSelector((state) => {
     return state.history;
   });
-  console.log(conversation);
   useEffect(() => {
     dispatch(getAllHistory());
   }, []);
-
-  // const chatBubbles = dummyData.map((obj, i = 0) => (
-  //   <div className={`${classes.bubbleContainer} ${obj.direction}`} key={i}>
-  //     {obj.direction === 'left' ? (
-  //       <div key={i++} className={classes.leftBubble}>
-  //         <div className={classes.kayColor}>{obj.name}</div>
-  //         <div>{obj.message}</div>
-  //       </div>
-  //     ) : (
-  //       <div key={i++} className={classes.rightBubble}>
-  //         <div className={classes.userColor}>{obj.name}</div>
-  //         <div>{obj.message}</div>
-  //       </div>
-  //     )}
-  //   </div>
-  // ));
   return (
-    // <div
-    //   style={{
-    //     display: 'flex',
-    //     flexDirection: 'column',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //   }}
-    // >
-    //   <Typography variant='h4' style={{ marginTop: '30px' }}>
-    //     History
-    //   </Typography>
-    //   <div className={classes.container}>{chatBubbles}</div>
-    // </div>
     <div
       style={{
         display: 'flex',
@@ -130,7 +100,6 @@ const History = () => {
             conversation.text.map((message) =>
               message.direction === 'left' ? (
                 <p className={classes.chatMessage}>
-                  {console.log(message)}
                   <span className={classes.chatName}>{message.name}</span>
                   {message.message}
                   <span className={classes.chatTimestamp}>{message.time}</span>

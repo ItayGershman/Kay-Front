@@ -8,6 +8,7 @@ import {
 } from './redux/reducers/userReducer';
 import scenarioReducer from './redux/reducers/conversationReducer';
 import historyReducer from './redux/reducers/historyReducer';
+import intentReducer from './redux/reducers/intentReducer';
 
 const userInfo = Cookie.getJSON('userInfo') || null;
 const initialState = {
@@ -18,6 +19,7 @@ const reducer = combineReducers({
   userRegister: userRegisterReducer,
   scenario: scenarioReducer,
   history: historyReducer,
+  intent: intentReducer,
 });
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(

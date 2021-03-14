@@ -14,6 +14,7 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
+import { createConfiguration } from '../../redux/actions/conversationActions';
 
 import ReactFlow, {
   isEdge,
@@ -48,6 +49,7 @@ import {
   handleOnDrop,
   handleOnAdd,
 } from './conversation-utils';
+import { useDispatch } from 'react-redux';
 
 const CustomNodeFlow = () => {
   const [mainElementsSize, setMainElementsSize] = useState({
@@ -69,7 +71,8 @@ const CustomNodeFlow = () => {
     right: mainElementsSize.rightDrawerWidth,
   });
   // const { transform } = useZoomPanHelper();
-
+  const dispatch = useDispatch();
+  console.log(elements);
   useEffect(() => {
     setElements(initialElements);
   }, []);
@@ -110,6 +113,7 @@ const CustomNodeFlow = () => {
   );
   const onLayout = useCallback(
     (direction) => {
+      console.log('does layout changes?');
       const layoutElements = getLayoutElements(elements, direction, isNode);
       setElements(layoutElements);
     },
@@ -131,23 +135,26 @@ const CustomNodeFlow = () => {
     );
     setElements((es) => es.concat(newNode));
   };
-  // const onSave = useCallback(() => {
-  //   if (reactflowInstance) {
-  //     const flow = reactflowInstance.toObject();
-  //     //setItem on Server
-  //     localforage.setItem('flowKey', flow);
-  //   }
-  // }, [reactflowInstance]);
+  const onSave = useCallback(() => {
+    if (reactflowInstance) {
+      const flow = reactflowInstance.toObject();
+      console.log(flow);
+      //setItem on Server
+      dispatch(createConfiguration());
+      // localforage.setItem('flowKey', flow);
+    }
+  }, [reactflowInstance]);
+
   // const onRestore = useCallback(() => {
-  //   const restoreFlow = async () => {
-  //     //restore from redux maybe?
-  //     const flow = await localforage.getItem('flowKey');
-  //     if (flow) {
-  //       const [x = 0, y = 0] = flow.position;
-  //       setElements(flow.elements || []);
-  //       transform({ x, y, zoom: flow.zoom || 0 });
-  //     }
-  //   };
+  // const restoreFlow = async () => {
+  //restore from redux maybe?
+  // const flow = await localforage.getItem('flowKey');
+  //   if (flow) {
+  //     const [x = 0, y = 0] = flow.position;
+  //     setElements(flow.elements || []);
+  //     transform({ x, y, zoom: flow.zoom || 0 });
+  //   }
+  // };
   //   restoreFlow();
   // }, [setElements, transform]);
 
@@ -174,7 +181,7 @@ const CustomNodeFlow = () => {
       name: 'save',
       title: 'Save Layout',
       handler: () => {
-        console.log('onSave');
+        onSave();
       },
       icon: <SaveIcon />,
       isDraggable: false,
@@ -266,36 +273,31 @@ const CustomNodeFlow = () => {
     },
   ];
   const onDrawerOpen = (side) => {
-    console.log(side);
     if (side === 'left') {
       setMainElementsSize((prevState) => {
-        console.log(prevState.conversationBuilder);
         if (prevState.leftDrawer === 2) return prevState;
-        else return {
-          ...prevState,
-          openLeft: true,
-          leftDrawerWidth: 240,
-          leftDrawer: 2,
-          conversationBuilder: prevState.conversationBuilder - 1,
-        };
+        else
+          return {
+            ...prevState,
+            openLeft: true,
+            leftDrawerWidth: 240,
+            leftDrawer: 2,
+            conversationBuilder: prevState.conversationBuilder - 1,
+          };
       });
     } else {
       setMainElementsSize((prevState) => {
-        console.log(prevState);
         if (prevState.rightDrawer === 2) return prevState;
-        else return {
-          ...prevState,
-          openRight: true,
-          rightDrawerWidth: 240,
-          rightDrawer: 2,
-          conversationBuilder: prevState.conversationBuilder - 1,
-        };
+        else
+          return {
+            ...prevState,
+            openRight: true,
+            rightDrawerWidth: 240,
+            rightDrawer: 2,
+            conversationBuilder: prevState.conversationBuilder - 1,
+          };
       });
     }
-    // setMainElementsSize((prevState) => ({
-    //   ...prevState,
-    //   conversationBuilder: prevState.conversationBuilder - 1,
-    // }));
   };
 
   const onDrawerClose = (side) => {
@@ -305,7 +307,7 @@ const CustomNodeFlow = () => {
         openLeft: false,
         leftDrawerWidth: 0,
         leftDrawer: 1,
-        // conversationBuilder: prevState.conversationBuilder + 1,
+        conversationBuilder: prevState.conversationBuilder + 1,
       }));
     } else {
       setMainElementsSize((prevState) => ({
@@ -313,13 +315,9 @@ const CustomNodeFlow = () => {
         openRight: false,
         rightDrawerWidth: 0,
         rightDrawer: 1,
-        // conversationBuilder: prevState.conversationBuilder + 1,
+        conversationBuilder: prevState.conversationBuilder + 1,
       }));
     }
-    setMainElementsSize((prevState) => ({
-      ...prevState,
-      conversationBuilder: prevState.conversationBuilder + 1,
-    }));
   };
   return (
     <div className={classes.root}>
@@ -345,6 +343,7 @@ const CustomNodeFlow = () => {
             side='left'
           />
         </Grid>
+        {console.log(mainElementsSize.conversationBuilder)}
         <Grid item xs={mainElementsSize.conversationBuilder}>
           <main
             className={`${classes.content} reactflow-wrapper`}

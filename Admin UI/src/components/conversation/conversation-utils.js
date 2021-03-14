@@ -20,7 +20,7 @@ const createInputNode = (id, position, elements) => {
     id,
     type: 'selectorInputNode',
     position,
-    data: elements,
+    data: {},
   };
 };
 

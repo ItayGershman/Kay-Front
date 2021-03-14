@@ -8,11 +8,7 @@ import API from '../../API/API-requests';
 export default function Register() {
   const classes = useStyles();
   const { register, handleSubmit, watch, errors } = useForm();
-  const onSubmit = (data) => {
-    console.log(data);
-    const api = new API();
-    api.createUser({data});
-  };
+  const onSubmit = (data) => API.createUser({ data });
 
   return (
     <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
