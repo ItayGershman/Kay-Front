@@ -19,6 +19,7 @@ export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const userSignin = useSelector((state) => state.userSignin);
+  console.log(userSignin);
   const { userInfo, loading, error } = userSignin;
 
   const handleMenu = (event) => {
@@ -58,7 +59,7 @@ export default function MenuAppBar() {
               <Typography variant='h6'>Logo</Typography>
             </Link>
           </div>
-          {!userInfo ? (
+          {userInfo ? (
             <div className={classes.nav}>
               <div className={classes.navItem}>
                 <Link to='/history' className={classes.link}>
@@ -81,7 +82,8 @@ export default function MenuAppBar() {
                 >
                   <AccountCircle />
                 </IconButton>
-                <Typography variant='h6'>Hi Michal</Typography>
+                {console.log(userInfo)}
+                <Typography variant='h6'>{userInfo.firstName}</Typography>
                 <Menu
                   id='menu-appbar'
                   anchorEl={anchorEl}

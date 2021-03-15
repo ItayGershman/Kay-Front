@@ -1,6 +1,7 @@
 const gTTS = require('gtts');
 const sound = require('sound-play');
 const path = require('path');
+const { randomBytes } = require('crypto');
 
 const greetings = ["Hey, how's it going?", "What's good with you?"];
 const jokes = [
@@ -34,6 +35,7 @@ const speak = async (text) => {
 };
 
 const sendResult = async (data) => {
+  let scenario = 'welcoming'
   // Get Utterances from DB 
   
   let { intents } = data;
@@ -43,6 +45,9 @@ const sendResult = async (data) => {
   } else return false;
   console.log(intent);
   //Need to send the intent to the server and get a response from the DB
+  const getResponse = await URL(intent)
+  //check which scenario Kay is found
+  //check the recieved intent
   if (intent === 'wit_greetings') {
     const res = await speak(greetings[1]);
     console.log(`res ->`, res);

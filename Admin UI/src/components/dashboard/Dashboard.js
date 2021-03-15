@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ScenarioCard from './ScenarioCard';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import ScenarioDialog from './ScenarioDialog';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllScenarios } from '../../redux/actions/conversationActions';
 
 const welcomingImage =
   'https://image.shutterstock.com/image-vector/welcome-sign-colour-confetti-vector-260nw-313934588.jpg';
@@ -17,20 +19,10 @@ const presentationImage =
   'https://www.galchimia.com/wp-content/uploads/2018/03/how-to-crash-your-own-presentation-1024x787.jpg';
 
 const Dashboard = () => {
-  const [scenarios, setScenarios] = useState([
-    { card: <ScenarioCard title={'Welcoming'} image={welcomingImage} /> },
-    { card: <ScenarioCard title={'Equipment'} image={equipmentImage} /> },
-    {
-      card: (
-        <ScenarioCard
-          title={'Position Training'}
-          image={positionTrainingImage}
-        />
-      ),
-    },
-    { card: <ScenarioCard title={'Schedule'} image={scheduleImage} /> },
-    { card: <ScenarioCard title={'Presentation'} image={presentationImage} /> },
-  ]);
+  const dispatch = useDispatch();
+  const [displayScenarios, setDisplayScenarios] = useState([]);
+  const scenarioSelector = useSelector((state) => state.scenario);
+  const { scenarios, loading, error } = scenarioSelector;
   const [openDialog, setOpenDialog] = useState(false);
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -38,6 +30,17 @@ const Dashboard = () => {
   const handleClickClose = () => {
     setOpenDialog(false);
   };
+  const handleClickedCard = (name) => {
+    // dispatch(getScenario(name));
+  };
+
+  useEffect(() => {
+    dispatch(getAllScenarios());
+  }, []);
+  useEffect(() => {
+    console.log(scenarioSelector)
+    setDisplayScenarios(scenarioSelector.scenarios ? scenarios : []);
+  }, [scenarioSelector]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -62,22 +65,43 @@ const Dashboard = () => {
           </Button>
         </div>
       </div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          margin: '50px',
-        }}
-      >
-        {scenarios.map((scenario) => {
-          return <div style={{ margin: '20px' }}>{scenario.card}</div>;
-        })}
-      </div>
+      {console.log(loading)}
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            margin: '50px',
+          }}
+        >
+          {console.log(displayScenarios)}
+          {displayScenarios.length > 0 &&
+            displayScenarios.map((scenario) => {
+              console.log(scenario);
+              return (
+                <div
+                  style={{ margin: '20px' }}
+                  onClick={() => handleClickedCard(scenario.title)}
+                >
+                  <ScenarioCard
+                    title={scenario.scenarioName}
+                    image={scenario.scenarioImage}
+                    description={scenario.scenarioDescription}
+                  />
+                </div>
+              );
+            })}
+        </div>
+      )}
+
       <ScenarioDialog
         openDialog={openDialog}
         handleClickClose={handleClickClose}
+        setScenarios={setDisplayScenarios}
       />
     </div>
   );

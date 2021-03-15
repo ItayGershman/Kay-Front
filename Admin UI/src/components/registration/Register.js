@@ -4,11 +4,17 @@ import TextField from '@material-ui/core/TextField';
 import useStyles from './RegistrationStyle';
 import { useForm } from 'react-hook-form';
 import API from '../../API/API-requests';
+import { useDispatch } from 'react-redux';
+import { signUp } from '../../redux/actions/userActions';
 
 export default function Register() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const onSubmit = (data) => {
+    console.log(data);
+    dispatch(signUp(data));
+  };
   const { register, handleSubmit, watch, errors } = useForm();
-  const onSubmit = (data) => API.createUser({ data });
 
   return (
     <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>

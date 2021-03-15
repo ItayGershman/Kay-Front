@@ -1,53 +1,60 @@
 import instance from './API-config';
-
+import axios from 'axios';
 class API {
+  static login(userEmail, userPassword) {
+    console.log(userPassword, userEmail);
+    return axios.post(`/routes/signin`, {
+      userPassword,
+      userEmail,
+    });
+  }
   static createUser(firstName, lastName, userPassword, userEmail) {
-    return instance.post(`/routes/createUser`, {
+    console.log(firstName, lastName, userPassword, userEmail);
+    return axios.post(`/routes/user`, {
       firstName,
       lastName,
       userPassword,
       userEmail,
     });
   }
-  static login(userPassword, userEmail) {
-    return instance.post(`/routes/createUser`, {
-      userPassword,
-      userEmail,
-    });
-  }
+
   //Intent
   static createIntent(scenarioConnection, intentName, outputTextIntent) {
     const req = { scenarioConnection, intentName, outputTextIntent };
     console.log(req);
-    return instance.post(`/routes/intent`, req);
+    return axios.post(`/routes/intent`, req);
   }
 
   //Scenario
   static getConfiguration(scenarioID) {
-    return instance.get(`/scenario_config/${scenarioID}`);
+    return axios.get(`/scenario_config/${scenarioID}`);
   }
   static createConfiguration(scenarioID, elements) {
-    return instance.get(`/scenario_config/${scenarioID}`, {
+    return axios.get(`/scenario_config/${scenarioID}`, {
       scenarioConfigData: elements,
     });
   }
-  static getScenario(scenarioName) {
-    return instance.get(`routes/scenario/${scenarioName}`);
+  static getAllScenarios() {
+    return axios.get(`routes/scenario`)
   }
-  static createScenario(scenario) {
-    return instance.post(`routes/scenario`, {
-      scenarioName: scenario.name,
-      scenarioImage: scenario.image,
-      scenarioDescription: scenario.description,
+  static getScenario(scenarioName) {
+    return axios.get(`routes/scenario/${scenarioName}`);
+  }
+  static createScenario(name, description, image) {
+    console.log(name, description, image);
+    return axios.post(`routes/scenario`, {
+      scenarioName: name,
+      scenarioImage: image,
+      scenarioDescription: description,
     });
   }
-  static updateScenario(currScenarioName,scenario) {
-    return instance.put(`routes/scenario/${currScenarioName}`, {
+  static updateScenario(currScenarioName, scenario) {
+    return axios.put(`routes/scenario/${currScenarioName}`, {
       scenario,
     });
   }
   static deleteScenario(scenarioName) {
-    return instance.put(`routes/scenario/${scenarioName}`);
+    return axios.put(`routes/scenario/${scenarioName}`);
   }
 }
 export default API;

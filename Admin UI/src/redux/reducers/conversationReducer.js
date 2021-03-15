@@ -25,28 +25,32 @@ const {
 const initialState = {
   loading: false,
   elements: [],
+  scenarios: [],
   selectedNode: {},
-  conversationID:'',
-  conversationImage:'',
-  conversationDescription:''
 };
 
 function scenarioReducer(state = initialState, action) {
   switch (action.type) {
     case SCENARIOS_GET_REQUEST:
-      return { loading: true };
+      return { loading: true};
     case SCENARIOS_GET_SUCCESS:
       return {
         loading: false,
+        scenarios: action.payload,
       };
     case SCENARIOS_GET_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, error: action.payload};
 
     case SCENARIO_GET_REQUEST:
       return { loading: true };
     case SCENARIO_GET_SUCCESS:
       return {
         loading: false,
+        conversationTitle: action.payload.scenarioName,
+        conversationID: action.payload._id,
+        conversationImage: action.payload.scenarioImage,
+        conversationDescription: action.payload.scenarioDescription,
+        ...state,
       };
     case SCENARIO_GET_FAIL:
       return { loading: false, error: action.payload };
@@ -56,6 +60,7 @@ function scenarioReducer(state = initialState, action) {
     case SCENARIO_CREATE_SUCCESS:
       return {
         loading: false,
+        ...state,
       };
     case SCENARIO_CREATE_FAIL:
       return { loading: false, error: action.payload };

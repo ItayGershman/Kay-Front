@@ -7,12 +7,17 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import useStyles from './RegistrationStyle';
 import { useForm } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { signin } from '../../redux/actions/userActions';
 
 
 export default function Login() {
   const classes = useStyles();
   const { register, handleSubmit, watch, errors } = useForm();
+  const dispatch = useDispatch();
   const onSubmit = (data) => {
+    console.log(data);
+    dispatch(signin(data));
   };
   return (
     <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>

@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ScenarioCard({ title, image }) {
+export default function ScenarioCard({ title, image, description }) {
   const classes = useStyles();
   const history = useHistory();
 
@@ -40,8 +40,7 @@ export default function ScenarioCard({ title, image }) {
             {title}
           </Typography>
           <Typography variant='body2' color='textSecondary' component='p'>
-            Lizards are a widespread group of squamate reptiles, with over 6,000
-            species, ranging across all continents except Antarctica
+            {description}
           </Typography>
         </CardContent>
       </CardActionArea>

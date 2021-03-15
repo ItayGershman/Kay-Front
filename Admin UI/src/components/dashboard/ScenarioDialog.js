@@ -9,13 +9,22 @@ import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import LinkIcon from '@material-ui/icons/Link';
+import { useDispatch } from 'react-redux';
+import { createScenario } from '../../redux/actions/conversationActions';
 
-const ScenarioDialog = ({ openDialog, handleClickClose }) => {
+const ScenarioDialog = ({ openDialog, handleClickClose, setScenarios }) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
-  const handleSubmit = () =>{
+  const dispatch = useDispatch();
+  const handleSubmit = () => {
+    console.log(name, description, image);
+    const scenario = { name, description, image };
     handleClickClose();
+    dispatch(createScenario(scenario));
+    setScenarios((prevState) => [...prevState, scenario]);
     //dispatch action for new scenario
-  }
+  };
   return (
     <Dialog
       fullWidth
@@ -34,6 +43,7 @@ const ScenarioDialog = ({ openDialog, handleClickClose }) => {
           type='title'
           variant='outlined'
           fullWidth
+          onChange={(e) => setName(e.target.value)}
         />
         <TextField
           style={{ marginTop: '20px' }}
@@ -44,6 +54,7 @@ const ScenarioDialog = ({ openDialog, handleClickClose }) => {
           multiline
           rows={4}
           fullWidth
+          onChange={(e) => setDescription(e.target.value)}
         />
         <input
           accept='image/*'
@@ -83,6 +94,7 @@ const ScenarioDialog = ({ openDialog, handleClickClose }) => {
             label='URL'
             type='text'
             variant='outlined'
+            onChange={(e) => setImage(e.target.value)}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>
@@ -95,10 +107,14 @@ const ScenarioDialog = ({ openDialog, handleClickClose }) => {
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClickClose} color='secondary' variant="contained">
+        <Button
+          onClick={handleClickClose}
+          color='secondary'
+          variant='contained'
+        >
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color='primary' variant="contained">
+        <Button onClick={handleSubmit} color='primary' variant='contained'>
           Submit
         </Button>
       </DialogActions>
