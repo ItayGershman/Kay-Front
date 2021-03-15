@@ -2,14 +2,12 @@ import instance from './API-config';
 import axios from 'axios';
 class API {
   static login(userEmail, userPassword) {
-    console.log(userPassword, userEmail);
     return axios.post(`/routes/signin`, {
       userPassword,
       userEmail,
     });
   }
   static createUser(firstName, lastName, userPassword, userEmail) {
-    console.log(firstName, lastName, userPassword, userEmail);
     return axios.post(`/routes/user`, {
       firstName,
       lastName,
@@ -21,7 +19,6 @@ class API {
   //Intent
   static createIntent(scenarioConnection, intentName, outputTextIntent) {
     const req = { scenarioConnection, intentName, outputTextIntent };
-    console.log(req);
     return axios.post(`/routes/intent`, req);
   }
 
@@ -41,7 +38,6 @@ class API {
     return axios.get(`routes/scenario/${scenarioName}`);
   }
   static createScenario(name, description, image) {
-    console.log(name, description, image);
     return axios.post(`routes/scenario`, {
       scenarioName: name,
       scenarioImage: image,

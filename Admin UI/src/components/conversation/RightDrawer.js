@@ -147,7 +147,6 @@ const RightDrawer = ({ node, elements, setElements, drawerState }) => {
   useEffect(() => {
     if (node) {
       const { name, intent, entities, speak } = node.data;
-      console.log(intent);
       setIntent(intent);
       setTitle(name);
       setEntities(entities ? entities : []);

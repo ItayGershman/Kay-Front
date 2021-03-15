@@ -40,7 +40,6 @@ function intentReducer(state = initialState, action) {
         intentName,
         outputTextIntent,
       } = action.payload;
-      console.log(scenarioConnection, intentName, outputTextIntent);
       return {
         ...state,
         loading: false,

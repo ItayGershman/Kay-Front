@@ -47,10 +47,8 @@ const getAllScenarios = () => async (dispatch) => {
   dispatch({ type: SCENARIOS_GET_REQUEST });
   try {
     const { data } = await API.getAllScenarios();
-    console.log(data);
     dispatch({ type: SCENARIOS_GET_SUCCESS, payload: data });
   } catch (error) {
-    console.log(error);
     dispatch({ type: SCENARIOS_GET_FAIL, payload: error });
   }
 };
@@ -58,7 +56,6 @@ const getScenario = (scenarioName) => async (dispatch) => {
   dispatch({ type: SCENARIO_GET_REQUEST });
   try {
     const { data } = await API.getScenario(scenarioName);
-    console.log(data);
     dispatch({ type: SCENARIO_GET_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: SCENARIO_GET_FAIL, payload: error });
@@ -68,7 +65,6 @@ const createScenario = ({ name, description, image }) => async (dispatch) => {
   dispatch({ type: SCENARIO_CREATE_REQUEST });
   try {
     const { data } = await API.createScenario(name, description, image);
-    console.log(data);
     dispatch(getAllScenarios());
     dispatch({ type: SCENARIO_CREATE_SUCCESS, payload: data });
   } catch (error) {

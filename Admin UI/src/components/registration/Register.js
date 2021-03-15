@@ -11,7 +11,6 @@ export default function Register() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const onSubmit = (data) => {
-    console.log(data);
     dispatch(signUp(data));
   };
   const { register, handleSubmit, watch, errors } = useForm();

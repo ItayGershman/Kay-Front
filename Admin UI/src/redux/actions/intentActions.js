@@ -19,7 +19,6 @@ const createIntent = (scenario, intentName, speak) => async (dispatch) => {
   dispatch({ type: INTENT_CREATE_REQUEST }); //loading =>true
   try {
     const {data} = await API.createIntent(scenario, intentName, speak);
-    console.log(data);
     return dispatch({ type: INTENT_CREATE_SUCCESS, payload: data });
   } catch (error) {
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });

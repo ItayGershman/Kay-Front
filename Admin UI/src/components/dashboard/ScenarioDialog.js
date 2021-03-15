@@ -18,7 +18,6 @@ const ScenarioDialog = ({ openDialog, handleClickClose, setScenarios }) => {
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
   const handleSubmit = () => {
-    console.log(name, description, image);
     const scenario = { name, description, image };
     handleClickClose();
     dispatch(createScenario(scenario));

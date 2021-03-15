@@ -14,7 +14,6 @@ const signin = ({ email, password }) => async (dispatch) => {
   dispatch({ type: USER_SIGNIN_REQUEST });
   try {
     const { data } = await API.login(email, password);
-    console.log(data);
     dispatch({ type: USER_SIGNIN_SUCCESS, payload: data });
     Cookie.set('userInfo', JSON.stringify(data));
   } catch (error) {

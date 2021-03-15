@@ -38,7 +38,6 @@ const Dashboard = () => {
     dispatch(getAllScenarios());
   }, []);
   useEffect(() => {
-    console.log(scenarioSelector)
     setDisplayScenarios(scenarioSelector.scenarios ? scenarios : []);
   }, [scenarioSelector]);
 
@@ -65,7 +64,6 @@ const Dashboard = () => {
           </Button>
         </div>
       </div>
-      {console.log(loading)}
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -78,10 +76,8 @@ const Dashboard = () => {
             margin: '50px',
           }}
         >
-          {console.log(displayScenarios)}
           {displayScenarios.length > 0 &&
             displayScenarios.map((scenario) => {
-              console.log(scenario);
               return (
                 <div
                   style={{ margin: '20px' }}

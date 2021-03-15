@@ -19,7 +19,6 @@ export default function MenuAppBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const userSignin = useSelector((state) => state.userSignin);
-  console.log(userSignin);
   const { userInfo, loading, error } = userSignin;
 
   const handleMenu = (event) => {
@@ -82,7 +81,6 @@ export default function MenuAppBar() {
                 >
                   <AccountCircle />
                 </IconButton>
-                {console.log(userInfo)}
                 <Typography variant='h6'>{userInfo.firstName}</Typography>
                 <Menu
                   id='menu-appbar'
