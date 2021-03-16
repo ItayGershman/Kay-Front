@@ -86,7 +86,8 @@ const RightDrawer = ({ node, elements, setElements, drawerState }) => {
   const classes = useStyles();
 
   const setInitialValues = () => {
-    if (node) {
+    if (node?.data) {
+      console.log(node)
       const { name, intent, entities, speak } = node.data;
       return {
         intent: intent,
@@ -145,7 +146,7 @@ const RightDrawer = ({ node, elements, setElements, drawerState }) => {
   };
 
   useEffect(() => {
-    if (node) {
+    if (node?.data) {
       const { name, intent, entities, speak } = node.data;
       setIntent(intent);
       setTitle(name);

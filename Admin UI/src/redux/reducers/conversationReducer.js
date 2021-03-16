@@ -27,19 +27,20 @@ const initialState = {
   elements: [],
   scenarios: [],
   selectedNode: {},
+  currentScenario: {},
 };
 
 function scenarioReducer(state = initialState, action) {
   switch (action.type) {
     case SCENARIOS_GET_REQUEST:
-      return { loading: true};
+      return { loading: true };
     case SCENARIOS_GET_SUCCESS:
       return {
         loading: false,
         scenarios: action.payload,
       };
     case SCENARIOS_GET_FAIL:
-      return { loading: false, error: action.payload};
+      return { loading: false, error: action.payload };
 
     case SCENARIO_GET_REQUEST:
       return { loading: true };
@@ -86,8 +87,11 @@ function scenarioReducer(state = initialState, action) {
     case CONFIGURATION_GET_REQUEST:
       return { loading: true };
     case CONFIGURATION_GET_SUCCESS:
+      console.log(action.payload);
       return {
         loading: false,
+        currentScenario: action.payload,
+        ...state,
       };
     case CONFIGURATION_GET_FAIL:
       return { loading: false, error: action.payload };
@@ -95,8 +99,12 @@ function scenarioReducer(state = initialState, action) {
     case CONFIGURATION_CREATE_REQUEST:
       return { loading: true };
     case CONFIGURATION_CREATE_SUCCESS:
+      console.log(action.payload);
       return {
         loading: false,
+        elements: action.payload.data,
+        currentScenario: action.payload,
+        ...state,
       };
     case CONFIGURATION_CREATE_FAIL:
       return { loading: false, error: action.payload };

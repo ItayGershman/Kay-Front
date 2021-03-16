@@ -14,7 +14,11 @@ import RestoreIcon from '@material-ui/icons/Restore';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
-import { createConfiguration } from '../../redux/actions/conversationActions';
+import { useLocation } from 'react-router-dom';
+import {
+  updateConfiguration,
+  getConfiguration,
+} from '../../redux/actions/conversationActions';
 
 import ReactFlow, {
   isEdge,
@@ -49,7 +53,7 @@ import {
   handleOnDrop,
   handleOnAdd,
 } from './conversation-utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CustomNodeFlow = () => {
   const [mainElementsSize, setMainElementsSize] = useState({
@@ -72,15 +76,25 @@ const CustomNodeFlow = () => {
   });
   // const { transform } = useZoomPanHelper();
   const dispatch = useDispatch();
-  console.log(elements);
+  const location = useLocation();
+  const scenarioSelector = useSelector((state) => state.scenario);
+
   useEffect(() => {
-    setElements(initialElements);
+    const scenarioName = location.pathname.replace('/conversation/', '');
+    console.log(scenarioSelector.currentScenario)
+    console.log(scenarioName)
+    dispatch(getConfiguration(scenarioName));
+    // setElements(initialElements);
   }, []);
   useEffect(() => {
     if (reactflowInstance && elements.length > 0) {
       reactflowInstance.fitView();
     }
   }, [reactflowInstance, elements.length]);
+  useEffect(() => {
+    const scenario = scenarioSelector.currentScenario;
+    setElements(scenario ? scenario.scenarioConfigData : []);
+  }, [scenarioSelector]);
 
   const onElementsRemove = useCallback(
     (elementsToRemove) =>
@@ -139,11 +153,12 @@ const CustomNodeFlow = () => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
       console.log(flow);
+      const { scenarioConfigName } = scenarioSelector.currentScenario;
       //setItem on Server
-      dispatch(createConfiguration());
+      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
       // localforage.setItem('flowKey', flow);
     }
-  }, [reactflowInstance]);
+  }, [reactflowInstance, scenarioSelector]);
 
   // const onRestore = useCallback(() => {
   // const restoreFlow = async () => {

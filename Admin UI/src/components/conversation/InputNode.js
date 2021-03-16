@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default memo(({ data, id }) => {
-  const { name, intent, entities, speak } = data;
+  // const { name, intent, entities, speak } = data;
   const classes = useStyles();
   return (
     <>
@@ -87,7 +87,7 @@ export default memo(({ data, id }) => {
                 color='textSecondary'
                 multiline
               >
-                {name}
+                {data.name}
               </Typography>
             ) : (
               <Typography variant='h5'>Scenario name</Typography>
@@ -95,16 +95,16 @@ export default memo(({ data, id }) => {
           </div>
           {data ? (
             <div>
-              {intent && (
+              {data.intent && (
                 <div className={classes.input}>
                   <AccountCircleIcon className={`${classes.icon} ${classes.intentIcon}`} />
-                  {intent && (
-                    <Typography variant='caption'>Intent: {intent}</Typography>
+                  {data.intent && (
+                    <Typography variant='caption'>Intent: {data.intent}</Typography>
                   )}
                 </div>
               )}
-              {entities &&
-                entities.map((entity) => {
+              {data.entities &&
+                data.entities.map((entity) => {
                   return (
                     <div className={classes.input}>
                       <CategoryIcon className={`${classes.icon} ${classes.entityIcon}`} />
@@ -115,8 +115,8 @@ export default memo(({ data, id }) => {
                   );
                 })}
               <div className={classes.speak}>
-                {speak &&
-                  speak.map((text) => {
+                {data.speak &&
+                  data.speak.map((text) => {
                     return (
                       <div className={`${classes.input}`}>
                         <ChatIcon className={`${classes.icon} ${classes.speakIcon}`} />

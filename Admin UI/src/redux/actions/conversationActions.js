@@ -6,6 +6,12 @@ import {
   CONFIGURATION_GET_FAIL,
   CONFIGURATION_GET_REQUEST,
   CONFIGURATION_GET_SUCCESS,
+  CONFIGURATION_UPDATE_FAIL,
+  CONFIGURATION_UPDATE_REQUEST,
+  CONFIGURATION_UPDATE_SUCCESS,
+  CONFIGURATION_DELETE_FAIL,
+  CONFIGURATION_DELETE_REQUEST,
+  CONFIGURATION_DELETE_SUCCESS,
   SCENARIO_CREATE_FAIL,
   SCENARIO_CREATE_REQUEST,
   SCENARIO_CREATE_SUCCESS,
@@ -23,23 +29,49 @@ import {
   SCENARIO_UPDATE_SUCCESS,
 } from '../constants/actionTypes';
 
-const getConfiguration = (scenarioID) => async (dispatch) => {
+const getConfiguration = (scenarioName) => async (dispatch) => {
   dispatch({ type: CONFIGURATION_GET_REQUEST });
   try {
-    const res = await API.getConfiguration(scenarioID);
+    const res = await API.getConfiguration(scenarioName);
+    console.log(res);
     dispatch({ type: CONFIGURATION_GET_SUCCESS, payload: res.data });
   } catch (error) {
-    dispatch({ type: CONFIGURATION_GET_FAIL });
+    dispatch({ type: CONFIGURATION_GET_FAIL, payload: error });
   }
 };
 
-const createConfiguration = (scenarioID, elements) => async (dispatch) => {
+const createConfiguration = (name) => async (dispatch) => {
   dispatch({ type: CONFIGURATION_CREATE_REQUEST });
   try {
-    const res = await API.createConfiguration(scenarioID, elements);
-    dispatch({ type: CONFIGURATION_CREATE_SUCCESS, payload: res.data });
+    const { data } = await API.createConfiguration(name);
+    console.log(data);
+    dispatch({
+      type: CONFIGURATION_CREATE_SUCCESS,
+      payload: { data, name },
+    });
   } catch (error) {
+    console.log(error)
     dispatch({ type: CONFIGURATION_CREATE_FAIL, payload: error });
+  }
+};
+const updateConfiguration = (scenarioConfigName, elements) => async (dispatch) => {
+  dispatch({ type: CONFIGURATION_UPDATE_REQUEST });
+  try {
+    console.log(scenarioConfigName, elements)
+    const res = await API.updateConfiguration(scenarioConfigName, elements);
+    console.log(res)
+    dispatch({ type: CONFIGURATION_UPDATE_SUCCESS, payload: res.data });
+  } catch (error) {
+    dispatch({ type: CONFIGURATION_UPDATE_FAIL, payload: error });
+  }
+};
+const deleteConfiguration = (scenarioID) => async (dispatch) => {
+  dispatch({ type: CONFIGURATION_DELETE_REQUEST });
+  try {
+    const res = await API.deleteConfiguration(scenarioID);
+    dispatch({ type: CONFIGURATION_DELETE_SUCCESS, payload: res.data });
+  } catch (error) {
+    dispatch({ type: CONFIGURATION_DELETE_FAIL, payload: error });
   }
 };
 
@@ -67,6 +99,7 @@ const createScenario = ({ name, description, image }) => async (dispatch) => {
     const { data } = await API.createScenario(name, description, image);
     dispatch(getAllScenarios());
     dispatch({ type: SCENARIO_CREATE_SUCCESS, payload: data });
+    dispatch(createConfiguration(name));
   } catch (error) {
     dispatch({ type: SCENARIO_CREATE_FAIL, payload: error });
   }
@@ -93,6 +126,8 @@ const deleteScenario = (scenarioName) => async (dispatch) => {
 export {
   getConfiguration,
   createConfiguration,
+  updateConfiguration,
+  deleteConfiguration,
   getAllScenarios,
   getScenario,
   createScenario,

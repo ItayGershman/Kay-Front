@@ -23,16 +23,16 @@ class API {
   }
 
   //Scenario
-  static getConfiguration(scenarioID) {
-    return axios.get(`/scenario_config/${scenarioID}`);
-  }
-  static createConfiguration(scenarioID, elements) {
-    return axios.get(`/scenario_config/${scenarioID}`, {
-      scenarioConfigData: elements,
-    });
-  }
+  // static getConfiguration(scenarioID) {
+  // return axios.get(`routes/scenario_config/${scenarioID}`);
+  // }
+  // static createConfiguration() {
+  //   return axios.post(`scenario_config`, {
+  //     scenarioConfigData: [],
+  //   });
+  // }
   static getAllScenarios() {
-    return axios.get(`routes/scenario`)
+    return axios.get(`routes/scenario`);
   }
   static getScenario(scenarioName) {
     return axios.get(`routes/scenario/${scenarioName}`);
@@ -51,6 +51,25 @@ class API {
   }
   static deleteScenario(scenarioName) {
     return axios.put(`routes/scenario/${scenarioName}`);
+  }
+
+  static getConfiguration(scenarioName) {
+    console.log(scenarioName);
+    return axios.get(`/routes/scenario_config/${scenarioName}`);
+  }
+  static createConfiguration(name) {
+    return axios.post(`/routes/scenario_config`, {
+      scenarioConfigData: [],
+      scenarioConfigName: name,
+    });
+  }
+  static updateConfiguration(scenarioConfigName, configuration) {
+    return axios.put(`/routes/scenario_config/${scenarioConfigName}`, {
+      scenarioConfigData: configuration,
+    });
+  }
+  static deleteConfiguration(scenarioID) {
+    return axios.delete(`/routes/scenario_config/${scenarioID}`);
   }
 }
 export default API;

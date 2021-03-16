@@ -13,13 +13,15 @@ import { useHistory } from 'react-router-dom';
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
+    padding: 10,
+    backgroundColor: '#c5cae9',
   },
   media: {
     height: 180,
   },
 });
 
-export default function ScenarioCard({ title, image, description }) {
+export default function ScenarioCard({ title, image, description, id }) {
   const classes = useStyles();
   const history = useHistory();
 

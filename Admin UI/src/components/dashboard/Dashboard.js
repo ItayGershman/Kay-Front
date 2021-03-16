@@ -87,6 +87,7 @@ const Dashboard = () => {
                     title={scenario.scenarioName}
                     image={scenario.scenarioImage}
                     description={scenario.scenarioDescription}
+                    id={scenario._id}
                   />
                 </div>
               );
