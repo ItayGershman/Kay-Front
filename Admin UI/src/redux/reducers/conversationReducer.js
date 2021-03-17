@@ -87,7 +87,6 @@ function scenarioReducer(state = initialState, action) {
     case CONFIGURATION_GET_REQUEST:
       return { loading: true };
     case CONFIGURATION_GET_SUCCESS:
-      console.log(action.payload);
       return {
         loading: false,
         currentScenario: action.payload,
@@ -99,7 +98,6 @@ function scenarioReducer(state = initialState, action) {
     case CONFIGURATION_CREATE_REQUEST:
       return { loading: true };
     case CONFIGURATION_CREATE_SUCCESS:
-      console.log(action.payload);
       return {
         loading: false,
         elements: action.payload.data,

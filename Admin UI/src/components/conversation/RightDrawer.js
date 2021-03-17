@@ -50,7 +50,6 @@ const setTextField = (
       defaultValue={defaultValue}
       render={(
         { onChange, onBlur, value, name, ref },
-        { invalid, isTouched, isDirty }
       ) => {
         return (
           <TextField

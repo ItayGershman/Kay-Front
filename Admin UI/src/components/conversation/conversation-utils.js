@@ -20,7 +20,12 @@ const createInputNode = (id, position, elements) => {
     id,
     type: 'selectorInputNode',
     position,
-    data: {},
+    data: {
+      name:'',
+      intent:'',
+      entities:[],
+      speak:[]
+    },
   };
 };
 

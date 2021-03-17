@@ -53,19 +53,19 @@ const useStyles = makeStyles((theme) => ({
     opacity: '0.5',
     fontSize: 24,
   },
-  intentIcon:{
-    color:'#0091ea'
+  intentIcon: {
+    color: '#0091ea',
   },
-  entityIcon:{
-    color:'#ffd180'
+  entityIcon: {
+    color: '#ffd180',
   },
-  speakIcon:{
-    color:'#757575'
+  speakIcon: {
+    color: '#757575',
   },
 }));
 
 export default memo(({ data, id }) => {
-  // const { name, intent, entities, speak } = data;
+  console.log(data);
   const classes = useStyles();
   return (
     <>
@@ -93,61 +93,63 @@ export default memo(({ data, id }) => {
               <Typography variant='h5'>Scenario name</Typography>
             )}
           </div>
-          {data ? (
-            <div>
-              {data.intent && (
-                <div className={classes.input}>
-                  <AccountCircleIcon className={`${classes.icon} ${classes.intentIcon}`} />
-                  {data.intent && (
-                    <Typography variant='caption'>Intent: {data.intent}</Typography>
-                  )}
-                </div>
-              )}
-              {data.entities &&
-                data.entities.map((entity) => {
-                  return (
-                    <div className={classes.input}>
-                      <CategoryIcon className={`${classes.icon} ${classes.entityIcon}`} />
-                      <Typography variant='caption'>
-                        Entity: {entity}
-                      </Typography>
-                    </div>
-                  );
-                })}
-              <div className={classes.speak}>
-                {data.speak &&
-                  data.speak.map((text) => {
-                    return (
-                      <div className={`${classes.input}`}>
-                        <ChatIcon className={`${classes.icon} ${classes.speakIcon}`} />
-                        <Typography variant='caption'>{text}</Typography>
-                      </div>
-                    );
-                  })}
+          <div>
+            {data && data.intent ? (
+              <div className={classes.input}>
+                <AccountCircleIcon
+                  className={`${classes.icon} ${classes.intentIcon}`}
+                />
+                <Typography variant='caption'>Intent: {data.intent}</Typography>
               </div>
-            </div>
-          ) : (
-            <div>
+            ) : (
               <div className={classes.input}>
                 <AccountCircleIcon className={classes.icon} />
                 <Typography className={classes.placeholder}>
                   "Intent name"
                 </Typography>
               </div>
+            )}
+            {data && data.entities.length > 0 ? (
+              data.entities.map((entity) => {
+                return (
+                  <div className={classes.input}>
+                    <CategoryIcon
+                      className={`${classes.icon} ${classes.entityIcon}`}
+                    />
+                    <Typography variant='caption'>Entity: {entity}</Typography>
+                  </div>
+                );
+              })
+            ) : (
               <div className={`${classes.input}`}>
                 <CategoryIcon className={classes.icon} />
                 <Typography className={classes.placeholder}>
                   "Entity name"
                 </Typography>
               </div>
-              <div className={`${classes.input}`}>
-                <ChatIcon className={classes.icon} />
-                <Typography variant='caption' className={classes.placeholder}>
-                  "Speak"
-                </Typography>
-              </div>
+            )}
+            <div className={classes.speak}>
+              {data && data.speak.length > 0 ? (
+                data.speak.map((text) => {
+                  return (
+                    <div className={`${classes.input}`}>
+                      <ChatIcon
+                        className={`${classes.icon} ${classes.speakIcon}`}
+                      />
+                      <Typography variant='caption'>{text}</Typography>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className={`${classes.input}`}>
+                  <ChatIcon className={classes.icon} />
+                  <Typography variant='caption' className={classes.placeholder}>
+                    "Speak"
+                  </Typography>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </CardContent>
       </Card>
       <Handle

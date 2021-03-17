@@ -67,7 +67,6 @@ const CustomNodeFlow = () => {
   });
   const [reactflowInstance, setReactflowInstance] = useState(null);
   const [elements, setElements] = useState([]);
-  const [bgColor, setBgColor] = useState(initBgColor);
   const [selectedNode, setSelectedNode] = useState(null);
   const reactFlowWrapper = useRef(null);
   const classes = useStyles({
@@ -81,10 +80,7 @@ const CustomNodeFlow = () => {
 
   useEffect(() => {
     const scenarioName = location.pathname.replace('/conversation/', '');
-    console.log(scenarioSelector.currentScenario)
-    console.log(scenarioName)
     dispatch(getConfiguration(scenarioName));
-    // setElements(initialElements);
   }, []);
   useEffect(() => {
     if (reactflowInstance && elements.length > 0) {
@@ -127,7 +123,6 @@ const CustomNodeFlow = () => {
   );
   const onLayout = useCallback(
     (direction) => {
-      console.log('does layout changes?');
       const layoutElements = getLayoutElements(elements, direction, isNode);
       setElements(layoutElements);
     },
@@ -152,11 +147,8 @@ const CustomNodeFlow = () => {
   const onSave = useCallback(() => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
-      console.log(flow);
       const { scenarioConfigName } = scenarioSelector.currentScenario;
-      //setItem on Server
       dispatch(updateConfiguration(scenarioConfigName, flow.elements));
-      // localforage.setItem('flowKey', flow);
     }
   }, [reactflowInstance, scenarioSelector]);
 
@@ -358,7 +350,6 @@ const CustomNodeFlow = () => {
             side='left'
           />
         </Grid>
-        {console.log(mainElementsSize.conversationBuilder)}
         <Grid item xs={mainElementsSize.conversationBuilder}>
           <main
             className={`${classes.content} reactflow-wrapper`}
@@ -374,7 +365,7 @@ const CustomNodeFlow = () => {
               onElementsRemove={onElementsRemove}
               onConnect={onConnect}
               onNodeDragStop={onNodeDragStop}
-              style={{ background: bgColor }}
+              style={{ background: initBgColor }}
               onLoad={onLoad}
               onDrop={onDrop}
               onDragOver={onDragOver}
@@ -389,7 +380,7 @@ const CustomNodeFlow = () => {
               <MiniMap
                 nodeStrokeColor={(n) => handleNodeStrokeColor(n)}
                 nodeColor={(n) =>
-                  n.type === 'selectorInputNode' ? bgColor : '#fff'
+                  n.type === 'selectorInputNode' ? initBgColor : '#fff'
                 }
                 nodeBorderRadius={2}
               />
