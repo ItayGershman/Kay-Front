@@ -31,6 +31,7 @@ const SideDrawer = ({
   node,
   elements,
   setElements,
+  title
 }) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -67,7 +68,7 @@ const SideDrawer = ({
       {side === 'left' ? (
         <LeftDrawer actions={actions} utils={utils} />
       ) : (
-        <RightDrawer node={node} elements={elements} setElements={setElements} drawerState={open}/>
+        <RightDrawer node={node} elements={elements} setElements={setElements} drawerState={open} title={title}/>
       )}
       <Divider />
       <List>

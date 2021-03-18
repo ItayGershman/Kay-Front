@@ -110,7 +110,7 @@ export default memo(({ data, id }) => {
               </div>
             )}
             {data && data.entities.length > 0 ? (
-              data.entities.map((entity) => {
+              data.entities.map(({entity}) => {
                 return (
                   <div className={classes.input}>
                     <CategoryIcon
@@ -130,13 +130,13 @@ export default memo(({ data, id }) => {
             )}
             <div className={classes.speak}>
               {data && data.speak.length > 0 ? (
-                data.speak.map((text) => {
+                data.speak.map(({speak}) => {
                   return (
                     <div className={`${classes.input}`}>
                       <ChatIcon
                         className={`${classes.icon} ${classes.speakIcon}`}
                       />
-                      <Typography variant='caption'>{text}</Typography>
+                      <Typography variant='caption'>{speak}</Typography>
                     </div>
                   );
                 })

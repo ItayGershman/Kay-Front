@@ -82,6 +82,7 @@ const CustomNodeFlow = () => {
     const scenarioName = location.pathname.replace('/conversation/', '');
     dispatch(getConfiguration(scenarioName));
   }, []);
+
   useEffect(() => {
     if (reactflowInstance && elements.length > 0) {
       reactflowInstance.fitView();
@@ -389,6 +390,7 @@ const CustomNodeFlow = () => {
           </main>
         </Grid>
         <Grid xs={mainElementsSize.rightDrawer}>
+          {console.log(scenarioSelector.currentScenario)}
           <SideDrawer
             open={mainElementsSize.openRight}
             drawerOpen={classes.drawerRightOpen}
@@ -402,6 +404,7 @@ const CustomNodeFlow = () => {
             elements={elements}
             setElements={setElements}
             side='right'
+            title={scenarioSelector?.currentScenario?.scenarioConfigName}
           />
         </Grid>
       </Grid>

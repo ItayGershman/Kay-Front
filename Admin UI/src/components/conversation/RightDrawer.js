@@ -57,7 +57,6 @@ const setTextField = (
             label={label}
             variant='outlined'
             name={name}
-            // inputRef={ref}
             onChange={(e) => {
               const changedData = {};
               changedData[name] = e.target.value;

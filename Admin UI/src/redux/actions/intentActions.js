@@ -15,10 +15,14 @@ import {
   INTENT_DELETE_FAIL,
 } from '../constants/actionTypes';
 
-const createIntent = (scenario, intentName, speak) => async (dispatch) => {
+const createIntent = ({ name, intent, speak, entities }) => async (
+  dispatch
+) => {
+  console.log(name, intent, speak, entities)
   dispatch({ type: INTENT_CREATE_REQUEST }); //loading =>true
   try {
-    const {data} = await API.createIntent(scenario, intentName, speak);
+    const { data } = await API.createIntent(name, intent, speak);
+    console.log(data)
     return dispatch({ type: INTENT_CREATE_SUCCESS, payload: data });
   } catch (error) {
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
