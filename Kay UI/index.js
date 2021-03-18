@@ -1,6 +1,5 @@
 require('dotenv').config();
 const rec = require('node-mic-record');
-const rec3 = require('node')
 const request = require('request');
 const axios = require('axios');
 const fetch = require('node-fetch');
@@ -22,7 +21,9 @@ const WitAISpeechRecognition = async () => {
   let response = false;
   const startRecording = (timer) => {
     axios
-      .post(reqData.url, rec.start(), {
+      .post(reqData.url, rec.start({
+        recordProgram :'arecord'
+      }), {
         headers: {
           Accept: 'application/vnd.wit.20160202+json',
           Authorization: `Bearer ${witToken}`,

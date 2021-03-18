@@ -22,13 +22,9 @@ const speak = async (text) => {
 
   try {
     const filePath = path.join(__dirname, 'result.mp3');
-    console.log('before play');
-    return sound.play(filePath).then((response) => {
-      console.log('done');
+    return sound.play(filePath).then(() => {
       return true;
     });
-    // console.log('after play')
-    // return true;
   } catch (error) {
     console.error(error);
   }
@@ -45,7 +41,7 @@ const sendResult = async (data) => {
   } else return false;
   console.log(intent);
   //Need to send the intent to the server and get a response from the DB
-  const getResponse = await URL(intent)
+  // const getResponse = await URL(intent)
   //check which scenario Kay is found
   //check the recieved intent
   if (intent === 'wit_greetings') {

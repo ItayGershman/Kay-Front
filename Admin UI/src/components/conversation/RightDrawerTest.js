@@ -77,12 +77,8 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
   const dispatch = useDispatch();
 
   const setInitialValues = () => {
-    console.log(Object.keys(node.data));
-    if(node?.data){
-        const { name, intent, entities, speak } = node.data;
-        console.log(intent,name,'?')
-    }
-    if (node?.data && node.data.intent != '') {
+    
+    if (node?.data) {
       console.log(node);
       const { name, intent, entities, speak } = node.data;
       const speakArray = speak.map((text) => text.speak);
