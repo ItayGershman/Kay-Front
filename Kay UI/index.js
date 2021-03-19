@@ -21,9 +21,7 @@ const WitAISpeechRecognition = async () => {
   let response = false;
   const startRecording = (timer) => {
     axios
-      .post(reqData.url, rec.start({
-        recordProgram :'arecord'
-      }), {
+      .post(reqData.url, rec.start(), {
         headers: {
           Accept: 'application/vnd.wit.20160202+json',
           Authorization: `Bearer ${witToken}`,

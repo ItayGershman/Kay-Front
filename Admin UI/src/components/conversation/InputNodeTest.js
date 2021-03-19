@@ -96,7 +96,6 @@ export default memo(({ data, id }) => {
           <div>
             {data ? (
               <div>
-                {console.log('inside data')}
                 {data.intent && (
                   <div className={classes.input}>
                     <AccountCircleIcon
@@ -134,7 +133,6 @@ export default memo(({ data, id }) => {
               </div>
             ) : (
               <div>
-                {console.log('inside not data')}
                 <div className={classes.input}>
                   <AccountCircleIcon
                     className={`${classes.icon} ${classes.intentIcon}`}

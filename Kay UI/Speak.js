@@ -1,7 +1,8 @@
 const gTTS = require('gtts');
-const sound = require('sound-play');
+// const sound = require('sound-play');
 const path = require('path');
 const { randomBytes } = require('crypto');
+const player = require('play-sound')(opts = {})
 
 const greetings = ["Hey, how's it going?", "What's good with you?"];
 const jokes = [
@@ -22,9 +23,16 @@ const speak = async (text) => {
 
   try {
     const filePath = path.join(__dirname, 'result.mp3');
-    return sound.play(filePath).then(() => {
-      return true;
-    });
+    console.log('im here')
+    return player.play('result.mp3', function(err){
+      if (err){
+        console.log('error', err)
+        throw err
+      } 
+    })
+    // return sound.play(filePath).then(() => {
+    //   return true;
+    // });
   } catch (error) {
     console.error(error);
   }

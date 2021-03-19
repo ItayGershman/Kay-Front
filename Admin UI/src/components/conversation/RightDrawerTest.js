@@ -35,36 +35,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const setTextField = (
+const setTextField = ({
   control,
   name,
   label,
   defaultValue,
-  handleOnChange,
-  index
-) => {
+  setIntent,
+  intent,
+}) => {
+  console.log(intent);
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue={defaultValue}
-      render={(
-        { onChange, onBlur, value, name, ref },
-        { invalid, isTouched, isDirty }
-      ) => {
+      render={({ onChange }) => {
         return (
           <TextField
             multiline
             label={label}
             variant='outlined'
-            name={name}
-            // inputRef={ref}
             onChange={(e) => {
-              const changedData = {};
-              changedData[name] = e.target.value;
-              handleOnChange(changedData, index);
+              setIntent(e.target.value);
+              onChange(e.target.value);
             }}
-            value={defaultValue}
+            value={intent}
           />
         );
       }}
@@ -73,18 +67,16 @@ const setTextField = (
 };
 
 const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
+  console.log('Right Drawer');
+  const [intent, setIntent] = useState(null);
   const classes = useStyles();
   const dispatch = useDispatch();
 
   const setInitialValues = () => {
-    
     if (node?.data) {
-      console.log(node);
       const { name, intent, entities, speak } = node.data;
       const speakArray = speak.map((text) => text.speak);
-      //   console.log(speakArray);
       const entitiesArray = entities.map(({ entity }) => entity);
-      console.log(intent);
       return {
         intent: intent,
         entities: entitiesArray,
@@ -93,9 +85,9 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
       };
     } else {
       return {
-        intent: '',
+        intent: ' ',
         entities: [],
-        name: '',
+        name: ' ',
         speak: [],
       };
     }
@@ -117,10 +109,9 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
   const watchFood = watch('food.name');
   const onSubmit = (data) => {
     const keys = Object.keys(data);
-    let newNode = { name: '', intent: '', entities: [], speak: [] };
+    let newNode = { name: title, intent: '', entities: [], speak: [] };
     keys.forEach((key) => (newNode[key] = data[key]));
-    dispatch(createIntent(newNode));
-
+    newNode.name = title;
     setElements((prevState) => {
       const elem = prevState.find((el) => el.id === node.id);
       elem.data = { ...elem.data, ...newNode };
@@ -128,13 +119,18 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
       modifiedElem.data = elem.data;
       return [...prevState, modifiedElem];
     });
+    dispatch(createIntent(newNode));
   };
 
   useEffect(() => {
-    reset({ intent: '', name: '', speak: [], entities: [] });
-    const { entities, speak } = setInitialValues();
+    //Clear old form
+    speakRemove([...Array(speakFields.length).keys()]);
+    entitiesRemove([...Array(entitiesFields.length).keys()]);
+    //Set new form
+    const { entities, speak, intent } = setInitialValues();
+    setIntent(intent);
     speak.forEach((text) => speakAppend({ speak: text }));
-    entities.forEach((entity) => speakAppend({ entity: entity }));
+    entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
 
   return (
@@ -165,24 +161,35 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
             />
           </div>
           <div className={classes.input}>
-            <Controller
+            {console.log(setInitialValues().intent)}
+            {setTextField({
+              control,
+              name: 'intent',
+              label: 'Intent name',
+              defaultValue: setInitialValues().intent,
+              setIntent,
+              intent,
+            })}
+            {/* <Controller
               control={control}
               name={'intent'}
               defaultValue={setInitialValues().intent}
               render={({ onChange, onBlur, value, name, ref }) => {
+                const defaultValue = setInitialValues().intent;
                 return (
                   <TextField
                     label={'Intent name'}
                     variant='outlined'
                     name={name}
                     onChange={(e) => {
+                      console.log(e.target.value)
                       onChange(e.target.value);
                     }}
-                    defaultValue={value}
+                    defaultValue={defaultValue}
                   />
                 );
               }}
-            />
+            /> */}
           </div>
           <div className={classes.input}>
             <h3>Entities</h3>
@@ -192,7 +199,7 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
                   <Controller
                     control={control}
                     name={`entities[${index}].entity`}
-                    defaultValue={item.value}
+                    defaultValue={setInitialValues().entities[index]}
                     render={({ onChange, value, name }) => {
                       return (
                         <TextField
@@ -220,14 +227,14 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
           </div>
           <div className={classes.input}>
             <h3>Speak</h3>
+            {console.log(speakFields)}
             {speakFields.map((item, index) => {
-              console.log(item);
               return (
                 <div key={item.id} className={classes.input}>
                   <Controller
                     control={control}
                     name={`speak[${index}].speak`}
-                    defaultValue={item.speak}
+                    defaultValue={setInitialValues().speak[index]}
                     render={({ onChange, value, name }) => {
                       return (
                         <TextField
