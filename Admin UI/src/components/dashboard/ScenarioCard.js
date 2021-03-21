@@ -15,6 +15,10 @@ const useStyles = makeStyles({
     maxWidth: 345,
     padding: 10,
     backgroundColor: '#c5cae9',
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'space-between',
+    maxHeight:360,
   },
   media: {
     height: 180,
@@ -38,7 +42,7 @@ export default function ScenarioCard({ title, image, description, id }) {
           title='Contemplative Reptile'
         />
         <CardContent>
-          <Typography gutterBottom variant='h5' component='h2'>
+          <Typography gutterBottom variant='h5' component='h2' noWrap={false}>
             {title}
           </Typography>
           <Typography variant='body2' color='textSecondary' component='p'>

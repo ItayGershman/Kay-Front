@@ -149,7 +149,8 @@ const CustomNodeFlow = () => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
       const { scenarioConfigName } = scenarioSelector.currentScenario;
-      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
+      console.log(flow.elements)
+      // dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
 
@@ -378,13 +379,13 @@ const CustomNodeFlow = () => {
               style={graphStyles}
             >
               <Controls />
-              <MiniMap
+              {/* <MiniMap
                 nodeStrokeColor={(n) => handleNodeStrokeColor(n)}
                 nodeColor={(n) =>
                   n.type === 'selectorInputNode' ? initBgColor : '#fff'
                 }
                 nodeBorderRadius={2}
-              />
+              /> */}
               <Background color='#aaa' gap={16} />
             </ReactFlow>
           </main>

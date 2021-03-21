@@ -4,9 +4,8 @@ import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { makeStyles } from '@material-ui/core/styles';
-import _, { remove } from 'lodash';
 import { createIntent } from '../../redux/actions/intentActions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm, useWatch, useFieldArray, Controller } from 'react-hook-form';
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const setTextField = ({
+const setIntentField = ({
   control,
   name,
   label,
@@ -43,7 +42,6 @@ const setTextField = ({
   setIntent,
   intent,
 }) => {
-  console.log(intent);
   return (
     <Controller
       control={control}
@@ -52,6 +50,7 @@ const setTextField = ({
         return (
           <TextField
             multiline
+            placeholder='getName'
             label={label}
             variant='outlined'
             onChange={(e) => {
@@ -66,11 +65,63 @@ const setTextField = ({
   );
 };
 
+const setTextField = ({ control, name, label, defaultValue, isDisabled }) => {
+  return (
+    <Controller
+      control={control}
+      name={name}
+      defaultValue={defaultValue}
+      render={({ onChange, value, name }) => {
+        return (
+          <TextField
+            disable={isDisabled}
+            multiline
+            label={label}
+            variant='outlined'
+            name={name}
+            onChange={(e) => {
+              onChange(e.target.value);
+            }}
+            defaultValue={value}
+          />
+        );
+      }}
+    />
+  );
+};
+
+const AppendButton = ({ handler, classes, title }) => {
+  return (
+    <Button
+      onClick={() => handler({})}
+      variant='contained'
+      color='primary'
+      className={classes.button}
+      startIcon={<AddCircleIcon />}
+    >
+      {title}
+    </Button>
+  );
+};
+const RemoveButton = ({ handler, index, classes, title }) => {
+  return (
+    <Button
+      onClick={() => handler(index)}
+      variant='contained'
+      color='secondary'
+      className={classes.button}
+      startIcon={<RemoveCircleIcon />}
+    >
+      {title}
+    </Button>
+  );
+};
+
 const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
-  console.log('Right Drawer');
   const [intent, setIntent] = useState(null);
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { allIntents } = useSelector((state) => state.intent);
 
   const setInitialValues = () => {
     if (node?.data) {
@@ -85,9 +136,9 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
       };
     } else {
       return {
-        intent: ' ',
+        intent: '',
         entities: [],
-        name: ' ',
+        name: '',
         speak: [],
       };
     }
@@ -106,20 +157,22 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
     remove: speakRemove,
   } = useFieldArray({ control, name: 'speak' });
 
-  const watchFood = watch('food.name');
+  // const watchFood = watch('food.name');
   const onSubmit = (data) => {
     const keys = Object.keys(data);
     let newNode = { name: title, intent: '', entities: [], speak: [] };
     keys.forEach((key) => (newNode[key] = data[key]));
     newNode.name = title;
+    if (newNode['intent'] === '') newNode['intent'] = intent;
     setElements((prevState) => {
       const elem = prevState.find((el) => el.id === node.id);
       elem.data = { ...elem.data, ...newNode };
-      let modifiedElem = prevState.find((el) => el.id === node.id);
-      modifiedElem.data = elem.data;
-      return [...prevState, modifiedElem];
+      return prevState;
     });
-    dispatch(createIntent(newNode));
+    const isExist = allIntents.some(
+      (intent) => intent.name === `wit_${newNode.intent}`
+    );
+    if (!isExist) dispatch(createIntent(newNode,isExist));
   };
 
   useEffect(() => {
@@ -138,31 +191,16 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
       {drawerState && (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.container}>
           <div className={classes.name}>
-            <Controller
-              control={control}
-              name={'name'}
-              defaultValue={title}
-              render={({ onChange, value, name }) => {
-                return (
-                  <TextField
-                    disabled
-                    label={'Scenario name'}
-                    variant='outlined'
-                    name={'name'}
-                    onChange={(e) => {
-                      const changedData = {};
-                      changedData[name] = e.target.value;
-                      onChange(e.target.value);
-                    }}
-                    defaultValue={value}
-                  />
-                );
-              }}
-            />
+            {setTextField({
+              control,
+              name: 'name',
+              label: 'Scenario Name',
+              defaultValue: title,
+              isDisabled: true,
+            })}
           </div>
           <div className={classes.input}>
-            {console.log(setInitialValues().intent)}
-            {setTextField({
+            {setIntentField({
               control,
               name: 'intent',
               label: 'Intent name',
@@ -170,98 +208,65 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
               setIntent,
               intent,
             })}
-            {/* <Controller
-              control={control}
-              name={'intent'}
-              defaultValue={setInitialValues().intent}
-              render={({ onChange, onBlur, value, name, ref }) => {
-                const defaultValue = setInitialValues().intent;
-                return (
-                  <TextField
-                    label={'Intent name'}
-                    variant='outlined'
-                    name={name}
-                    onChange={(e) => {
-                      console.log(e.target.value)
-                      onChange(e.target.value);
-                    }}
-                    defaultValue={defaultValue}
-                  />
-                );
-              }}
-            /> */}
           </div>
           <div className={classes.input}>
-            <h3>Entities</h3>
             {entitiesFields.map((item, index) => {
               return (
                 <div key={item.id} className={classes.input}>
-                  <Controller
-                    control={control}
-                    name={`entities[${index}].entity`}
-                    defaultValue={setInitialValues().entities[index]}
-                    render={({ onChange, value, name }) => {
-                      return (
-                        <TextField
-                          multiline
-                          label={'entity'}
-                          variant='outlined'
-                          name={name}
-                          onChange={(e) => {
-                            onChange(e.target.value);
-                          }}
-                          defaultValue={value}
-                        />
-                      );
-                    }}
+                  {setTextField({
+                    control,
+                    name: `entities[${index}].entity`,
+                    label: 'Entity',
+                    defaultValue: setInitialValues().entities[index],
+                    setTextField: false,
+                  })}
+                  <RemoveButton
+                    handler={entitiesRemove}
+                    index={index}
+                    title={'Remove Entity'}
+                    classes={classes}
                   />
-                  <Button onClick={() => entitiesRemove(index)}>
-                    <RemoveCircleIcon color='secondary' />
-                  </Button>
                 </div>
               );
             })}
-            <Button onClick={() => entitiesAppend({})}>
-              <AddCircleIcon color='primary' />
-            </Button>
+            <AppendButton
+              handler={entitiesAppend}
+              title={'Add Entity'}
+              classes={classes}
+            />
           </div>
           <div className={classes.input}>
-            <h3>Speak</h3>
-            {console.log(speakFields)}
             {speakFields.map((item, index) => {
               return (
                 <div key={item.id} className={classes.input}>
-                  <Controller
-                    control={control}
-                    name={`speak[${index}].speak`}
-                    defaultValue={setInitialValues().speak[index]}
-                    render={({ onChange, value, name }) => {
-                      return (
-                        <TextField
-                          multiline
-                          label={'Speak'}
-                          variant='outlined'
-                          name={name}
-                          onChange={(e) => {
-                            onChange(e.target.value);
-                          }}
-                          defaultValue={value}
-                        />
-                      );
-                    }}
+                  {setTextField({
+                    control,
+                    name: `speak[${index}].speak`,
+                    label: 'Speak',
+                    defaultValue: setInitialValues().speak[index],
+                    isDisabled: false,
+                  })}
+                  <RemoveButton
+                    handler={speakRemove}
+                    index={index}
+                    title={'Remove Speak'}
+                    classes={classes}
                   />
-                  <Button onClick={() => speakRemove(index)}>
-                    <RemoveCircleIcon color='secondary' />
-                  </Button>
                 </div>
               );
             })}
-            <Button onClick={() => speakAppend({})}>
-              <AddCircleIcon color='primary' />
-            </Button>
+            <AppendButton
+              handler={speakAppend}
+              title={'Add Speak'}
+              classes={classes}
+            />
           </div>
-
-          <Button variant='contained' color='primary' type='submit'>
+          <Button
+            variant='contained'
+            color='primary'
+            type='submit'
+            style={{ marginTop: 20 }}
+          >
             Submit
           </Button>
         </form>

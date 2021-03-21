@@ -111,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
+    paddingBottom:'65px'
   },
   drawerRightClose: {
     right: 0,

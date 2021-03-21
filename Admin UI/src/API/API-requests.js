@@ -54,7 +54,6 @@ class API {
   }
 
   static getConfiguration(scenarioName) {
-    console.log(scenarioName);
     return axios.get(`/routes/scenario_config/${scenarioName}`);
   }
   static createConfiguration(name) {

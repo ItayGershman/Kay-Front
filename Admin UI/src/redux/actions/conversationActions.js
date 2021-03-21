@@ -33,7 +33,6 @@ const getConfiguration = (scenarioName) => async (dispatch) => {
   dispatch({ type: CONFIGURATION_GET_REQUEST });
   try {
     const res = await API.getConfiguration(scenarioName);
-    console.log(res);
     dispatch({ type: CONFIGURATION_GET_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch({ type: CONFIGURATION_GET_FAIL, payload: error });
@@ -44,22 +43,18 @@ const createConfiguration = (name) => async (dispatch) => {
   dispatch({ type: CONFIGURATION_CREATE_REQUEST });
   try {
     const { data } = await API.createConfiguration(name);
-    console.log(data);
     dispatch({
       type: CONFIGURATION_CREATE_SUCCESS,
       payload: { data, name },
     });
   } catch (error) {
-    console.log(error)
     dispatch({ type: CONFIGURATION_CREATE_FAIL, payload: error });
   }
 };
 const updateConfiguration = (scenarioConfigName, elements) => async (dispatch) => {
   dispatch({ type: CONFIGURATION_UPDATE_REQUEST });
   try {
-    console.log(scenarioConfigName, elements)
     const res = await API.updateConfiguration(scenarioConfigName, elements);
-    console.log(res)
     dispatch({ type: CONFIGURATION_UPDATE_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch({ type: CONFIGURATION_UPDATE_FAIL, payload: error });

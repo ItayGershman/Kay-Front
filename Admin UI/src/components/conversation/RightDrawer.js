@@ -85,7 +85,6 @@ const RightDrawer = ({ node, elements, setElements, drawerState }) => {
 
   const setInitialValues = () => {
     if (node?.data) {
-      console.log(node)
       const { name, intent, entities, speak } = node.data;
       return {
         intent: intent,

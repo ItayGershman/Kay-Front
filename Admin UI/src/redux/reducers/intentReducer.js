@@ -1,4 +1,7 @@
 const {
+  INTENTS_GET_REQUEST,
+  INTENTS_GET_SUCCESS,
+  INTENTS_GET_FAIL,
   INTENT_GET_REQUEST,
   INTENT_GET_SUCCESS,
   INTENT_GET_FAIL,
@@ -19,10 +22,21 @@ const initialState = {
   intent: '',
   entities: [],
   speak: [],
+  allIntents: [],
 };
 
 function intentReducer(state = initialState, action) {
   switch (action.type) {
+    case INTENTS_GET_REQUEST:
+      return { loading: true };
+    case INTENTS_GET_SUCCESS:
+      return {
+        loading: false,
+        allIntents: action.payload,
+      };
+    case INTENTS_GET_FAIL:
+      return { loading: false, error: action.payload };
+      
     case INTENT_GET_REQUEST:
       return { loading: true };
     case INTENT_GET_SUCCESS:

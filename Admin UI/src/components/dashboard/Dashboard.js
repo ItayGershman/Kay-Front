@@ -6,6 +6,7 @@ import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import ScenarioDialog from './ScenarioDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllScenarios } from '../../redux/actions/conversationActions';
+import { getAllIntents } from '../../redux/actions/intentActions';
 
 const welcomingImage =
   'https://image.shutterstock.com/image-vector/welcome-sign-colour-confetti-vector-260nw-313934588.jpg';
@@ -36,6 +37,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     dispatch(getAllScenarios());
+    dispatch(getAllIntents());
   }, []);
   useEffect(() => {
     setDisplayScenarios(scenarioSelector.scenarios ? scenarios : []);
