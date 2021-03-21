@@ -54,6 +54,8 @@ import {
   handleOnAdd,
 } from './conversation-utils';
 import { useDispatch, useSelector } from 'react-redux';
+import TrainIntents from './TrainIntents';
+import TrainDialog from './TrainDialog';
 
 const CustomNodeFlow = () => {
   const [mainElementsSize, setMainElementsSize] = useState({
@@ -69,6 +71,7 @@ const CustomNodeFlow = () => {
   const [elements, setElements] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const reactFlowWrapper = useRef(null);
+  const [trainDialog, setTrainDialog] = useState(false);
   const classes = useStyles({
     left: mainElementsSize.leftDrawerWidth,
     right: mainElementsSize.rightDrawerWidth,
@@ -149,7 +152,7 @@ const CustomNodeFlow = () => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
       const { scenarioConfigName } = scenarioSelector.currentScenario;
-      console.log(flow.elements)
+      console.log(flow.elements);
       // dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
@@ -268,7 +271,7 @@ const CustomNodeFlow = () => {
       name: 'intents',
       title: 'Intents',
       handler: () => {
-        console.log('intent');
+        setTrainDialog(true);
       },
       icon: <AccountCircleIcon />,
     },
@@ -296,14 +299,14 @@ const CustomNodeFlow = () => {
       });
     } else {
       setMainElementsSize((prevState) => {
-        if (prevState.rightDrawer === 2) return prevState;
+        if (prevState.rightDrawer === 3) return prevState;
         else
           return {
             ...prevState,
             openRight: true,
-            rightDrawerWidth: 240,
-            rightDrawer: 2,
-            conversationBuilder: prevState.conversationBuilder - 1,
+            rightDrawerWidth: 370,
+            rightDrawer: 3,
+            conversationBuilder: prevState.conversationBuilder - 2,
           };
       });
     }
@@ -324,7 +327,7 @@ const CustomNodeFlow = () => {
         openRight: false,
         rightDrawerWidth: 0,
         rightDrawer: 1,
-        conversationBuilder: prevState.conversationBuilder + 1,
+        conversationBuilder: prevState.conversationBuilder + 2,
       }));
     }
   };
@@ -409,6 +412,7 @@ const CustomNodeFlow = () => {
           />
         </Grid>
       </Grid>
+      <TrainDialog openDialog={trainDialog} handleClickClose={setTrainDialog}/>
     </div>
   );
 };

@@ -106,7 +106,7 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
     left: 'auto',
     top: 65,
-    width: 240,
+    width: 370,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,

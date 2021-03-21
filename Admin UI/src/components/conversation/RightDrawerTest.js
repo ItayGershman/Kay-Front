@@ -20,17 +20,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     flexDirection: 'column',
     padding: '5px',
+    width: '100%',
   },
   button: {
     marginTop: '10px',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-  },
-  name: {
-    margin: 5,
-    paddingBottom: 10,
-    width: '90%',
   },
 }));
 
@@ -49,7 +45,7 @@ const setIntentField = ({
       render={({ onChange }) => {
         return (
           <TextField
-            multiline
+            multiline={false}
             placeholder='getName'
             label={label}
             variant='outlined'
@@ -65,7 +61,15 @@ const setIntentField = ({
   );
 };
 
-const setTextField = ({ control, name, label, defaultValue, isDisabled }) => {
+const setTextField = ({
+  control,
+  name,
+  label,
+  defaultValue,
+  isDisabled,
+  isMultiline,
+}) => {
+  console.log(isDisabled);
   return (
     <Controller
       control={control}
@@ -74,8 +78,8 @@ const setTextField = ({ control, name, label, defaultValue, isDisabled }) => {
       render={({ onChange, value, name }) => {
         return (
           <TextField
-            disable={isDisabled}
-            multiline
+            disabled={isDisabled}
+            multiline={isMultiline}
             label={label}
             variant='outlined'
             name={name}
@@ -172,7 +176,7 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
-    if (!isExist) dispatch(createIntent(newNode,isExist));
+    if (!isExist) dispatch(createIntent(newNode, isExist));
   };
 
   useEffect(() => {
@@ -188,15 +192,16 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
 
   return (
     <div>
-      {drawerState && (
+      {drawerState && node && (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.container}>
-          <div className={classes.name}>
+          <div className={classes.input}>
             {setTextField({
               control,
               name: 'name',
               label: 'Scenario Name',
               defaultValue: title,
               isDisabled: true,
+              isMultiline: false,
             })}
           </div>
           <div className={classes.input}>
@@ -218,7 +223,8 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
                     name: `entities[${index}].entity`,
                     label: 'Entity',
                     defaultValue: setInitialValues().entities[index],
-                    setTextField: false,
+                    isDisabled: false,
+                    isMultiline: true,
                   })}
                   <RemoveButton
                     handler={entitiesRemove}
@@ -245,6 +251,7 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
                     label: 'Speak',
                     defaultValue: setInitialValues().speak[index],
                     isDisabled: false,
+                    isMultiline: true,
                   })}
                   <RemoveButton
                     handler={speakRemove}

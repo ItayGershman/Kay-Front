@@ -14,7 +14,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import LeftDrawer from './LeftDrawer';
 // import RightDrawer from './RightDrawer';
-import RightDrawer from './RightDrawerTest'
+import RightDrawer from './RightDrawerTest';
 import { useStoreActions } from 'react-flow-renderer';
 
 const SideDrawer = ({
@@ -31,7 +31,7 @@ const SideDrawer = ({
   node,
   elements,
   setElements,
-  title
+  title,
 }) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -52,7 +52,7 @@ const SideDrawer = ({
       }}
     >
       <div
-        className={side === 'left' ? classes.toolbarLeft : classes.toolRight}
+        className={side === 'left' ? classes.toolbarLeft : classes.toolbarRight}
       >
         {open ? (
           <IconButton onClick={handleDrawerClose}>
@@ -68,7 +68,13 @@ const SideDrawer = ({
       {side === 'left' ? (
         <LeftDrawer actions={actions} utils={utils} />
       ) : (
-        <RightDrawer node={node} elements={elements} setElements={setElements} drawerState={open} title={title}/>
+        <RightDrawer
+          node={node}
+          elements={elements}
+          setElements={setElements}
+          drawerState={open}
+          title={title}
+        />
       )}
       <Divider />
       <List>
