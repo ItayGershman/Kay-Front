@@ -1,16 +1,9 @@
 const gTTS = require('gtts');
-const sound = require('sound-play');
-const path = require('path');
-const { randomBytes } = require('crypto');
+const axios = require('axios');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 
-const greetings = ["Hey, how's it going?", "What's good with you?"];
-const jokes = [
-  'Do I lose when the police officer says papers and I say scissors?',
-  'I have clean conscience. I haven’t used it once till now.',
-  'Did you hear about the crook who stole a calendar? He got twelve months.',
-];
-
-const speak = async (text) => {
+const speak = (text, timer) => {
   console.log(text);
   const gtts = new gTTS(text, 'en');
   gtts.save('result.mp3', function (err, result) {
@@ -18,42 +11,39 @@ const speak = async (text) => {
       throw new Error(err);
     }
     console.log('Success! Open file result.mp3 to hear result.');
+    const res = exec('nvlc result.mp3')
+    timer.reset(10000)
   });
-
-  try {
-    const filePath = path.join(__dirname, 'result.mp3');
-    console.log('before play');
-    return sound.play(filePath).then((response) => {
-      console.log('done');
-      return true;
-    });
-    // console.log('after play')
-    // return true;
-  } catch (error) {
-    console.error(error);
-  }
 };
 
-const sendResult = async (data) => {
-  let scenario = 'welcoming'
+const sendResult = async (data, timer) => {
+  let scenario = 'Welcoming'
   // Get Utterances from DB 
-  
   let { intents } = data;
   let intent;
   if (intents.length > 0) {
     intent = intents[0].name;
   } else return false;
-  console.log(intent);
+  console.log('intent:', intent);
   //Need to send the intent to the server and get a response from the DB
-  const getResponse = await URL(intent)
+  // const getResponse = await URL(intent)
   //check which scenario Kay is found
   //check the recieved intent
-  if (intent === 'wit_greetings') {
-    const res = await speak(greetings[1]);
-    console.log(`res ->`, res);
+
+  const intentsByScenrio = await axios.get(
+    `http://localhost:3030/routes/intent/${scenario}`
+  );
+  const intentObj = intentsByScenrio.data.find((elem) => {
+    return `wit_${elem.intentName}` === intent
+  });
+  if (intentObj) {
+    const outputOptions = intentObj.outputTextIntent;
+    const randomElement =
+      outputOptions[Math.floor(Math.random() * outputOptions.length)];
+    await speak(randomElement.speak, timer);
     return true;
-  } else if (intent === 'wit_getJoke') {
-    speak(jokes[2]);
+  } else {
+    await speak('Fallback', timer);
     return true;
   }
 };

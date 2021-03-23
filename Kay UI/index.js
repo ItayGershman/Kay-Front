@@ -1,14 +1,12 @@
 require('dotenv').config();
 const rec = require('node-mic-record');
-const rec3 = require('node')
-const request = require('request');
 const axios = require('axios');
-const fetch = require('node-fetch');
-const { resolve } = require('path');
 const { sendResult } = require('./Speak.js');
 const { Timer } = require('./Timer');
+const { getPosition } = require('./Position')
 
 const witToken = process.env.WIT_ACCESS_TOKEN;
+
 const reqData = {
   url: 'https://api.wit.ai/speech?client=chromium&lang=en-us&output=json',
   headers: {
@@ -22,7 +20,9 @@ const WitAISpeechRecognition = async () => {
   let response = false;
   const startRecording = (timer) => {
     axios
-      .post(reqData.url, rec.start(), {
+      .post(reqData.url, rec.start({
+        recordProgram: 'arecord',
+      }), {
         headers: {
           Accept: 'application/vnd.wit.20160202+json',
           Authorization: `Bearer ${witToken}`,
@@ -35,35 +35,22 @@ const WitAISpeechRecognition = async () => {
           response = false;
         } else {
           timer.stop();
-          response = await sendResult(data);
-          response = false;
-          timer.reset(5000);
+          response = true;
+          let tmp = false
+          tmp = await sendResult(data, timer);
+          // response = await sendResult(data);
+          console.log('data:', data)
+          if (tmp) {
+            response = false
+            timer.reset(10000);
+          }
         }
       })
       .catch((e) => console.log(e));
-    // }
-    // axios
-    //   .post(reqData.url, { headers: reqData.headers })
-    //   .then((res) => console.log(res))
-    //   .catch((e) => console.log(e))
-    // );
-    //   request.post(reqData, async (err, resp, body) => {
-    //     const data = JSON.parse(body);
-    // if (data._text === '') {
-    //   response = false;
-    // } else {
-    //   timer.stop();
-    //   response = await sendResult(err, resp, data);
-    //   console.log('res: ', response);
-    //   response = false;
-    //   timer.reset(5000);
-    // }
-    //   })
-    // );
     //After 5 seconds Kay stop recording
     setTimeout(function () {
       rec.stop();
-    }, 5000);
+    }, 3000);
   };
   //Every 10 seconds Kay relistening
   const timer = new Timer(function () {
@@ -71,12 +58,15 @@ const WitAISpeechRecognition = async () => {
       console.log('Listening...');
       startRecording(timer);
     }
-  }, 5000);
+  }, 10000);
   timer.start();
 };
 
 try {
+  //Call to check the position
+  getPosition() // Needs to add another call to this function after "Ready intent"
   // send request for welcoming scenario
+
   WitAISpeechRecognition();
 } catch (error) {
   console.log(error);
