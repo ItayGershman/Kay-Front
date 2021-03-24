@@ -14,7 +14,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import LeftDrawer from './LeftDrawer';
 // import RightDrawer from './RightDrawer';
-import RightDrawer from './RightDrawerTest';
+import RightDrawer from './RightDrawer';
 import { useStoreActions } from 'react-flow-renderer';
 
 const SideDrawer = ({

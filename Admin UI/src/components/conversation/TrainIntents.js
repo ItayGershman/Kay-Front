@@ -12,6 +12,9 @@ const intentsOptions = (intents) => {
 
 const TrainIntents = () => {
   const [isFixed, setIsFixed] = useState(false);
+  const [capturedEntity, setCapturedEntity] = useState(false);
+  const [entities, setEntities] = useState([]);
+  const [selectedEntity, setSelectedEntity] = useState('');
   const { allIntents } = useSelector((state) => state.intent);
 
   const { handleSubmit, control, reset } = useForm({
@@ -62,17 +65,49 @@ const TrainIntents = () => {
         <Controller
           control={control}
           name='utterance'
-          render={({ onChange, value, name }) => {
+          render={({ onChange }) => {
             return (
-              <TextField
-                label='Utterance'
-                variant='outlined'
-                placeholder='My name is John'
-                onChange={(e) => {
-                  onChange(e.target.value);
-                }}
-                defaultValue=''
-              />
+              <div>
+                <TextField
+                  label='Utterance'
+                  variant='outlined'
+                  placeholder='My name is John'
+                  onChange={(e) => {
+                    console.log(e.target.value.length);
+                    if (e.target.value[e.target.value.length - 1] === '{') {
+                      setCapturedEntity(true);
+                    }
+                    if (e.target.value[e.target.value.length - 1] === '}') {
+                      setCapturedEntity(false);
+                      //set new entity
+                    }
+                    onChange(e.target.value + selectedEntity);
+                  }}
+                  defaultValue=''
+                />
+                {/* <select
+                  hidden={!capturedEntity}
+                  type='dropdown'
+                  onClick={setSelectedEntity}
+                >
+                  <option value='1'>1</option>
+                  <option value='2'>2</option>
+                </select> */}
+                {/* <div
+                  style={
+                    capturedEntity ? { display: 'block' } : { display: 'none' }
+                  }
+                >
+                  <Select
+                    options={intentsOptions(allIntents)}
+                    menuPosition={'fixed'}
+                    onChange={(value) => {
+                      setSelectedEntity(value);
+                      onChange(value);
+                    }}
+                  />
+                </div> */}
+              </div>
             );
           }}
         />
