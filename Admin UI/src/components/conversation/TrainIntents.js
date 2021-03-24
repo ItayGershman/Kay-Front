@@ -6,6 +6,15 @@ import { useSelector } from 'react-redux';
 import Select from 'react-select';
 import axios from 'axios';
 
+const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
+    const config = {
+      headers: {
+        Accept: 'application/vnd.wit.20160202+json',
+        Authorization: `Bearer ${witToken}`,
+        'Content-Type': 'audio/wav',
+      },
+    };
+
 const intentsOptions = (intents) => {
   return intents.map((intent) => ({ value: intent.name, label: intent.name }));
 };
@@ -20,9 +29,15 @@ const TrainIntents = () => {
   const { handleSubmit, control, reset } = useForm({
     defaultValues: { intent: '', utterance: '' },
   });
-  const onSubmit = (values, e) => {
+  const onSubmit = async (values, e) => {
     console.log(values);
-    //send result to wit
+    const data = {
+      text:values.utterance,
+      intent:values.intent.value,
+      entities:[],
+      traits:[]
+    }
+    const res = await axios.post(`https://api.wit.ai/utterances`,[data],config)
     e.target.reset();
   };
 

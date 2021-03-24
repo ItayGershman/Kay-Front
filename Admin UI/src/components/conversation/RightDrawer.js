@@ -161,7 +161,6 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
     remove: speakRemove,
   } = useFieldArray({ control, name: 'speak' });
 
-  // const watchFood = watch('food.name');
   const onSubmit = (data) => {
     const keys = Object.keys(data);
     let newNode = { name: title, intent: '', entities: [], speak: [] };
@@ -176,7 +175,7 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
-    if (!isExist) dispatch(createIntent(newNode, isExist));
+    dispatch(createIntent(newNode, isExist));
   };
 
   useEffect(() => {

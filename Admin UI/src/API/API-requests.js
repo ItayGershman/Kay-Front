@@ -18,6 +18,7 @@ class API {
 
   //Intent
   static createIntent(scenarioConnection, intentName, outputTextIntent) {
+    console.log('create intent')
     const req = { scenarioConnection, intentName, outputTextIntent };
     return axios.post(`/routes/intent`, req);
   }

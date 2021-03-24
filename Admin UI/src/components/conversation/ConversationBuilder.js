@@ -153,7 +153,7 @@ const CustomNodeFlow = () => {
       const flow = reactflowInstance.toObject();
       const { scenarioConfigName } = scenarioSelector.currentScenario;
       console.log(flow.elements);
-      // dispatch(updateConfiguration(scenarioConfigName, flow.elements));
+      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
 
