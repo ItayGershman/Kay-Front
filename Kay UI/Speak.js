@@ -50,8 +50,12 @@ const sendResult = async (data, timer) => {
       }, 12000)
     }
 
-    if (intent === 'wit_ready'){
-      getPosition()
+    if (intent === 'wit_ready') {
+      const tmpPosition = async () => {
+        const returnValue = await getPosition()
+        return returnValue
+      }
+      console.log('tmpPosition:', tmpPosition())
     }
     return true;
   } else {
