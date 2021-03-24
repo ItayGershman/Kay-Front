@@ -2,6 +2,8 @@ const gTTS = require('gtts');
 const axios = require('axios');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const { getLaser } = require('./Laser')
+const { getPosition } = require('./Position')
 
 const speak = (text, timer) => {
   console.log(text);
@@ -25,6 +27,7 @@ const sendResult = async (data, timer) => {
     intent = intents[0].name;
   } else return false;
   console.log('intent:', intent);
+
   //Need to send the intent to the server and get a response from the DB
   // const getResponse = await URL(intent)
   //check which scenario Kay is found
@@ -41,6 +44,15 @@ const sendResult = async (data, timer) => {
     const randomElement =
       outputOptions[Math.floor(Math.random() * outputOptions.length)];
     await speak(randomElement.speak, timer);
+    if (intent === 'wit_consent') {
+      setTimeout(() => {
+        getLaser(60, 20)
+      }, 12000)
+    }
+
+    if (intent === 'wit_ready'){
+      getPosition()
+    }
     return true;
   } else {
     await speak('Fallback', timer);

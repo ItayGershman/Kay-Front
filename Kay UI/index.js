@@ -3,8 +3,6 @@ const rec = require('node-mic-record');
 const axios = require('axios');
 const { sendResult } = require('./Speak.js');
 const { Timer } = require('./Timer');
-const { getPosition } = require('./Position')
-const { getLaser } = require('./Laser')
 
 const witToken = process.env.WIT_ACCESS_TOKEN;
 
@@ -63,14 +61,8 @@ const WitAISpeechRecognition = async () => {
   timer.start();
 };
 
+
 try {
-
-  getLaser(50,10)
-
-  //Call to check the position
-  getPosition() // Needs to add another call to this function after "Ready intent"
-  // send request for welcoming scenario
-
   WitAISpeechRecognition();
 } catch (error) {
   console.log(error);
