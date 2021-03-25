@@ -21,7 +21,8 @@ const speak = (text, timer) => {
 const sendResult = async (data, timer) => {
   let scenario = 'Welcoming'
   // Get Utterances from DB 
-  let { intents } = data;
+  let { intents, entities } = data;
+  console.log('entitites:', entities[Object.keys(entities)[0]][0].value)
   let intent;
   if (intents.length > 0) {
     intent = intents[0].name;
