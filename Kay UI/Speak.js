@@ -27,7 +27,7 @@ const sendResult = async (data, timer) => {
     intent = intents[0].name;
   } else return false;
   console.log('intent:', intent);
-
+  
   //Need to send the intent to the server and get a response from the DB
   // const getResponse = await URL(intent)
   //check which scenario Kay is found
