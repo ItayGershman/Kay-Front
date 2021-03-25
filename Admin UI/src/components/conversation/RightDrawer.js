@@ -4,9 +4,11 @@ import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { makeStyles } from '@material-ui/core/styles';
-import { createIntent } from '../../redux/actions/intentActions';
+import { createIntent, updateIntent } from '../../redux/actions/intentActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm, useWatch, useFieldArray, Controller } from 'react-hook-form';
+import Select from 'react-select';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -69,7 +71,6 @@ const setTextField = ({
   isDisabled,
   isMultiline,
 }) => {
-  console.log(isDisabled);
   return (
     <Controller
       control={control}
@@ -88,6 +89,59 @@ const setTextField = ({
             }}
             defaultValue={value}
           />
+        );
+      }}
+    />
+  );
+};
+
+const SpeakTextField = ({
+  control,
+  name,
+  label,
+  defaultValue,
+  isDisabled,
+  isMultiline,
+  setValue,
+  entitiesOptions,
+}) => {
+  const [capturedEntity, setCapturedEntity] = useState(0);
+  return (
+    <Controller
+      control={control}
+      name={name}
+      defaultValue={defaultValue}
+      render={({ onChange, value, name }) => {
+        return (
+          <div>
+            <TextField
+              style={{
+                height: 'fit-content',
+                width: '100%',
+              }}
+              disabled={isDisabled}
+              multiline={isMultiline}
+              label={label}
+              variant='outlined'
+              name={name}
+              onChange={(e) => {
+                if (e.target.value[e.target.value.length - 1] === '{') {
+                  setCapturedEntity(1);
+                }
+                if (e.target.value[e.target.value.length - 1] === '}') {
+                  setCapturedEntity(0);
+                }
+                onChange(e.target.value);
+              }}
+              value={value}
+            />
+            {capturedEntity === 1 && (
+              <Select
+                options={entitiesOptions}
+                onChange={(val) => setValue(name, `${value}${val.label}}`)}
+              />
+            )}
+          </div>
         );
       }}
     />
@@ -121,8 +175,9 @@ const RemoveButton = ({ handler, index, classes, title }) => {
   );
 };
 
-const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
+const RightDrawer = ({ node, setElements, drawerState, title }) => {
   const [intent, setIntent] = useState(null);
+  const [entities, setEntities] = useState(null);
   const classes = useStyles();
   const dispatch = useDispatch();
   const { allIntents } = useSelector((state) => state.intent);
@@ -147,7 +202,7 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
       };
     }
   };
-  const { register, control, handleSubmit, watch, reset } = useForm({
+  const { control, handleSubmit, watch, setValue } = useForm({
     defaultValues: setInitialValues(),
   });
   const {
@@ -162,20 +217,25 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
   } = useFieldArray({ control, name: 'speak' });
 
   const onSubmit = (data) => {
+    console.log(node);
+    console.log(`data:${JSON.stringify(data)}`);
     const keys = Object.keys(data);
+    console.log(keys);
     let newNode = { name: title, intent: '', entities: [], speak: [] };
     keys.forEach((key) => (newNode[key] = data[key]));
     newNode.name = title;
     if (newNode['intent'] === '') newNode['intent'] = intent;
-    setElements((prevState) => {
-      const elem = prevState.find((el) => el.id === node.id);
-      elem.data = { ...elem.data, ...newNode };
-      return prevState;
-    });
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
-    dispatch(createIntent(newNode, isExist));
+    if (node.data === undefined) {
+      dispatch(createIntent(newNode, isExist));
+    } else dispatch(updateIntent(newNode));
+    setElements((prevState) => {
+      const elem = prevState.find((el) => el.id === node.id);
+      elem.data = { ...elem.data, ...newNode };
+      return [...prevState];
+    });
   };
 
   useEffect(() => {
@@ -188,6 +248,25 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
     speak.forEach((text) => speakAppend({ speak: text }));
     entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
+  useEffect(async () => {
+    //Set entities options
+    const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
+    const { data } = await axios.get(`https://api.wit.ai/entities?v=20200513`, {
+      headers: {
+        Authorization: `Bearer ${witToken}`,
+      },
+    });
+    setEntities(
+      data
+        .filter((entity) => {
+          return !entity.name.startsWith('wit');
+        })
+        .map(({ name }) => ({
+          value: name,
+          label: name,
+        }))
+    );
+  }, []);
 
   return (
     <div>
@@ -244,14 +323,17 @@ const RightDrawer = ({ node, elements, setElements, drawerState, title }) => {
             {speakFields.map((item, index) => {
               return (
                 <div key={item.id} className={classes.input}>
-                  {setTextField({
-                    control,
-                    name: `speak[${index}].speak`,
-                    label: 'Speak',
-                    defaultValue: setInitialValues().speak[index],
-                    isDisabled: false,
-                    isMultiline: true,
-                  })}
+                  <SpeakTextField
+                    control={control}
+                    name={`speak[${index}].speak`}
+                    label={'Speak'}
+                    defaultValue={setInitialValues().speak[index]}
+                    isDisabled={false}
+                    isMultiline={true}
+                    index={index}
+                    setValue={setValue}
+                    entitiesOptions={entities}
+                  />
                   <RemoveButton
                     handler={speakRemove}
                     index={index}

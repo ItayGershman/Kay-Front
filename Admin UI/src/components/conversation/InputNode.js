@@ -65,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default memo(({ data, id }) => {
+  console.log(data);
   const classes = useStyles();
   return (
     <>

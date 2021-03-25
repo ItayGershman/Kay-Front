@@ -96,6 +96,10 @@ const CustomNodeFlow = () => {
     setElements(scenario ? scenario.scenarioConfigData : []);
   }, [scenarioSelector]);
 
+  useEffect(() => {
+    console.log(elements);
+  }, [elements]);
+
   const onElementsRemove = useCallback(
     (elementsToRemove) =>
       setElements((els) => removeElements(elementsToRemove, els)),
@@ -103,6 +107,7 @@ const CustomNodeFlow = () => {
   );
   const onAdd = useCallback(
     (node) => {
+      console.log(node);
       const newNode = handleOnAdd(node);
       setElements((els) => els.concat(newNode));
     },
@@ -175,7 +180,7 @@ const CustomNodeFlow = () => {
       name: 'input',
       title: 'Input Node',
       handler: () => {
-        console.log('onAdd');
+        onAdd();
       },
       icon: <WidgetsIcon />,
       isDraggable: true,
@@ -412,7 +417,7 @@ const CustomNodeFlow = () => {
           />
         </Grid>
       </Grid>
-      <TrainDialog openDialog={trainDialog} handleClickClose={setTrainDialog}/>
+      <TrainDialog openDialog={trainDialog} handleClickClose={setTrainDialog} />
     </div>
   );
 };

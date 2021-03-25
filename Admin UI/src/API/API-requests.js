@@ -17,10 +17,23 @@ class API {
   }
 
   //Intent
-  static createIntent(scenarioConnection, intentName, outputTextIntent) {
-    console.log('create intent')
-    const req = { scenarioConnection, intentName, outputTextIntent };
+  static createIntent(
+    scenarioConnection,
+    intentName,
+    outputTextIntent,
+    entities
+  ) {
+    const req = { scenarioConnection, intentName, outputTextIntent, entities };
     return axios.post(`/routes/intent`, req);
+  }
+  static updateIntent(
+    scenarioConnection,
+    intentName,
+    outputTextIntent,
+    entities
+  ) {
+    const req = { scenarioConnection, intentName, outputTextIntent, entities };
+    return axios.put(`/routes/intent/${scenarioConnection}/${intentName}`, req);
   }
 
   //Scenario

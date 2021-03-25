@@ -36,15 +36,16 @@ function intentReducer(state = initialState, action) {
       };
     case INTENTS_GET_FAIL:
       return { loading: false, error: action.payload };
-      
+
     case INTENT_GET_REQUEST:
       return { loading: true };
     case INTENT_GET_SUCCESS:
       return {
         loading: false,
+        allIntents: state.allIntents,
       };
     case INTENT_GET_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, error: action.payload, ...state };
 
     case INTENT_CREATE_REQUEST:
       return { loading: true };
@@ -70,6 +71,7 @@ function intentReducer(state = initialState, action) {
     case INTENT_UPDATE_SUCCESS:
       return {
         loading: false,
+        allIntents: state.allIntents,
       };
     case INTENT_UPDATE_FAIL:
       return { loading: false, error: action.payload };
