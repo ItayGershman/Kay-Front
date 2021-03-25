@@ -22,13 +22,11 @@ const sendResult = async (data, timer) => {
   let scenario = 'Welcoming'
   // Get Utterances from DB 
   let { intents, entities } = data;
-  // console.log('entitites:', entities[Object.keys(entities)[0]][0].value)
-  let entity = entities[Object.keys(entities)[0]][0].value
 
   let intent;
   if (intents.length > 0) {
     intent = intents[0].name;
-  } else return false;
+  }
   console.log('intent:', intent);
 
   //Need to send the intent to the server and get a response from the DB
@@ -47,7 +45,7 @@ const sendResult = async (data, timer) => {
     const outputOptions = intentObj.outputTextIntent;
     const randomElement = outputOptions[Math.floor(Math.random() * outputOptions.length)];
 
-
+    // Add entity to the text to speak
     let textToSpeak = ""
     for (let key in entities) {
       if (entities.hasOwnProperty(key)) {
