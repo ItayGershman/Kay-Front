@@ -70,7 +70,7 @@ const sendResult = async (data, timer) => {
     }
     return true;
   } else {
-    await speak('Fallback', timer);
+    await speak('Sorry, I didnt understand can you please say that again?', timer);
     return true;
   }
 };
