@@ -7,6 +7,7 @@ import ScenarioDialog from './ScenarioDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllScenarios } from '../../redux/actions/conversationActions';
 import { getAllIntents } from '../../redux/actions/intentActions';
+import AppLoader from '../Loader';
 
 const welcomingImage =
   'https://image.shutterstock.com/image-vector/welcome-sign-colour-confetti-vector-260nw-313934588.jpg';
@@ -67,7 +68,7 @@ const Dashboard = () => {
         </div>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <AppLoader />
       ) : (
         <div
           style={{
