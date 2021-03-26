@@ -7,18 +7,17 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { Redirect } from 'react-router';
 import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles({
   root: {
-    maxWidth: 345,
+    width: 300,
     padding: 10,
     backgroundColor: '#c5cae9',
     display:'flex',
     flexDirection:'column',
     justifyContent:'space-between',
-    maxHeight:360,
+    height:360,
   },
   media: {
     height: 180,
@@ -52,7 +51,7 @@ export default function ScenarioCard({ title, image, description, id }) {
       </CardActionArea>
       <CardActions>
         <Button color='primary' variant='contained' onClick={routeChange}>
-          Add Action To This Scenario
+          Edit This Scenario
         </Button>
       </CardActions>
     </Card>
