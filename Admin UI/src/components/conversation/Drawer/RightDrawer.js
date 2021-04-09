@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   createIntent,
   updateIntent,
 } from '../../../redux/actions/intentActions';
 import { useDispatch, useSelector } from 'react-redux';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import Select from 'react-select';
-import axios from 'axios';
+import { useForm, useFieldArray } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
@@ -22,7 +16,9 @@ import {
   IntentField,
   SpeakTextField,
   setInitialValues,
+  getWitEntities,
 } from './Drawer-utils';
+import CustomizedAccordion from './CustomAccordion';
 
 const RightDrawer = ({ node, setElements, drawerState, title }) => {
   const [intent, setIntent] = useState(null);
@@ -32,14 +28,14 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
   const { allIntents } = useSelector((state) => state.intent);
 
   const notify = (text) =>
-  toast.info('🦄 Submitted!', {
-    position: "bottom-left",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
+    toast.info('🦄 Submitted!', {
+      position: 'bottom-left',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
     });
   const { control, handleSubmit, setValue } = useForm({
     defaultValues: setInitialValues(node),
@@ -56,6 +52,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
   } = useFieldArray({ control, name: 'speak' });
 
   const onSubmit = (data) => {
+    //set new node
     const keys = Object.keys(data);
     let newNode = { name: title, intent: '', entities: [], speak: [] };
     keys.forEach((key) => (newNode[key] = data[key]));
@@ -86,23 +83,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
     entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
   useEffect(async () => {
-    //Set entities options
-    const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
-    const { data } = await axios.get(`https://api.wit.ai/entities?v=20200513`, {
-      headers: {
-        Authorization: `Bearer ${witToken}`,
-      },
-    });
-    setEntities(
-      data
-        .filter((entity) => {
-          return !entity.name.startsWith('wit');
-        })
-        .map(({ name }) => ({
-          value: name,
-          label: name,
-        }))
-    );
+    setEntities(getWitEntities());
   }, []);
 
   return (
@@ -195,6 +176,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
           </Button>
         </form>
       )}
+      <CustomizedAccordion isDrawerOpen={drawerState} />
       <ToastContainer
         position='bottom-left'
         autoClose={5000}

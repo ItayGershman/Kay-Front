@@ -7,23 +7,19 @@ import Select from 'react-select';
 import axios from 'axios';
 
 const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
-    const config = {
-      headers: {
-        Accept: 'application/vnd.wit.20160202+json',
-        Authorization: `Bearer ${witToken}`,
-        'Content-Type': 'audio/wav',
-      },
-    };
+const config = {
+  headers: {
+    Accept: 'application/vnd.wit.20160202+json',
+    Authorization: `Bearer ${witToken}`,
+    'Content-Type': 'audio/wav',
+  },
+};
 
 const intentsOptions = (intents) => {
   return intents.map((intent) => ({ value: intent.name, label: intent.name }));
 };
 
 const TrainIntents = () => {
-  const [isFixed, setIsFixed] = useState(false);
-  const [capturedEntity, setCapturedEntity] = useState(false);
-  const [entities, setEntities] = useState([]);
-  const [selectedEntity, setSelectedEntity] = useState('');
   const { allIntents } = useSelector((state) => state.intent);
 
   const { handleSubmit, control, reset } = useForm({
@@ -32,12 +28,16 @@ const TrainIntents = () => {
   const onSubmit = async (values, e) => {
     console.log(values);
     const data = {
-      text:values.utterance,
-      intent:values.intent.value,
-      entities:[],
-      traits:[]
-    }
-    const res = await axios.post(`https://api.wit.ai/utterances`,[data],config)
+      text: values.utterance,
+      intent: values.intent.value,
+      entities: [],
+      traits: [],
+    };
+    const res = await axios.post(
+      `https://api.wit.ai/utterances`,
+      [data],
+      config
+    );
     e.target.reset();
   };
 
@@ -49,10 +49,10 @@ const TrainIntents = () => {
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'column',
-        height: 300,
+        height: 200,
       }}
     >
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
         <Controller
           control={control}
           name='intent'
@@ -66,10 +66,10 @@ const TrainIntents = () => {
                 }}
               >
                 <Select
+                  maxMenuHeight={170}
                   options={intentsOptions(allIntents)}
-                  menuPosition={'fixed'}
+                  // menuPosition={'fixed'}
                   onChange={(value) => {
-                    setIsFixed((prevState) => !prevState);
                     onChange(value);
                   }}
                 />
@@ -84,44 +84,17 @@ const TrainIntents = () => {
             return (
               <div>
                 <TextField
-                  label='Utterance'
+                  // label='Utterance'
                   variant='outlined'
-                  placeholder='My name is John'
+                  multiline
+                  rowsMax={3}
+                  placeholder='Utterance: My name is John'
+                  fullWidth
                   onChange={(e) => {
-                    console.log(e.target.value.length);
-                    if (e.target.value[e.target.value.length - 1] === '{') {
-                      setCapturedEntity(true);
-                    }
-                    if (e.target.value[e.target.value.length - 1] === '}') {
-                      setCapturedEntity(false);
-                      //set new entity
-                    }
-                    onChange(e.target.value + selectedEntity);
+                    onChange(e.target.value);
                   }}
                   defaultValue=''
                 />
-                {/* <select
-                  hidden={!capturedEntity}
-                  type='dropdown'
-                  onClick={setSelectedEntity}
-                >
-                  <option value='1'>1</option>
-                  <option value='2'>2</option>
-                </select> */}
-                {/* <div
-                  style={
-                    capturedEntity ? { display: 'block' } : { display: 'none' }
-                  }
-                >
-                  <Select
-                    options={intentsOptions(allIntents)}
-                    menuPosition={'fixed'}
-                    onChange={(value) => {
-                      setSelectedEntity(value);
-                      onChange(value);
-                    }}
-                  />
-                </div> */}
               </div>
             );
           }}

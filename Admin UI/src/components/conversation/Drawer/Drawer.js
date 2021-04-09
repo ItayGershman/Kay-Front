@@ -78,7 +78,7 @@ const SideDrawer = ({
       )}
       <Divider />
       <List>
-        {buttons.map((button, index) => (
+        {buttons?.map((button, index) => (
           <ListItem
             button
             key={index}

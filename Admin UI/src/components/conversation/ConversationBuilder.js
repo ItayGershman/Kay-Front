@@ -295,7 +295,7 @@ const CustomNodeFlow = () => {
             drawerClose={classes.drawerRightClose}
             handleDrawerClose={() => onDrawerClose('right')}
             handleDrawerOpen={() => onDrawerOpen('right')}
-            buttons={rightButtons}
+            // buttons={rightButtons}
             classes={classes}
             defaultZoom={1}
             node={selectedNode}

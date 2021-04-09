@@ -6,6 +6,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
+import axios from 'axios'
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -192,4 +193,21 @@ export const RemoveButton = ({ handler, index, classes, title }) => {
       {title}
     </Button>
   );
+};
+
+export const getWitEntities = async () => {
+  const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
+  const { data } = await axios.get(`https://api.wit.ai/entities?v=20200513`, {
+    headers: {
+      Authorization: `Bearer ${witToken}`,
+    },
+  });
+  return data
+    .filter((entity) => {
+      return !entity.name.startsWith('wit');
+    })
+    .map(({ name }) => ({
+      value: name,
+      label: name,
+    }));
 };
