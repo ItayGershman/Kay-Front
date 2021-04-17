@@ -6,7 +6,15 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
-import axios from 'axios'
+import axios from 'axios';
+import 'date-fns';
+import Grid from '@material-ui/core/Grid';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -49,6 +57,72 @@ export const setInitialValues = (node) => {
       speak: [],
     };
   }
+};
+
+const LaserAction = () => {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        marginTop: 20,
+      }}
+    >
+      <TextField
+        style={{ marginBottom: 10 }}
+        multiline={false}
+        placeholder='32'
+        label='Position x'
+        variant='outlined'
+        onChange={(e) => {
+          setPosition((prevState) => ({ ...prevState, x: e.target.value }));
+        }}
+        defaultValue={position.x}
+      />
+      <TextField
+        multiline={false}
+        placeholder='12'
+        label='Position y'
+        variant='outlined'
+        onChange={(e) => {
+          setPosition((prevState) => ({ ...prevState, y: e.target.value }));
+        }}
+        value={position.y}
+      />
+    </div>
+  );
+};
+
+const CalendarAction = () => {
+  const [selectedDate, setSelectedDate] = useState(
+    new Date('2014-08-18T21:11:54')
+  );
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+  return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <Grid container justify='space-around'>
+        <KeyboardDatePicker
+          disableToolbar
+          variant='inline'
+          format='MM/dd/yyyy'
+          margin='normal'
+          id='date-picker-inline'
+          label='Date picker inline'
+          value={selectedDate}
+          onChange={handleDateChange}
+          KeyboardButtonProps={{
+            'aria-label': 'change date',
+          }}
+          autoOk
+        />
+      </Grid>
+    </MuiPickersUtilsProvider>
+  );
 };
 
 export const IntentField = ({
@@ -161,6 +235,41 @@ export const SpeakTextField = ({
                 onChange={(val) => setValue(name, `${value}${val.label}}`)}
               />
             )}
+          </div>
+        );
+      }}
+    />
+  );
+};
+
+export const ActionField = ({ control, name, label, options }) => {
+  const [action, setAction] = useState(null);
+  return (
+    <Controller
+      control={control}
+      name={name}
+      render={({ onChange }) => {
+        return (
+          <div>
+            <Select
+              styles={{
+                container: (base, state) => ({
+                  ...base,
+                  zIndex: '999',
+                }),
+              }}
+              maxMenuHeight={170}
+              options={options}
+              label={label}
+              onChange={(value) => {
+                onChange(value);
+                setAction(value);
+                console.log(value);
+              }}
+            />
+            {action && action.label === 'Laser' && <LaserAction />}
+            {action && action.label === 'Calendar' && <CalendarAction />}
+            {action && action.label === 'Video' && <LaserAction />}
           </div>
         );
       }}

@@ -3,10 +3,10 @@ import List from '@material-ui/core/List';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
-import Divider from '@material-ui/core/Divider';
+
 const LeftDrawer = ({ actions, utils }) => {
   return (
-    <div>
+    <>
       <List>
         {actions &&
           actions.map((action, index) => (
@@ -22,8 +22,8 @@ const LeftDrawer = ({ actions, utils }) => {
             </ListItem>
           ))}
       </List>
-      <Divider />
-      <List>
+      {/* <Divider /> */}
+      {/* <List>
         {utils &&
           utils.map((util, index) => (
             <ListItem
@@ -37,8 +37,8 @@ const LeftDrawer = ({ actions, utils }) => {
               <ListItemText primary={util.title} />
             </ListItem>
           ))}
-      </List>
-    </div>
+      </List> */}
+    </>
   );
 };
 export default LeftDrawer;

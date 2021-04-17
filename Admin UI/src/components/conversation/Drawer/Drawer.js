@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -64,19 +64,16 @@ const SideDrawer = ({
           </IconButton>
         )}
       </div>
-      <Divider />
-      {side === 'left' ? (
-        <LeftDrawer actions={actions} utils={utils} />
-      ) : (
+      {side === 'right' && (
         <RightDrawer
-          node={node}
-          elements={elements}
-          setElements={setElements}
-          drawerState={open}
-          title={title}
-        />
-      )}
-      <Divider />
+        node={node}
+        elements={elements}
+        setElements={setElements}
+        drawerState={open}
+        title={title}
+      />
+      ) }
+      {/* <Divider /> */}
       <List>
         {buttons?.map((button, index) => (
           <ListItem
@@ -96,7 +93,6 @@ const SideDrawer = ({
           </ListItem>
         ))}
       </List>
-      <Divider />
     </Drawer>
   );
 };

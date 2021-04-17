@@ -17,6 +17,7 @@ import {
   SpeakTextField,
   setInitialValues,
   getWitEntities,
+  ActionField,
 } from './Drawer-utils';
 import CustomizedAccordion from './CustomAccordion';
 
@@ -27,7 +28,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
   const dispatch = useDispatch();
   const { allIntents } = useSelector((state) => state.intent);
 
-  const notify = (text) =>
+  const notify = () =>
     toast.info('🦄 Submitted!', {
       position: 'bottom-left',
       autoClose: 5000,
@@ -166,6 +167,19 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
               classes={classes}
             />
           </div>
+          <div className={classes.input}>
+            <ActionField
+              control={control}
+              name={'action'}
+              label={'Choose Action'}
+              options={[
+                { value: '', label: 'Select Action...' },
+                { value: 'laser', label: 'Laser' },
+                { value: 'video', label: 'Video' },
+                { value: 'calendar', label: 'Calendar' },
+              ]}
+            />
+          </div>
           <Button
             variant='contained'
             color='primary'
@@ -174,6 +188,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
           >
             Submit
           </Button>
+          
         </form>
       )}
       <CustomizedAccordion isDrawerOpen={drawerState} />
