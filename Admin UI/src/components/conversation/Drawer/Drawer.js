@@ -64,16 +64,18 @@ const SideDrawer = ({
           </IconButton>
         )}
       </div>
+      <Divider />
       {side === 'right' && (
         <RightDrawer
-        node={node}
-        elements={elements}
-        setElements={setElements}
-        drawerState={open}
-        title={title}
-      />
-      ) }
-      {/* <Divider /> */}
+          node={node}
+          elements={elements}
+          setElements={setElements}
+          drawerState={open}
+          title={title}
+          handleDrawerOpen={handleDrawerOpen}
+        />
+      )}
+
       <List>
         {buttons?.map((button, index) => (
           <ListItem

@@ -34,7 +34,7 @@ export default function MenuAppBar() {
       <AppBar position='static'>
         <Toolbar className={classes.toolbar}>
           <div className={classes.logo}>
-            <Link to='/' className={classes.link}>
+            <Link to='/dashboard' className={classes.link}>
               <Typography variant='h6'>Logo</Typography>
             </Link>
           </div>

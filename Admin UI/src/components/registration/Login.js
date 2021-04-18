@@ -7,13 +7,15 @@ import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import useStyles from './RegistrationStyle';
 import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { signin } from '../../redux/actions/userActions';
 
 export default function Login() {
   const classes = useStyles();
   const { register, handleSubmit, watch, errors } = useForm();
   const dispatch = useDispatch();
+  const userSelector = useSelector((state) => state.userSignin);
+  console.log(userSelector);
   const onSubmit = (data) => dispatch(signin(data));
 
   return (
@@ -42,6 +44,9 @@ export default function Login() {
         autoComplete='current-password'
         inputRef={register({ required: true })}
       />
+      {userSelector.error && (
+        <div style={{ color: 'red' }}>Wrong username or password</div>
+      )}
       <FormControlLabel
         control={<Checkbox value='remember' color='primary' />}
         label='Remember me'
@@ -55,6 +60,7 @@ export default function Login() {
       >
         Login
       </Button>
+
       <Grid container>
         <Grid item xs>
           <Link href='#' variant='body2'>

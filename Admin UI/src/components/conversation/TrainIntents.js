@@ -26,7 +26,6 @@ const TrainIntents = () => {
     defaultValues: { intent: '', utterance: '' },
   });
   const onSubmit = async (values, e) => {
-    console.log(values);
     const data = {
       text: values.utterance,
       intent: values.intent.value,
@@ -60,15 +59,14 @@ const TrainIntents = () => {
             return (
               <div
                 style={{
-                  width: '230px',
+                  width: '300px',
                   marginBottom: '10px',
-                  marginRight: '30px',
+                  // marginRight: '30px',
                 }}
               >
                 <Select
                   maxMenuHeight={170}
                   options={intentsOptions(allIntents)}
-                  // menuPosition={'fixed'}
                   onChange={(value) => {
                     onChange(value);
                   }}
@@ -84,7 +82,6 @@ const TrainIntents = () => {
             return (
               <div>
                 <TextField
-                  // label='Utterance'
                   variant='outlined'
                   multiline
                   rowsMax={3}

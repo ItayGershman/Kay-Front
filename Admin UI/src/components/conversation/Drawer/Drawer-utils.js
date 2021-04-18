@@ -29,6 +29,7 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     padding: '5px',
     width: '100%',
+    marginBottom:5
   },
   button: {
     marginTop: '10px',
@@ -258,6 +259,7 @@ export const ActionField = ({ control, name, label, options }) => {
                   zIndex: '999',
                 }),
               }}
+              placeholder='Action: Laser'
               maxMenuHeight={170}
               options={options}
               label={label}
@@ -295,11 +297,10 @@ export const RemoveButton = ({ handler, index, classes, title }) => {
     <Button
       onClick={() => handler(index)}
       variant='contained'
-      color='secondary'
+      style={{ backgroundColor: 'red', color: 'white', marginBottom: 10 }}
       className={classes.button}
-      startIcon={<RemoveCircleIcon />}
     >
-      {title}
+      <RemoveCircleIcon />
     </Button>
   );
 };

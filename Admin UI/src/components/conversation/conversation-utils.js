@@ -23,16 +23,6 @@ const createInputNode = (id, position, elements) => {
   };
 };
 
-const createOutputNode = (id, position, sourcePosition, targetPosition) => {
-  return {
-    id,
-    type: 'selectorOutputNode',
-
-    position,
-    sourcePosition,
-  };
-};
-
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
 
@@ -84,7 +74,6 @@ export const connectionLineStyle = { stroke: '#fff' };
 export const snapGrid = [20, 20];
 export const nodeTypes = {
   selectorInputNode: InputNode,
-  selectorOutputNode: OutputNode,
 };
 
 export const handleOnDrop = (
@@ -101,7 +90,6 @@ export const handleOnDrop = (
     y: event.clientY - reactFlowBounds.top,
   });
   if (type === 'input') return createInputNode(getNodeId(), position, elements);
-  if (type === 'output') return createOutputNode(getNodeId(), position);
   if (type === 'default')
     return { id: getNodeId(), type, position, data: { label: `${type} node` } };
   return {};
@@ -113,9 +101,7 @@ export const handleOnAdd = (node) => {
     y: Math.random() * window.innerHeight,
   };
   let id = getNodeId();
-  console.log(position);
   if (node === 'input') return createInputNode(id, position);
-  if (node === 'output') return createOutputNode(id, position, 'Right');
 };
 
 export const handleDrawer = (

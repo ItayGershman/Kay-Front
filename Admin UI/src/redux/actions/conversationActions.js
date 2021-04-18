@@ -101,10 +101,10 @@ const createScenario = ({ name, description, image }) => async (dispatch) => {
     dispatch({ type: SCENARIO_CREATE_FAIL, payload: error });
   }
 };
-const updateScenario = (scenarioName) => async (dispatch) => {
+const updateScenario = (scenarioName,scenario) => async (dispatch) => {
   dispatch({ type: SCENARIO_UPDATE_REQUEST });
   try {
-    const res = await API.updateScenario(scenarioName);
+    const res = await API.updateScenario(scenarioName,scenario);
     dispatch({ type: SCENARIO_UPDATE_SUCCESS, payload: res.data });
   } catch (error) {
     dispatch({ type: SCENARIO_UPDATE_FAIL, payload: error });

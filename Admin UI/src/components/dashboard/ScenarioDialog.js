@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -10,24 +10,45 @@ import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import LinkIcon from '@material-ui/icons/Link';
 import { useDispatch } from 'react-redux';
-import { createScenario } from '../../redux/actions/conversationActions';
+import {
+  createScenario,
+  updateScenario,
+} from '../../redux/actions/conversationActions';
 
-const ScenarioDialog = ({ openDialog, handleClickClose, setScenarios }) => {
+const ScenarioDialog = ({
+  dialogStatus,
+  handleClickClose,
+  setScenarios,
+  content,
+}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
+
   const handleSubmit = () => {
     const scenario = { name, description, image };
+    if (Object.keys(content).length === 0) dispatch(createScenario(scenario));
+    else dispatch(updateScenario(content.title, scenario));
     handleClickClose();
-    dispatch(createScenario(scenario));
     setScenarios((prevState) => [...prevState, scenario]);
-    //dispatch action for new scenario
   };
+  useEffect(() => {
+    console.log(content);
+    if (Object.keys(content).length !== 0) {
+      setName(content.title);
+      setDescription(content.description);
+      setImage(content.image);
+    } else {
+      setName('');
+      setDescription('');
+      setImage('');
+    }
+  }, [content]);
   return (
     <Dialog
       fullWidth
-      open={openDialog}
+      open={dialogStatus}
       onClose={handleClickClose}
       aria-labelledby='form-dialog-title'
     >
@@ -36,13 +57,13 @@ const ScenarioDialog = ({ openDialog, handleClickClose, setScenarios }) => {
       </DialogTitle>
       <DialogContent dividers>
         <TextField
-          // margin='dense'
           id='title'
           label='Scenario Title'
           type='title'
           variant='outlined'
           fullWidth
           onChange={(e) => setName(e.target.value)}
+          value={name}
         />
         <TextField
           style={{ marginTop: '20px' }}
@@ -54,6 +75,7 @@ const ScenarioDialog = ({ openDialog, handleClickClose, setScenarios }) => {
           rows={4}
           fullWidth
           onChange={(e) => setDescription(e.target.value)}
+          value={description}
         />
         <input
           accept='image/*'
@@ -94,6 +116,7 @@ const ScenarioDialog = ({ openDialog, handleClickClose, setScenarios }) => {
             type='text'
             variant='outlined'
             onChange={(e) => setImage(e.target.value)}
+            value={content.image}
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start'>

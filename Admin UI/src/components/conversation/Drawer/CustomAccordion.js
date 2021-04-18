@@ -49,7 +49,8 @@ const AccordionDetails = withStyles((theme) => ({
   },
 }))(MuiAccordionDetails);
 
-const CustomizedAccordion = ({isDrawerOpen}) => {
+const CustomizedAccordion = ({isDrawerOpen,setDrawer}) => {
+  console.log(isDrawerOpen)
   const [expanded, setExpanded] = useState('');
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -62,6 +63,7 @@ const CustomizedAccordion = ({isDrawerOpen}) => {
         square
         expanded={expanded === 'panel1'}
         onChange={handleChange('panel1')}
+        onClick={setDrawer}
       >
         <AccordionSummary
           aria-controls='panel1d-content'
@@ -76,7 +78,7 @@ const CustomizedAccordion = ({isDrawerOpen}) => {
           >
             <AccountCircleIcon style={{color:'#757575'}}  />
             {isDrawerOpen && (
-              <Typography style={{ marginLeft: '30px' }}>Intents</Typography>
+              <Typography style={{ marginLeft: '30px' }}>Train Kay's Intents</Typography>
             )}
           </div>
         </AccordionSummary>

@@ -21,7 +21,13 @@ import {
 } from './Drawer-utils';
 import CustomizedAccordion from './CustomAccordion';
 
-const RightDrawer = ({ node, setElements, drawerState, title }) => {
+const RightDrawer = ({
+  node,
+  setElements,
+  drawerState,
+  title,
+  handleDrawerOpen,
+}) => {
   const [intent, setIntent] = useState(null);
   const [entities, setEntities] = useState(null);
   const classes = useStyles();
@@ -113,7 +119,15 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
           <div className={classes.input}>
             {entitiesFields.map((item, index) => {
               return (
-                <div key={item.id} className={classes.input}>
+                <div
+                  key={item.id}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 10,
+                  }}
+                >
                   <ControlledTextFields
                     control={control}
                     name={`entities[${index}].entity`}
@@ -125,7 +139,6 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
                   <RemoveButton
                     handler={entitiesRemove}
                     index={index}
-                    title={'Remove Entity'}
                     classes={classes}
                   />
                 </div>
@@ -140,14 +153,22 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
           <div className={classes.input}>
             {speakFields.map((item, index) => {
               return (
-                <div key={item.id} className={classes.input}>
+                <div
+                  key={item.id}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginBottom: 10,
+                  }}
+                >
                   <SpeakTextField
                     control={control}
                     name={`speak[${index}].speak`}
                     label={'Speak'}
                     defaultValue={setInitialValues(node).speak[index]}
                     isDisabled={false}
-                    isMultiline={true}
+                    isMultiline
                     index={index}
                     setValue={setValue}
                     entitiesOptions={entities}
@@ -155,7 +176,6 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
                   <RemoveButton
                     handler={speakRemove}
                     index={index}
-                    title={'Remove Speak'}
                     classes={classes}
                   />
                 </div>
@@ -168,12 +188,12 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
             />
           </div>
           <div className={classes.input}>
+            <label>Choose Action</label>
             <ActionField
               control={control}
               name={'action'}
               label={'Choose Action'}
               options={[
-                { value: '', label: 'Select Action...' },
                 { value: 'laser', label: 'Laser' },
                 { value: 'video', label: 'Video' },
                 { value: 'calendar', label: 'Calendar' },
@@ -188,10 +208,13 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
           >
             Submit
           </Button>
-          
         </form>
       )}
-      <CustomizedAccordion isDrawerOpen={drawerState} />
+      {console.log(drawerState)}
+      <CustomizedAccordion
+        isDrawerOpen={drawerState}
+        setDrawer={handleDrawerOpen}
+      />
       <ToastContainer
         position='bottom-left'
         autoClose={5000}
