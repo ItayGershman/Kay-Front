@@ -17,7 +17,7 @@ import {
 
 const ScenarioDialog = ({
   dialogStatus,
-  handleClickClose,
+  handleCloseDialog,
   setScenarios,
   content,
 }) => {
@@ -30,7 +30,7 @@ const ScenarioDialog = ({
     const scenario = { name, description, image };
     if (Object.keys(content).length === 0) dispatch(createScenario(scenario));
     else dispatch(updateScenario(content.title, scenario));
-    handleClickClose();
+    handleCloseDialog();
     setScenarios((prevState) => [...prevState, scenario]);
   };
   useEffect(() => {
@@ -49,7 +49,7 @@ const ScenarioDialog = ({
     <Dialog
       fullWidth
       open={dialogStatus}
-      onClose={handleClickClose}
+      onClose={handleCloseDialog}
       aria-labelledby='form-dialog-title'
     >
       <DialogTitle id='form-dialog-title' onClose={() => {}}>
@@ -130,7 +130,7 @@ const ScenarioDialog = ({
       </DialogContent>
       <DialogActions>
         <Button
-          onClick={handleClickClose}
+          onClick={handleCloseDialog}
           color='secondary'
           variant='contained'
         >

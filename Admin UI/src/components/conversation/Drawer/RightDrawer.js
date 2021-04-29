@@ -194,6 +194,7 @@ const RightDrawer = ({
               name={'action'}
               label={'Choose Action'}
               options={[
+                { value: '', label: '' },
                 { value: 'laser', label: 'Laser' },
                 { value: 'video', label: 'Video' },
                 { value: 'calendar', label: 'Calendar' },

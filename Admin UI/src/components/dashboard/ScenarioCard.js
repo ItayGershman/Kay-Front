@@ -14,7 +14,7 @@ const useStyles = makeStyles({
   root: {
     width: 350,
     padding: 10,
-    backgroundColor: '#c5cae9',
+    backgroundColor: '#ffffff',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',

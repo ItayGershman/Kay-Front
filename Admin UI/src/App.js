@@ -6,6 +6,7 @@ import Registration from './components/registration/Registration';
 import Dashboard from './components/dashboard/Dashboard';
 import History from './components/history/History';
 import ConversationBuilder from './components/conversation/ConversationBuilder';
+import './App.css';
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);

@@ -46,7 +46,6 @@ const Dashboard = () => {
     dispatch(getAllScenarios());
     dispatch(getAllIntents());
   }, []);
-  
   useEffect(() => {
     setDisplayScenarios(scenarioSelector.scenarios ? scenarios : []);
   }, [scenarioSelector]);
@@ -102,6 +101,7 @@ const Dashboard = () => {
             })}
         </div>
       )}
+      {console.log(content)}
       <ScenarioDialog
         dialogStatus={dialogStatus}
         handleCloseDialog={handleCloseDialog}
