@@ -193,8 +193,22 @@ const CustomNodeFlow = () => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
       const { scenarioConfigName } = scenarioSelector.currentScenario;
+
+      // Change nodes name for building strong relations between nodes
+      const mappedElements = {}
+      flow.elements.forEach((element,i)=>{
+        if(element.data){
+          console.log(element.data)
+          mappedElements[element.id] = `${element.data.name}_${element.data.intent}_${i}`
+          element.id = `${element.data.name}_${element.data.intent}_${i}`
+        }
+        else{
+          element.source = mappedElements[element.source]
+          element.target = mappedElements[element.target]
+        }
+      })
       console.log(flow.elements);
-      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
+      // dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
 

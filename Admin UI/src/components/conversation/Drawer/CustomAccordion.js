@@ -50,7 +50,6 @@ const AccordionDetails = withStyles((theme) => ({
 }))(MuiAccordionDetails);
 
 const CustomizedAccordion = ({isDrawerOpen,setDrawer}) => {
-  console.log(isDrawerOpen)
   const [expanded, setExpanded] = useState('');
 
   const handleChange = (panel) => (event, newExpanded) => {

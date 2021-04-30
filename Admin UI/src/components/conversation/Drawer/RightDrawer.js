@@ -211,7 +211,6 @@ const RightDrawer = ({
           </Button>
         </form>
       )}
-      {console.log(drawerState)}
       <CustomizedAccordion
         isDrawerOpen={drawerState}
         setDrawer={handleDrawerOpen}
