@@ -208,7 +208,7 @@ const CustomNodeFlow = () => {
         }
       })
       console.log(flow.elements);
-      // dispatch(updateConfiguration(scenarioConfigName, flow.elements));
+      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
 

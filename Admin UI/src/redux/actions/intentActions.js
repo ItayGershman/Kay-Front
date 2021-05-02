@@ -50,14 +50,27 @@ const createIntent = ({ name, intent, speak, entities }, isExist) => async (
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
   }
 };
-const updateIntent = ({ name, intent, speak, entities }) => async (
+const updateIntent = ({ name, intent, speak, entities }, isExist) => async (
   dispatch
 ) => {
-  console.log('update')
+  console.log('update');
   dispatch({ type: INTENT_UPDATE_REQUEST }); //loading =>true
   try {
     const res = await API.updateIntent(name, intent, speak, entities);
     dispatch({ type: INTENT_UPDATE_SUCCESS, payload: res });
+    const intentName = `wit_${intent}`;
+    //Check if intent already exist in Wit.ai
+    if (!isExist) {
+      axios
+        .post(
+          `https://api.wit.ai/intents`,
+          {
+            name: intentName,
+          },
+          config
+        )
+        .then((res) => console.log(res.data));
+    }
   } catch (error) {
     dispatch({ type: INTENT_UPDATE_FAIL, payload: error.message });
   }

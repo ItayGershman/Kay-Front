@@ -61,7 +61,7 @@ const RightDrawer = ({
   const onSubmit = (data) => {
     console.log(data);
     //set new node
-    data["action"] = data.action.value;
+    data["action"] = data?.action?.value;
     const keys = Object.keys(data);
     let newNode = { name: title, intent: '', entities: [], speak: [],action:{} };
     keys.forEach((key) => (newNode[key] = data[key]));
@@ -74,7 +74,7 @@ const RightDrawer = ({
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));
-    } else dispatch(updateIntent(newNode));
+    } else dispatch(updateIntent(newNode,isExist));
     setElements((prevState) => {
       const elem = prevState.find((el) => el.id === node.id);
       elem.data = { ...elem.data, ...newNode };
