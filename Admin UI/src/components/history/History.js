@@ -14,48 +14,6 @@ const History = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   
-  const dummyData = [
-    {
-      name: 'Kay',
-      message: 'This should be in left ',
-      direction: 'left',
-    },
-    {
-      name: 'User',
-      message: 'This should be in right',
-      direction: 'right',
-    },
-    {
-      name: 'Kay',
-      message: 'This should be in left again',
-      direction: 'left',
-    },
-    {
-      name: 'User',
-      message: 'This should be in right again',
-      direction: 'right',
-    },
-    {
-      name: 'Kay',
-      message: 'This should be in left',
-      direction: 'left',
-    },
-    {
-      name: 'User',
-      message: 'This should be in right',
-      direction: 'right',
-    },
-    {
-      name: 'Kay',
-      message: 'This should be in left again',
-      direction: 'left',
-    },
-    {
-      name: 'User',
-      message: 'This should be in right again',
-      direction: 'right',
-    },
-  ];
   const { conversations, conversation } = useSelector((state) => {
     return state.history;
   });

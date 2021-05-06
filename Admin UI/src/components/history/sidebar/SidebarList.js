@@ -14,7 +14,7 @@ const SidebarList = ({ conversation }) => {
     <div
       style={{ position: 'relative' }}
       className={classes.sidebarChat }
-      onClick={() => {dispatch(getConversation(conversation.id))}}
+      onClick={() => {dispatch(getConversation(conversation._id))}}
       onMouseEnter={() => {
         setIsHovered(true);
       }}

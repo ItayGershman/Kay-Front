@@ -84,5 +84,8 @@ class API {
   static deleteConfiguration(scenarioID) {
     return axios.delete(`/routes/scenario_config/${scenarioID}`);
   }
+  static getHistory(){
+    return axios.get(`routes/conversation`)
+  }
 }
 export default API;

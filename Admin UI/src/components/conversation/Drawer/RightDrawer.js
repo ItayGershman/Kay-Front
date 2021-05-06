@@ -70,6 +70,7 @@ const RightDrawer = ({
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
+    console.log(isExist)
     console.log(newNode);
     if (node.data === undefined) {
       //need to send action also

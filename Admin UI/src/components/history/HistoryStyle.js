@@ -83,17 +83,19 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '10px',
     backgroundColor: 'lightskyblue',
     marginBottom: '30px',
-    maxWidth: '45vw',
+    maxWidth: '40vw',
   },
   chatTimestamp: {
+    right:0,
     marginLeft: '10px',
-    fontSize: 'xx-small',
+    fontSize: 'small',
   },
   chatName: {
     position: 'absolute',
-    top: '-15px',
+    top: '-20px',
     fontWeight: 800,
-    fontSize: 'xx-small',
+    fontSize: 'small',
+    
   },
   chatReceiver: {
     marginLeft: 'auto',

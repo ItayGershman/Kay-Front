@@ -38,13 +38,16 @@ const createIntent = ({ name, intent, speak, entities }, isExist) => async (
     const intentName = `wit_${intent}`;
     //Check if intent already exist in Wit.ai
     if (!isExist)
-      axios.post(
-        `https://api.wit.ai/intents`,
-        {
-          name: intentName,
-        },
-        config
-      );
+      axios
+        .post(
+          `https://api.wit.ai/intents`,
+          {
+            name: intentName,
+          },
+          config
+        )
+        .then((res) => res.json())
+        .then((data) => console.log(data));
   } catch (error) {
     console.log(error);
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });

@@ -34,7 +34,7 @@ const Sidebar = ({ conversations }) => {
       </div>
       <div className={classes.sidebarChats}>
         {/* Should be map over an array of conversations with props */}
-        {conversations.map((conversation) => (
+        {conversations.slice(0).reverse().map((conversation) => (
           <SidebarList
             conversation={conversation}
           />
