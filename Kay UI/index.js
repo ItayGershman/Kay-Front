@@ -24,7 +24,9 @@ const WitAISpeechRecognition = async () => {
     let state = {
       isKaySpeaking:false,
       conversationStarted:false,
-      history:[]
+      history:[],
+      configuration:{},
+      lastNode:{}
     }
     while (conversation) {
       if (!state.isKaySpeaking) {
@@ -34,7 +36,7 @@ const WitAISpeechRecognition = async () => {
             reqData.url,
             rec.start({
               recordProgram: "rec",
-              silence: "1.0",
+              silence: "0.7",
               threshold:0.7
             }),
             {
@@ -56,7 +58,7 @@ const WitAISpeechRecognition = async () => {
       }
       else {
         console.log(state.isKaySpeaking)
-        await sleep(1000)
+        await sleep(500)
       }
     }
   };
