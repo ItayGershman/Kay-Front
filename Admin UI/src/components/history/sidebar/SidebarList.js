@@ -1,15 +1,38 @@
-import React from 'react';
-import './Sidebar.css';
+import React, { useState } from 'react';
+import useStyles from '../HistoryStyle';
 import { Avatar } from '@material-ui/core';
+import { useDispatch } from 'react-redux';
+import DeleteIcon from '@material-ui/icons/Delete';
 
-const SidebarList = () => {
+import { getConversation,deleteConversation } from '../../../redux/actions/historyActions';
+
+const SidebarList = ({ conversation }) => {
+  const classes = useStyles();
+  const [isHovered, setIsHovered] = useState(false);
+  const dispatch = useDispatch();
   return (
-    <div className='sidebarChat'>
+    <div
+      style={{ position: 'relative' }}
+      className={classes.sidebarChat }
+      onClick={() => {dispatch(getConversation(conversation.id))}}
+      onMouseEnter={() => {
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+      }}
+    >
       {/* <Avatar /> */}
-      <div className='sidebarChat__info'>
-          {/* Should get from redux */}
-        <h2>Room name</h2>
-        <p>This is the last message</p>
+      <div className={classes.sidebarChatInfo}>
+        {/* Should get from redux */}
+        <h2>{conversation.title}</h2>
+        {/* {conversation.text[strlen(text)].message} */}
+        <p>{conversation.text[conversation.text.length - 1].message}</p>
+        {isHovered && (
+          <div className={classes.trashIcon} onClick={()=>{dispatch(deleteConversation(conversation.id))}}>
+            <DeleteIcon />
+          </div>
+        )}
       </div>
     </div>
   );

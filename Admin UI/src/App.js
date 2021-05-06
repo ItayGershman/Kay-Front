@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Link } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Header from './components/header/Header';
-import SignIn from './components/registration/SignIn';
-import Register from './components/registration/Register';
-import ScenarioBuilder from './components/ScenarioBuilder';
+import Registration from './components/registration/Registration';
 import Dashboard from './components/dashboard/Dashboard';
-import History from './components/history/History'
-
+import History from './components/history/History';
+import ConversationBuilder from './components/conversation/ConversationBuilder';
 
 function App() {
   const userSignin = useSelector((state) => state.userSignin);
@@ -15,12 +13,9 @@ function App() {
   return (
     <Router>
       <div>
-        <Header/>
+        <Header />
         <Route path='/'>
           {userInfo ? <Redirect to='/dashboard' /> : <Redirect to='/login' />}
-        </Route>
-        <Route path='/conversation'>
-          <ScenarioBuilder />
         </Route>
         <Route path='/history'>
           <History />
@@ -29,10 +24,13 @@ function App() {
           <Dashboard />
         </Route>
         <Route path='/login'>
-          <SignIn />
+          <Registration />
         </Route>
         <Route path='/register'>
-          <Register />
+          <Registration />
+        </Route>
+        <Route path='/conversation'>
+          <ConversationBuilder />
         </Route>
       </div>
     </Router>

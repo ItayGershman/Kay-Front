@@ -11,6 +11,11 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
+import LeftDrawer from './LeftDrawer';
+// import RightDrawer from './RightDrawer';
+import RightDrawer from './RightDrawerTest'
+import { useStoreActions } from 'react-flow-renderer';
 
 const SideDrawer = ({
   open,
@@ -21,8 +26,17 @@ const SideDrawer = ({
   buttons,
   actions,
   classes,
+  utils,
   side,
+  node,
+  elements,
+  setElements,
+  title
 }) => {
+  const onDragStart = (event, nodeType) => {
+    event.dataTransfer.setData('application/reactflow', nodeType);
+    event.dataTransfer.effectAllowed = 'move';
+  };
   return (
     <Drawer
       variant='permanent'
@@ -51,23 +65,32 @@ const SideDrawer = ({
         )}
       </div>
       <Divider />
+      {side === 'left' ? (
+        <LeftDrawer actions={actions} utils={utils} />
+      ) : (
+        <RightDrawer node={node} elements={elements} setElements={setElements} drawerState={open} title={title}/>
+      )}
+      <Divider />
       <List>
         {buttons.map((button, index) => (
-          <ListItem button key={index} onClick={()=>{button.handler(button.name)}}>
+          <ListItem
+            button
+            key={index}
+            draggable={button.isDraggable}
+            onClick={() => {
+              button.handler(button.name);
+            }}
+            onDragStart={(event) => {
+              onDragStart(event, button.name);
+            }}
+          >
             <ListItemIcon>{button.icon}</ListItemIcon>
             <ListItemText primary={button.title} />
+            {button.isDraggable && <DragIndicatorIcon color='action' />}
           </ListItem>
         ))}
       </List>
       <Divider />
-      <List>
-        {actions.map((action, index) => (
-          <ListItem button key={index} onClick={()=>{action.handler(action.name)}}>
-            <ListItemIcon>{action.icon}</ListItemIcon>
-            <ListItemText primary={action.title} />
-          </ListItem>
-        ))}
-      </List>
     </Drawer>
   );
 };

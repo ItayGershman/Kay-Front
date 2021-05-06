@@ -1,44 +1,23 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+import Link from '@material-ui/core/Link';
+import Grid from '@material-ui/core/Grid';
 import useStyles from './RegistrationStyle';
 import { useForm } from 'react-hook-form';
-import API from '../../API/API-requests';
 import { useDispatch } from 'react-redux';
-import { signUp } from '../../redux/actions/userActions';
+import { signin } from '../../redux/actions/userActions';
 
-export default function Register() {
+export default function Login() {
   const classes = useStyles();
-  const dispatch = useDispatch();
-  const onSubmit = (data) => {
-    dispatch(signUp(data));
-  };
   const { register, handleSubmit, watch, errors } = useForm();
+  const dispatch = useDispatch();
+  const onSubmit = (data) => dispatch(signin(data));
 
   return (
     <form className={classes.form} noValidate onSubmit={handleSubmit(onSubmit)}>
-      <TextField
-        variant='outlined'
-        margin='normal'
-        required
-        fullWidth
-        id='fName'
-        label='First Name'
-        name='fName'
-        autoFocus
-        inputRef={register({ required: true })}
-      />
-      <TextField
-        variant='outlined'
-        margin='normal'
-        required
-        fullWidth
-        id='lName'
-        label='Last Name'
-        name='lName'
-        autoFocus
-        inputRef={register({ required: true })}
-      />
       <TextField
         variant='outlined'
         margin='normal'
@@ -48,6 +27,7 @@ export default function Register() {
         label='Email Address'
         name='email'
         autoComplete='email'
+        autoFocus
         inputRef={register({ required: true })}
       />
       <TextField
@@ -62,7 +42,10 @@ export default function Register() {
         autoComplete='current-password'
         inputRef={register({ required: true })}
       />
-      {errors.exampleRequired && <span>This field is required</span>}
+      <FormControlLabel
+        control={<Checkbox value='remember' color='primary' />}
+        label='Remember me'
+      />
       <Button
         type='submit'
         fullWidth
@@ -70,8 +53,20 @@ export default function Register() {
         color='primary'
         className={classes.submit}
       >
-        Register
+        Login
       </Button>
+      <Grid container>
+        <Grid item xs>
+          <Link href='#' variant='body2'>
+            Forgot password?
+          </Link>
+        </Grid>
+        <Grid item>
+          <Link href='/register' variant='body2'>
+            {"Don't have an account? Sign Up"}
+          </Link>
+        </Grid>
+      </Grid>
     </form>
   );
 }

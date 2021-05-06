@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ScenarioCard from './ScenarioCard';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import ScenarioDialog from './ScenarioDialog';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllScenarios } from '../../redux/actions/conversationActions';
 
 const welcomingImage =
   'https://image.shutterstock.com/image-vector/welcome-sign-colour-confetti-vector-260nw-313934588.jpg';
@@ -17,20 +19,10 @@ const presentationImage =
   'https://www.galchimia.com/wp-content/uploads/2018/03/how-to-crash-your-own-presentation-1024x787.jpg';
 
 const Dashboard = () => {
-  const [scenarios, setScenarios] = useState([
-    { card: <ScenarioCard title={'Welcoming'} image={welcomingImage} /> },
-    { card: <ScenarioCard title={'Equipment'} image={equipmentImage} /> },
-    {
-      card: (
-        <ScenarioCard
-          title={'Position Training'}
-          image={positionTrainingImage}
-        />
-      ),
-    },
-    { card: <ScenarioCard title={'Schedule'} image={scheduleImage} /> },
-    { card: <ScenarioCard title={'Presentation'} image={presentationImage} /> },
-  ]);
+  const dispatch = useDispatch();
+  const [displayScenarios, setDisplayScenarios] = useState([]);
+  const scenarioSelector = useSelector((state) => state.scenario);
+  const { scenarios, loading, error } = scenarioSelector;
   const [openDialog, setOpenDialog] = useState(false);
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -38,6 +30,16 @@ const Dashboard = () => {
   const handleClickClose = () => {
     setOpenDialog(false);
   };
+  const handleClickedCard = (name) => {
+    // dispatch(getScenario(name));
+  };
+
+  useEffect(() => {
+    dispatch(getAllScenarios());
+  }, []);
+  useEffect(() => {
+    setDisplayScenarios(scenarioSelector.scenarios ? scenarios : []);
+  }, [scenarioSelector]);
 
   return (
     <div style={{ width: '100%' }}>
@@ -62,79 +64,42 @@ const Dashboard = () => {
           </Button>
         </div>
       </div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          margin: '50px',
-        }}
-      >
-        {scenarios.map((scenario) => {
-          return <div style={{ margin: '20px' }}>{scenario.card}</div>;
-        })}
-      </div>
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            margin: '50px',
+          }}
+        >
+          {displayScenarios.length > 0 &&
+            displayScenarios.map((scenario) => {
+              return (
+                <div
+                  style={{ margin: '20px' }}
+                  onClick={() => handleClickedCard(scenario.title)}
+                >
+                  <ScenarioCard
+                    title={scenario.scenarioName}
+                    image={scenario.scenarioImage}
+                    description={scenario.scenarioDescription}
+                    id={scenario._id}
+                  />
+                </div>
+              );
+            })}
+        </div>
+      )}
+
       <ScenarioDialog
         openDialog={openDialog}
         handleClickClose={handleClickClose}
+        setScenarios={setDisplayScenarios}
       />
-      {/* <Dialog
-        open={openDialog}
-        onClose={handleClickClose}
-        aria-labelledby='form-dialog-title'
-      >
-        <DialogTitle id='form-dialog-title'>Subscribe</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText>
-          <TextField
-            // margin='dense'
-            id='title'
-            label='Scenario Title'
-            type='title'
-            variant="outlined"
-            fullWidth
-          />
-          <TextField
-            style={{marginTop:'20px'}}
-            id='description'
-            label='Scenario Description'
-            type='textarea'
-            variant="outlined"
-            fullWidth
-          />
-          <input
-            accept='image/*'
-            style={{ display: 'none' }}
-            id='contained-button-file'
-            multiple
-            type='file'
-          />
-          <label htmlFor='contained-button-file'>
-            <Button
-              variant='contained'
-              color='primary'
-              component='span'
-              startIcon={<CloudUploadIcon />}
-              style={{ marginTop: '20px' }}
-            >
-              Upload Image
-            </Button>
-          </label>
-        </DialogContent>
-        <Divider />
-        <DialogActions>
-          <Button onClick={handleClickClose} color='primary'>
-            Cancel
-          </Button>
-          <Button onClick={handleClickClose} color='primary'>
-            Subscribe
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </div>
   );
 };

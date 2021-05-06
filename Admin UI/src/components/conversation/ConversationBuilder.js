@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import useStyles from './conversationStyle';
 import SideDrawer from './Drawer';
 import ConversationHeader from './ConversationHeader';
-import InputIcon from '@material-ui/icons/Input';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import ListIcon from '@material-ui/icons/List';
 import MovieIcon from '@material-ui/icons/Movie';
@@ -10,6 +9,16 @@ import LocationOnIcon from '@material-ui/icons/LocationOn';
 import BrushIcon from '@material-ui/icons/Brush';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PeopleIcon from '@material-ui/icons/People';
+import SaveIcon from '@material-ui/icons/Save';
+import RestoreIcon from '@material-ui/icons/Restore';
+import WidgetsIcon from '@material-ui/icons/Widgets';
+import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
+import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
+import { useLocation } from 'react-router-dom';
+import {
+  updateConfiguration,
+  getConfiguration,
+} from '../../redux/actions/conversationActions';
 
 import ReactFlow, {
   isEdge,
@@ -18,53 +27,72 @@ import ReactFlow, {
   MiniMap,
   Controls,
   Background,
+  useZoomPanHelper,
+  isNode,
 } from 'react-flow-renderer';
-import InputNode from '../conversationFlow/InputNode';
+import InputNode from './InputNode';
+import OutputNode from './OutputNode';
 import {
   createEdge,
   createInputNode,
   createOutputNode,
   initialElements,
-} from '../conversationFlow/conversation-utils';
+  getLayoutElements,
+} from './conversation-utils';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-
-const graphStyles = {
-  width: '100%',
-  height: '100vh',
-  background: 'rgb(26, 25, 43)',
-};
-const getNodeId = () => `randomnode_${+new Date()}`;
-const onNodeDragStop = (event, node) => console.log('drag stop', node);
-const onElementClick = (event, element) => console.log('click', element);
-const initBgColor = 'white';
-const connectionLineStyle = { stroke: '#fff' };
-const snapGrid = [30, 20];
-const nodeTypes = {
-  selectorInputNode: InputNode,
-};
+import {
+  graphStyles,
+  handleNodeStrokeColor,
+  onNodeDragStop,
+  onElementClick,
+  initBgColor,
+  connectionLineStyle,
+  snapGrid,
+  nodeTypes,
+  handleOnDrop,
+  handleOnAdd,
+} from './conversation-utils';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CustomNodeFlow = () => {
-  const [leftDrawerWidth, setLeftDrawerWidth] = useState(0);
-  const [rightDrawerWidth, setRightDrawerWidth] = useState(0);
-  const classes = useStyles({ left: leftDrawerWidth, right: rightDrawerWidth });
-  const [openLeft, setOpenLeft] = useState(false);
-  const [openRight, setOpenRight] = useState(false);
+  const [mainElementsSize, setMainElementsSize] = useState({
+    leftDrawer: 1,
+    rightDrawer: 1,
+    conversationBuilder: 10,
+    openLeft: false,
+    openRight: false,
+    leftDrawerWidth: 0,
+    rightDrawerWidth: 0,
+  });
   const [reactflowInstance, setReactflowInstance] = useState(null);
   const [elements, setElements] = useState([]);
-  const [bgColor, setBgColor] = useState(initBgColor);
-  const [conversationBuilderSize, setConversationBuilderSize] = useState(10);
-  const [leftDrawerSize, setLeftDrawerSize] = useState(1);
-  const [rightDrawerSize, setRightDrawerSize] = useState(1);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const reactFlowWrapper = useRef(null);
+  const classes = useStyles({
+    left: mainElementsSize.leftDrawerWidth,
+    right: mainElementsSize.rightDrawerWidth,
+  });
+  // const { transform } = useZoomPanHelper();
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const scenarioSelector = useSelector((state) => state.scenario);
 
   useEffect(() => {
-    setElements(initialElements);
+    const scenarioName = location.pathname.replace('/conversation/', '');
+    dispatch(getConfiguration(scenarioName));
   }, []);
+
   useEffect(() => {
     if (reactflowInstance && elements.length > 0) {
       reactflowInstance.fitView();
     }
   }, [reactflowInstance, elements.length]);
+  useEffect(() => {
+    const scenario = scenarioSelector.currentScenario;
+    setElements(scenario ? scenario.scenarioConfigData : []);
+  }, [scenarioSelector]);
+
   const onElementsRemove = useCallback(
     (elementsToRemove) =>
       setElements((els) => removeElements(elementsToRemove, els)),
@@ -72,21 +100,11 @@ const CustomNodeFlow = () => {
   );
   const onAdd = useCallback(
     (node) => {
-      console.log(node);
-      const position = {
-        x: Math.random() * window.innerWidth - 100,
-        y: Math.random() * window.innerHeight,
-      };
-      let id = getNodeId();
-      let newNode;
-      console.log(position);
-      if (node === 'input') newNode = createInputNode(id, position);
-      if (node === 'output') newNode = createOutputNode(id, position, 'Right');
+      const newNode = handleOnAdd(node);
       setElements((els) => els.concat(newNode));
     },
     [setElements]
   );
-
   const onConnect = useCallback(
     (params) =>
       setElements((els) =>
@@ -98,18 +116,92 @@ const CustomNodeFlow = () => {
     (rfi) => {
       if (!reactflowInstance) {
         setReactflowInstance(rfi);
+        rfi.fitView();
         console.log('flow loaded:', rfi);
       }
     },
     [reactflowInstance]
   );
+  const onLayout = useCallback(
+    (direction) => {
+      const layoutElements = getLayoutElements(elements, direction, isNode);
+      setElements(layoutElements);
+    },
+    [elements]
+  );
+
+  const onDragOver = (event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+  };
+  const onDrop = (event) => {
+    event.preventDefault();
+    reactflowInstance.fitView();
+    const newNode = handleOnDrop(
+      event,
+      reactflowInstance,
+      reactFlowWrapper,
+      elements
+    );
+    setElements((es) => es.concat(newNode));
+  };
+  const onSave = useCallback(() => {
+    if (reactflowInstance) {
+      const flow = reactflowInstance.toObject();
+      const { scenarioConfigName } = scenarioSelector.currentScenario;
+      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
+    }
+  }, [reactflowInstance, scenarioSelector]);
+
+  // const onRestore = useCallback(() => {
+  // const restoreFlow = async () => {
+  //restore from redux maybe?
+  // const flow = await localforage.getItem('flowKey');
+  //   if (flow) {
+  //     const [x = 0, y = 0] = flow.position;
+  //     setElements(flow.elements || []);
+  //     transform({ x, y, zoom: flow.zoom || 0 });
+  //   }
+  // };
+  //   restoreFlow();
+  // }, [setElements, transform]);
+
   const leftButtons = [
-    { name: 'input', title: 'Input Node', handler: onAdd, icon: <InputIcon /> },
+    {
+      name: 'input',
+      title: 'Input Node',
+      handler: () => {
+        console.log('onAdd');
+      },
+      icon: <WidgetsIcon />,
+      isDraggable: true,
+    },
     {
       name: 'output',
       title: 'Output Node',
-      handler: onAdd,
-      icon: <InputIcon />,
+      handler: () => {
+        console.log('onAdd');
+      },
+      icon: <WidgetsIcon />,
+      isDraggable: true,
+    },
+    {
+      name: 'save',
+      title: 'Save Layout',
+      handler: () => {
+        onSave();
+      },
+      icon: <SaveIcon />,
+      isDraggable: false,
+    },
+    {
+      name: 'restore',
+      title: 'Restore',
+      handler: () => {
+        console.log('should be onRestore');
+      },
+      icon: <RestoreIcon />,
+      isDraggable: false,
     },
   ];
   const actions = [
@@ -154,104 +246,165 @@ const CustomNodeFlow = () => {
       icon: <LocationOnIcon />,
     },
   ];
-  const rightButtons = [
-    { name: 'intents', title: 'Intents', handler: ()=>{console.log('intent')}, icon: <AccountCircleIcon /> },
-    { name: 'entities', title: 'Entities', handler: ()=>{console.log('entities')}, icon: <PeopleIcon /> },
+  const utils = [
+    {
+      name: 'vertical layout',
+      title: 'Vertical Layout',
+      handler: onLayout,
+      icon: <SwapVerticalCircleIcon />,
+      isDraggable: false,
+    },
+    {
+      name: 'horizontal layout',
+      title: 'Horizontal Layout',
+      handler: onLayout,
+      icon: <SwapHorizontalCircleIcon />,
+      isDraggable: false,
+    },
   ];
-  const handleDrawerOpen = (side) => {
+  const rightButtons = [
+    {
+      name: 'intents',
+      title: 'Intents',
+      handler: () => {
+        console.log('intent');
+      },
+      icon: <AccountCircleIcon />,
+    },
+    {
+      name: 'entities',
+      title: 'Entities',
+      handler: () => {
+        console.log('entities');
+      },
+      icon: <PeopleIcon />,
+    },
+  ];
+  const onDrawerOpen = (side) => {
     if (side === 'left') {
-      setOpenLeft(true);
-      setLeftDrawerWidth(240);
-      setLeftDrawerSize(2);
+      setMainElementsSize((prevState) => {
+        if (prevState.leftDrawer === 2) return prevState;
+        else
+          return {
+            ...prevState,
+            openLeft: true,
+            leftDrawerWidth: 240,
+            leftDrawer: 2,
+            conversationBuilder: prevState.conversationBuilder - 1,
+          };
+      });
     } else {
-      setOpenRight(true);
-      setRightDrawerWidth(240);
-      setRightDrawerSize(2);
+      setMainElementsSize((prevState) => {
+        if (prevState.rightDrawer === 2) return prevState;
+        else
+          return {
+            ...prevState,
+            openRight: true,
+            rightDrawerWidth: 240,
+            rightDrawer: 2,
+            conversationBuilder: prevState.conversationBuilder - 1,
+          };
+      });
     }
-    setConversationBuilderSize((prevState) => prevState - 1);
   };
 
-  const handleDrawerClose = (side) => {
+  const onDrawerClose = (side) => {
     if (side === 'left') {
-      setOpenLeft(false);
-      setLeftDrawerWidth(0);
-      setLeftDrawerSize(1);
+      setMainElementsSize((prevState) => ({
+        ...prevState,
+        openLeft: false,
+        leftDrawerWidth: 0,
+        leftDrawer: 1,
+        conversationBuilder: prevState.conversationBuilder + 1,
+      }));
     } else {
-      setOpenRight(false);
-      setRightDrawerWidth(0);
-      setRightDrawerSize(1);
+      setMainElementsSize((prevState) => ({
+        ...prevState,
+        openRight: false,
+        rightDrawerWidth: 0,
+        rightDrawer: 1,
+        conversationBuilder: prevState.conversationBuilder + 1,
+      }));
     }
-    setConversationBuilderSize((prevState) => prevState + 1);
   };
-
   return (
     <div className={classes.root}>
       <ConversationHeader
         classes={classes}
-        openLeft={openLeft}
-        openRight={openRight}
-        handleLeftDrawerOpen={() => handleDrawerOpen('left')}
-        handleRightDrawerOpen={() => handleDrawerOpen('right')}
+        openLeft={mainElementsSize.openLeft}
+        openRight={mainElementsSize.openRight}
+        handleLeftDrawerOpen={() => onDrawerOpen('left')}
+        handleRightDrawerOpen={() => onDrawerOpen('right')}
       />
       <Grid container spacing={3}>
-        <Grid xs={leftDrawerSize}>
+        <Grid xs={mainElementsSize.leftDrawer}>
           <SideDrawer
-            open={openLeft}
+            open={mainElementsSize.openLeft}
             drawerOpen={classes.drawerLeftOpen}
             drawerClose={classes.drawerLeftClose}
-            handleDrawerClose={() => handleDrawerClose('left')}
-            handleDrawerOpen={() => handleDrawerOpen('left')}
+            handleDrawerClose={() => onDrawerClose('left')}
+            onDrawerOpen={() => onDrawerOpen('left')}
             buttons={leftButtons}
             actions={actions}
             classes={classes}
+            utils={utils}
             side='left'
           />
         </Grid>
-        <Grid item xs={conversationBuilderSize}>
-          <main className={classes.content}>
+        <Grid item xs={mainElementsSize.conversationBuilder}>
+          <main
+            className={`${classes.content} reactflow-wrapper`}
+            ref={reactFlowWrapper}
+          >
             <Paper className={classes.conversation}></Paper>
             <ReactFlow
               elements={elements}
-              onElementClick={onElementClick}
+              onElementClick={(event, element) => {
+                onElementClick(event, element, setSelectedNode);
+                onDrawerOpen('right');
+              }}
               onElementsRemove={onElementsRemove}
               onConnect={onConnect}
               onNodeDragStop={onNodeDragStop}
-              style={{ background: bgColor }}
+              style={{ background: initBgColor }}
               onLoad={onLoad}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
               nodeTypes={nodeTypes}
               connectionLineStyle={connectionLineStyle}
               snapToGrid={true}
               snapGrid={snapGrid}
-              defaultZoom={1.5}
+              defaultZoom={0}
               style={graphStyles}
             >
               <Controls />
-              <Background color='#aaa' gap={16} />
               <MiniMap
-                nodeStrokeColor={(n) => {
-                  if (n.type === 'input') return '#0041d0';
-                  if (n.type === 'selectorNode') return bgColor;
-                  if (n.type === 'output') return '#ff0072';
-                }}
-                nodeColor={(n) => {
-                  if (n.type === 'selectorNode') return bgColor;
-                  return '#fff';
-                }}
+                nodeStrokeColor={(n) => handleNodeStrokeColor(n)}
+                nodeColor={(n) =>
+                  n.type === 'selectorInputNode' ? initBgColor : '#fff'
+                }
+                nodeBorderRadius={2}
               />
+              <Background color='#aaa' gap={16} />
             </ReactFlow>
           </main>
         </Grid>
-        <Grid xs={rightDrawerSize}>
+        <Grid xs={mainElementsSize.rightDrawer}>
+          {console.log(scenarioSelector.currentScenario)}
           <SideDrawer
-            open={openRight}
+            open={mainElementsSize.openRight}
             drawerOpen={classes.drawerRightOpen}
             drawerClose={classes.drawerRightClose}
-            handleDrawerClose={() => handleDrawerClose('right')}
-            handleDrawerOpen={() => handleDrawerOpen('right')}
+            handleDrawerClose={() => onDrawerClose('right')}
+            handleDrawerOpen={() => onDrawerOpen('right')}
             buttons={rightButtons}
-            actions={[]}
             classes={classes}
+            defaultZoom={1}
+            node={selectedNode}
+            elements={elements}
+            setElements={setElements}
             side='right'
+            title={scenarioSelector?.currentScenario?.scenarioConfigName}
           />
         </Grid>
       </Grid>
