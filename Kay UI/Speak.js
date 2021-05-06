@@ -93,6 +93,7 @@ const sendResult = async (data, state) => {
         try {
           const res = KayAPI.saveConversationHistory(state.history);
           console.log(res);
+          
         } catch (e) {
           console.log(e);
         }
