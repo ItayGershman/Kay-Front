@@ -1,4 +1,7 @@
 const {
+  INTENTS_GET_REQUEST,
+  INTENTS_GET_SUCCESS,
+  INTENTS_GET_FAIL,
   INTENT_GET_REQUEST,
   INTENT_GET_SUCCESS,
   INTENT_GET_FAIL,
@@ -19,21 +22,37 @@ const initialState = {
   intent: '',
   entities: [],
   speak: [],
+  allIntents: [],
 };
 
 function intentReducer(state = initialState, action) {
   switch (action.type) {
-    case INTENT_GET_REQUEST:
+    case INTENTS_GET_REQUEST:
       return { loading: true };
+    case INTENTS_GET_SUCCESS:
+      return {
+        loading: false,
+        allIntents: action.payload,
+      };
+    case INTENTS_GET_FAIL:
+      return { loading: false, error: action.payload };
+
+    case INTENT_GET_REQUEST:
+      return { loading: true, allIntents: state.allIntents };
     case INTENT_GET_SUCCESS:
       return {
         loading: false,
+         ...state
       };
     case INTENT_GET_FAIL:
-      return { loading: false, error: action.payload };
+      return {
+        loading: false,
+        error: action.payload,
+         ...state
+      };
 
     case INTENT_CREATE_REQUEST:
-      return { loading: true };
+      return { loading: true, ...state };
     case INTENT_CREATE_SUCCESS:
       const {
         scenarioConnection,
@@ -41,33 +60,47 @@ function intentReducer(state = initialState, action) {
         outputTextIntent,
       } = action.payload;
       return {
-        ...state,
         loading: false,
         scenarioName: scenarioConnection,
         intent: intentName,
         entities: [],
         speak: outputTextIntent,
+         ...state
       };
     case INTENT_CREATE_FAIL:
-      return { loading: false, error: action.payload };
+      return {
+        loading: false,
+        error: action.payload,
+         ...state
+      };
 
     case INTENT_UPDATE_REQUEST:
-      return { loading: true };
+      return { loading: true, ...state };
     case INTENT_UPDATE_SUCCESS:
       return {
         loading: false,
+         ...state
       };
     case INTENT_UPDATE_FAIL:
-      return { loading: false, error: action.payload };
+      return {
+        loading: false,
+        error: action.payload,
+         ...state
+      };
 
     case INTENT_DELETE_REQUEST:
-      return { loading: true };
+      return { loading: true, ...state };
     case INTENT_DELETE_SUCCESS:
       return {
         loading: false,
+         ...state
       };
     case INTENT_DELETE_FAIL:
-      return { loading: false, error: action.payload };
+      return {
+        loading: false,
+        error: action.payload,
+         ...state
+      };
 
     default:
       return state;

@@ -1,46 +1,23 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import useStyles from './conversationStyle';
-import SideDrawer from './Drawer';
-import ConversationHeader from './ConversationHeader';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
-import ListIcon from '@material-ui/icons/List';
-import MovieIcon from '@material-ui/icons/Movie';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import BrushIcon from '@material-ui/icons/Brush';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import PeopleIcon from '@material-ui/icons/People';
-import SaveIcon from '@material-ui/icons/Save';
-import RestoreIcon from '@material-ui/icons/Restore';
-import WidgetsIcon from '@material-ui/icons/Widgets';
-import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
-import SwapVerticalCircleIcon from '@material-ui/icons/SwapVerticalCircle';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import {
   updateConfiguration,
   getConfiguration,
 } from '../../redux/actions/conversationActions';
-
+import useStyles from './conversationStyle';
+import SideDrawer from './Drawer/Drawer';
+import TrainIntents from './TrainIntents';
+import TrainDialog from './TrainDialog';
+import ConversationHeader from './ConversationHeader';
 import ReactFlow, {
-  isEdge,
   removeElements,
   addEdge,
   MiniMap,
   Controls,
   Background,
-  useZoomPanHelper,
   isNode,
 } from 'react-flow-renderer';
-import InputNode from './InputNode';
-import OutputNode from './OutputNode';
-import {
-  createEdge,
-  createInputNode,
-  createOutputNode,
-  initialElements,
-  getLayoutElements,
-} from './conversation-utils';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
 import {
   graphStyles,
   handleNodeStrokeColor,
@@ -52,8 +29,16 @@ import {
   nodeTypes,
   handleOnDrop,
   handleOnAdd,
+  handleDrawer,
+  getLayoutElements,
 } from './conversation-utils';
-import { useDispatch, useSelector } from 'react-redux';
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import PeopleIcon from '@material-ui/icons/People';
+import SaveIcon from '@material-ui/icons/Save';
+import RestoreIcon from '@material-ui/icons/Restore';
+import WidgetsIcon from '@material-ui/icons/Widgets';
 
 const CustomNodeFlow = () => {
   const [mainElementsSize, setMainElementsSize] = useState({
@@ -69,6 +54,7 @@ const CustomNodeFlow = () => {
   const [elements, setElements] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const reactFlowWrapper = useRef(null);
+  const [trainDialog, setTrainDialog] = useState(false);
   const classes = useStyles({
     left: mainElementsSize.leftDrawerWidth,
     right: mainElementsSize.rightDrawerWidth,
@@ -78,28 +64,86 @@ const CustomNodeFlow = () => {
   const location = useLocation();
   const scenarioSelector = useSelector((state) => state.scenario);
 
-  useEffect(() => {
-    const scenarioName = location.pathname.replace('/conversation/', '');
-    dispatch(getConfiguration(scenarioName));
+  const leftButtons = [
+    {
+      name: 'input',
+      title: 'Add Node',
+      handler: () => {
+        onAdd();
+      },
+      icon: <WidgetsIcon />,
+      isDraggable: true,
+    },
+    {
+      name: 'save',
+      title: 'Save Layout',
+      handler: () => {
+        onSave();
+      },
+      icon: <SaveIcon />,
+      isDraggable: false,
+    },
+    {
+      name: 'restore',
+      title: 'Restore',
+      handler: () => {
+        console.log('should be onRestore');
+      },
+      icon: <RestoreIcon />,
+      isDraggable: false,
+    },
+  ];
+  const rightButtons = [
+    {
+      name: 'intents',
+      title: 'Intents',
+      handler: () => {
+        setTrainDialog(true);
+      },
+      icon: <AccountCircleIcon />,
+    },
+    {
+      name: 'entities',
+      title: 'Entities',
+      handler: () => {
+        console.log('entities');
+      },
+      icon: <PeopleIcon />,
+    },
+  ];
+  const onDrawerOpen = (side) => {
+    if (side === 'left') {
+      setMainElementsSize((prevState) => {
+        if (prevState.leftDrawer === 2) return prevState;
+        return handleDrawer('left', prevState, true, 240, 2, -1);
+      });
+    } else {
+      setMainElementsSize((prevState) => {
+        if (prevState.rightDrawer === 3) return prevState;
+        return handleDrawer('right', prevState, true, 370, 3, -2);
+      });
+    }
+  };
+  const onDrawerClose = (side) => {
+    if (side === 'left') {
+      setMainElementsSize((prevState) =>
+        handleDrawer('left', prevState, false, 0, 1, 1)
+      );
+    } else {
+      setMainElementsSize((prevState) =>
+        handleDrawer('right', prevState, false, 0, 1, 2)
+      );
+    }
+  };
+
+  const onElementsRemove = useCallback((elementsToRemove) => {
+    console.log(elementsToRemove);
+    setElements((els) => removeElements(elementsToRemove, els));
   }, []);
 
-  useEffect(() => {
-    if (reactflowInstance && elements.length > 0) {
-      reactflowInstance.fitView();
-    }
-  }, [reactflowInstance, elements.length]);
-  useEffect(() => {
-    const scenario = scenarioSelector.currentScenario;
-    setElements(scenario ? scenario.scenarioConfigData : []);
-  }, [scenarioSelector]);
-
-  const onElementsRemove = useCallback(
-    (elementsToRemove) =>
-      setElements((els) => removeElements(elementsToRemove, els)),
-    []
-  );
   const onAdd = useCallback(
     (node) => {
+      console.log(node);
       const newNode = handleOnAdd(node);
       setElements((els) => els.concat(newNode));
     },
@@ -149,9 +193,39 @@ const CustomNodeFlow = () => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
       const { scenarioConfigName } = scenarioSelector.currentScenario;
+
+      // Change nodes name for building strong relations between nodes
+      const mappedElements = {}
+      flow.elements.forEach((element,i)=>{
+        if(element.data){
+          console.log(element.data)
+          mappedElements[element.id] = `${element.data.name}_${element.data.intent}_${i}`
+          element.id = `${element.data.name}_${element.data.intent}_${i}`
+        }
+        else{
+          element.source = mappedElements[element.source]
+          element.target = mappedElements[element.target]
+        }
+      })
+      console.log(flow.elements);
       dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
+
+  useEffect(() => {
+    const scenarioName = location.pathname.replace('/conversation/', '');
+    dispatch(getConfiguration(scenarioName));
+  }, []);
+
+  useEffect(() => {
+    if (reactflowInstance && elements.length > 0) {
+      reactflowInstance.fitView();
+    }
+  }, [reactflowInstance, elements.length]);
+  useEffect(() => {
+    const scenario = scenarioSelector.currentScenario;
+    setElements(scenario ? scenario.scenarioConfigData : []);
+  }, [scenarioSelector]);
 
   // const onRestore = useCallback(() => {
   // const restoreFlow = async () => {
@@ -166,167 +240,6 @@ const CustomNodeFlow = () => {
   //   restoreFlow();
   // }, [setElements, transform]);
 
-  const leftButtons = [
-    {
-      name: 'input',
-      title: 'Input Node',
-      handler: () => {
-        console.log('onAdd');
-      },
-      icon: <WidgetsIcon />,
-      isDraggable: true,
-    },
-    {
-      name: 'output',
-      title: 'Output Node',
-      handler: () => {
-        console.log('onAdd');
-      },
-      icon: <WidgetsIcon />,
-      isDraggable: true,
-    },
-    {
-      name: 'save',
-      title: 'Save Layout',
-      handler: () => {
-        onSave();
-      },
-      icon: <SaveIcon />,
-      isDraggable: false,
-    },
-    {
-      name: 'restore',
-      title: 'Restore',
-      handler: () => {
-        console.log('should be onRestore');
-      },
-      icon: <RestoreIcon />,
-      isDraggable: false,
-    },
-  ];
-  const actions = [
-    {
-      name: 'calendar',
-      title: 'Calendar',
-      handler: () => {
-        console.log('handler');
-      },
-      icon: <CalendarTodayIcon />,
-    },
-    {
-      name: 'laser',
-      title: 'Laser Pointer',
-      handler: () => {
-        console.log('handler');
-      },
-      icon: <BrushIcon />,
-    },
-    {
-      name: 'equipment',
-      title: 'Equipment List',
-      handler: () => {
-        console.log('handler');
-      },
-      icon: <ListIcon />,
-    },
-    {
-      name: 'video',
-      title: 'Video Library',
-      handler: () => {
-        console.log('handler');
-      },
-      icon: <MovieIcon />,
-    },
-    {
-      name: 'locations',
-      title: 'Location of Positions',
-      handler: () => {
-        console.log('handler');
-      },
-      icon: <LocationOnIcon />,
-    },
-  ];
-  const utils = [
-    {
-      name: 'vertical layout',
-      title: 'Vertical Layout',
-      handler: onLayout,
-      icon: <SwapVerticalCircleIcon />,
-      isDraggable: false,
-    },
-    {
-      name: 'horizontal layout',
-      title: 'Horizontal Layout',
-      handler: onLayout,
-      icon: <SwapHorizontalCircleIcon />,
-      isDraggable: false,
-    },
-  ];
-  const rightButtons = [
-    {
-      name: 'intents',
-      title: 'Intents',
-      handler: () => {
-        console.log('intent');
-      },
-      icon: <AccountCircleIcon />,
-    },
-    {
-      name: 'entities',
-      title: 'Entities',
-      handler: () => {
-        console.log('entities');
-      },
-      icon: <PeopleIcon />,
-    },
-  ];
-  const onDrawerOpen = (side) => {
-    if (side === 'left') {
-      setMainElementsSize((prevState) => {
-        if (prevState.leftDrawer === 2) return prevState;
-        else
-          return {
-            ...prevState,
-            openLeft: true,
-            leftDrawerWidth: 240,
-            leftDrawer: 2,
-            conversationBuilder: prevState.conversationBuilder - 1,
-          };
-      });
-    } else {
-      setMainElementsSize((prevState) => {
-        if (prevState.rightDrawer === 2) return prevState;
-        else
-          return {
-            ...prevState,
-            openRight: true,
-            rightDrawerWidth: 240,
-            rightDrawer: 2,
-            conversationBuilder: prevState.conversationBuilder - 1,
-          };
-      });
-    }
-  };
-
-  const onDrawerClose = (side) => {
-    if (side === 'left') {
-      setMainElementsSize((prevState) => ({
-        ...prevState,
-        openLeft: false,
-        leftDrawerWidth: 0,
-        leftDrawer: 1,
-        conversationBuilder: prevState.conversationBuilder + 1,
-      }));
-    } else {
-      setMainElementsSize((prevState) => ({
-        ...prevState,
-        openRight: false,
-        rightDrawerWidth: 0,
-        rightDrawer: 1,
-        conversationBuilder: prevState.conversationBuilder + 1,
-      }));
-    }
-  };
   return (
     <div className={classes.root}>
       <ConversationHeader
@@ -345,9 +258,9 @@ const CustomNodeFlow = () => {
             handleDrawerClose={() => onDrawerClose('left')}
             onDrawerOpen={() => onDrawerOpen('left')}
             buttons={leftButtons}
-            actions={actions}
+            // actions={actions}
             classes={classes}
-            utils={utils}
+            // utils={utils}
             side='left'
           />
         </Grid>
@@ -390,14 +303,13 @@ const CustomNodeFlow = () => {
           </main>
         </Grid>
         <Grid xs={mainElementsSize.rightDrawer}>
-          {console.log(scenarioSelector.currentScenario)}
           <SideDrawer
             open={mainElementsSize.openRight}
             drawerOpen={classes.drawerRightOpen}
             drawerClose={classes.drawerRightClose}
             handleDrawerClose={() => onDrawerClose('right')}
             handleDrawerOpen={() => onDrawerOpen('right')}
-            buttons={rightButtons}
+            // buttons={rightButtons}
             classes={classes}
             defaultZoom={1}
             node={selectedNode}
@@ -408,6 +320,7 @@ const CustomNodeFlow = () => {
           />
         </Grid>
       </Grid>
+      <TrainDialog openDialog={trainDialog} handleClickClose={setTrainDialog} />
     </div>
   );
 };

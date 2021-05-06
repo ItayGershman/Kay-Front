@@ -94,61 +94,77 @@ export default memo(({ data, id }) => {
             )}
           </div>
           <div>
-            {data && data.intent ? (
-              <div className={classes.input}>
-                <AccountCircleIcon
-                  className={`${classes.icon} ${classes.intentIcon}`}
-                />
-                <Typography variant='caption'>Intent: {data.intent}</Typography>
-              </div>
-            ) : (
-              <div className={classes.input}>
-                <AccountCircleIcon className={classes.icon} />
-                <Typography className={classes.placeholder}>
-                  "Intent name"
-                </Typography>
-              </div>
-            )}
-            {data && data.entities.length > 0 ? (
-              data.entities.map(({entity}) => {
-                return (
+            {data ? (
+              <div>
+                {data.intent && (
                   <div className={classes.input}>
-                    <CategoryIcon
-                      className={`${classes.icon} ${classes.entityIcon}`}
+                    <AccountCircleIcon
+                      className={`${classes.icon} ${classes.intentIcon}`}
                     />
-                    <Typography variant='caption'>Entity: {entity}</Typography>
+                    <Typography variant='caption'>
+                      Intent: {data.intent}
+                    </Typography>
                   </div>
-                );
-              })
-            ) : (
-              <div className={`${classes.input}`}>
-                <CategoryIcon className={classes.icon} />
-                <Typography className={classes.placeholder}>
-                  "Entity name"
-                </Typography>
+                )}
+                {data.entities &&
+                  data.entities.map(({ entity }) => {
+                    return (
+                      <div className={classes.input}>
+                        <CategoryIcon
+                          className={`${classes.icon} ${classes.entityIcon}`}
+                        />
+                        <Typography variant='caption'>
+                          Entity: {entity}
+                        </Typography>
+                      </div>
+                    );
+                  })}
+                {data.speak &&
+                  data.speak.map(({ speak }) => {
+                    return (
+                      <div className={`${classes.input}`}>
+                        <ChatIcon
+                          className={`${classes.icon} ${classes.speakIcon}`}
+                        />
+                        <Typography variant='caption'>{speak}</Typography>
+                      </div>
+                    );
+                  })}
               </div>
-            )}
-            <div className={classes.speak}>
-              {data && data.speak.length > 0 ? (
-                data.speak.map(({speak}) => {
-                  return (
-                    <div className={`${classes.input}`}>
-                      <ChatIcon
-                        className={`${classes.icon} ${classes.speakIcon}`}
-                      />
-                      <Typography variant='caption'>{speak}</Typography>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className={`${classes.input}`}>
-                  <ChatIcon className={classes.icon} />
-                  <Typography variant='caption' className={classes.placeholder}>
-                    "Speak"
+            ) : (
+              <div>
+                <div className={classes.input}>
+                  <AccountCircleIcon
+                    className={`${classes.icon} ${classes.intentIcon}`}
+                  />
+                  <Typography className={classes.placeholder}>
+                    "Intent name"
                   </Typography>
                 </div>
-              )}
-            </div>
+                <div className={`${classes.input}`}>
+                  <CategoryIcon
+                    className={`${classes.icon} ${classes.entityIcon}`}
+                  />
+                  <Typography className={classes.placeholder}>
+                    "Entity name"
+                  </Typography>
+                </div>
+
+                <div className={classes.speak}>
+                  <div className={`${classes.input}`}>
+                    <ChatIcon
+                      className={`${classes.icon} ${classes.speakIcon}`}
+                    />
+                    <Typography
+                      variant='caption'
+                      className={classes.placeholder}
+                    >
+                      "Speak"
+                    </Typography>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

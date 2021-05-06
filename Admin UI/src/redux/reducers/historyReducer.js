@@ -166,11 +166,12 @@ function historyReducer(state = initialState, action) {
     case HISTORY_GET_ALL_REQUEST:
       return { ...state, loading: true };
     case HISTORY_GET_ALL_SUCCESS:
+      console.log('reducer history: ',action.payload)
       return {
         ...state,
         loading: false,
-        conversations: state.conversations,
-        conversation: state.conversations[0],
+        conversations: action.payload,
+        conversation: action.payload[action.payload.length - 1],
       };
     case HISTORY_GET_ALL_FAIL:
       return { ...state, loading: false, error: action.payload };
@@ -178,8 +179,9 @@ function historyReducer(state = initialState, action) {
     case HISTORY_GET_REQUEST:
       return { ...state, loading: true };
     case HISTORY_GET_SUCCESS:
+      console.log(state.conversations)
       let conversation = state.conversations.find(
-        (con) => con.id === action.payload
+        (con) => con._id === action.payload
       );
       if (!conversation) {
         if (state.conversations.length > 0)

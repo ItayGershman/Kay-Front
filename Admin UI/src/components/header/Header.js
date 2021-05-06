@@ -31,30 +31,10 @@ export default function MenuAppBar() {
 
   return (
     <div className={classes.root}>
-      {/* <FormGroup>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={auth}
-              onChange={handleChange}
-              aria-label='login switch'
-            />
-          }
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup> */}
       <AppBar position='static'>
         <Toolbar className={classes.toolbar}>
           <div className={classes.logo}>
-            {/* <IconButton
-              edge='start'
-              className={classes.menuButton}
-              color='inherit'
-              aria-label='menu'
-            >
-              <MenuIcon />
-            </IconButton> */}
-            <Link to='/' className={classes.link}>
+            <Link to='/dashboard' className={classes.link}>
               <Typography variant='h6'>Logo</Typography>
             </Link>
           </div>
@@ -66,9 +46,6 @@ export default function MenuAppBar() {
                 </Link>
                 <Link to='/dashboard' className={classes.link}>
                   <Typography variant='h6'>Dashboard</Typography>
-                </Link>
-                <Link to='/conversation' className={classes.link}>
-                  <Typography variant='h6'>Conversation</Typography>
                 </Link>
               </div>
               <div className={classes.navItem}>

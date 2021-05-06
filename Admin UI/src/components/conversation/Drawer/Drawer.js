@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -14,7 +14,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import LeftDrawer from './LeftDrawer';
 // import RightDrawer from './RightDrawer';
-import RightDrawer from './RightDrawerTest'
+import RightDrawer from './RightDrawer';
 import { useStoreActions } from 'react-flow-renderer';
 
 const SideDrawer = ({
@@ -31,7 +31,7 @@ const SideDrawer = ({
   node,
   elements,
   setElements,
-  title
+  title,
 }) => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
@@ -52,7 +52,7 @@ const SideDrawer = ({
       }}
     >
       <div
-        className={side === 'left' ? classes.toolbarLeft : classes.toolRight}
+        className={side === 'left' ? classes.toolbarLeft : classes.toolbarRight}
       >
         {open ? (
           <IconButton onClick={handleDrawerClose}>
@@ -65,14 +65,19 @@ const SideDrawer = ({
         )}
       </div>
       <Divider />
-      {side === 'left' ? (
-        <LeftDrawer actions={actions} utils={utils} />
-      ) : (
-        <RightDrawer node={node} elements={elements} setElements={setElements} drawerState={open} title={title}/>
+      {side === 'right' && (
+        <RightDrawer
+          node={node}
+          elements={elements}
+          setElements={setElements}
+          drawerState={open}
+          title={title}
+          handleDrawerOpen={handleDrawerOpen}
+        />
       )}
-      <Divider />
+
       <List>
-        {buttons.map((button, index) => (
+        {buttons?.map((button, index) => (
           <ListItem
             button
             key={index}
@@ -90,7 +95,6 @@ const SideDrawer = ({
           </ListItem>
         ))}
       </List>
-      <Divider />
     </Drawer>
   );
 };

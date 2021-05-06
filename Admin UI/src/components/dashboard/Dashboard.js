@@ -6,6 +6,8 @@ import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import ScenarioDialog from './ScenarioDialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllScenarios } from '../../redux/actions/conversationActions';
+import { getAllIntents } from '../../redux/actions/intentActions';
+import AppLoader from '../Loader';
 
 const welcomingImage =
   'https://image.shutterstock.com/image-vector/welcome-sign-colour-confetti-vector-260nw-313934588.jpg';
@@ -21,21 +23,28 @@ const presentationImage =
 const Dashboard = () => {
   const dispatch = useDispatch();
   const [displayScenarios, setDisplayScenarios] = useState([]);
+  const [content, setContent] = useState({});
   const scenarioSelector = useSelector((state) => state.scenario);
   const { scenarios, loading, error } = scenarioSelector;
-  const [openDialog, setOpenDialog] = useState(false);
-  const handleClickOpen = () => {
-    setOpenDialog(true);
+  const [dialogStatus, setDialogStatus] = useState(false);
+
+  const handleOpenDialog = () => {
+    setDialogStatus(true);
   };
-  const handleClickClose = () => {
-    setOpenDialog(false);
-  };
-  const handleClickedCard = (name) => {
-    // dispatch(getScenario(name));
+  const handleCloseDialog = () => {
+    setDialogStatus(false);
+    setContent({});
   };
 
   useEffect(() => {
+    if (!dialogStatus && Object.keys(content).length !== 0) {
+      handleOpenDialog();
+    }
+  }, [content]);
+
+  useEffect(() => {
     dispatch(getAllScenarios());
+    dispatch(getAllIntents());
   }, []);
   useEffect(() => {
     setDisplayScenarios(scenarioSelector.scenarios ? scenarios : []);
@@ -58,14 +67,14 @@ const Dashboard = () => {
             variant='contained'
             color='primary'
             endIcon={<PlaylistAddIcon />}
-            onClick={handleClickOpen}
+            onClick={handleOpenDialog}
           >
             Add Scenario
           </Button>
         </div>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <AppLoader />
       ) : (
         <div
           style={{
@@ -79,26 +88,25 @@ const Dashboard = () => {
           {displayScenarios.length > 0 &&
             displayScenarios.map((scenario) => {
               return (
-                <div
-                  style={{ margin: '20px' }}
-                  onClick={() => handleClickedCard(scenario.title)}
-                >
+                <div style={{ margin: '20px' }}>
                   <ScenarioCard
                     title={scenario.scenarioName}
                     image={scenario.scenarioImage}
                     description={scenario.scenarioDescription}
                     id={scenario._id}
+                    setContent={setContent}
                   />
                 </div>
               );
             })}
         </div>
       )}
-
+      {console.log(content)}
       <ScenarioDialog
-        openDialog={openDialog}
-        handleClickClose={handleClickClose}
+        dialogStatus={dialogStatus}
+        handleCloseDialog={handleCloseDialog}
         setScenarios={setDisplayScenarios}
+        content={content}
       />
     </div>
   );

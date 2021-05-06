@@ -17,9 +17,23 @@ class API {
   }
 
   //Intent
-  static createIntent(scenarioConnection, intentName, outputTextIntent) {
-    const req = { scenarioConnection, intentName, outputTextIntent };
+  static createIntent(
+    scenarioConnection,
+    intentName,
+    outputTextIntent,
+    entities
+  ) {
+    const req = { scenarioConnection, intentName, outputTextIntent, entities };
     return axios.post(`/routes/intent`, req);
+  }
+  static updateIntent(
+    scenarioConnection,
+    intentName,
+    outputTextIntent,
+    entities
+  ) {
+    const req = { scenarioConnection, intentName, outputTextIntent, entities };
+    return axios.put(`/routes/intent/${scenarioConnection}/${intentName}`, req);
   }
 
   //Scenario
@@ -54,7 +68,6 @@ class API {
   }
 
   static getConfiguration(scenarioName) {
-    console.log(scenarioName);
     return axios.get(`/routes/scenario_config/${scenarioName}`);
   }
   static createConfiguration(name) {
@@ -70,6 +83,9 @@ class API {
   }
   static deleteConfiguration(scenarioID) {
     return axios.delete(`/routes/scenario_config/${scenarioID}`);
+  }
+  static getHistory(){
+    return axios.get(`routes/conversation`)
   }
 }
 export default API;

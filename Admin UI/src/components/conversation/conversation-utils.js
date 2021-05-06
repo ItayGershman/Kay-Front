@@ -20,156 +20,8 @@ const createInputNode = (id, position, elements) => {
     id,
     type: 'selectorInputNode',
     position,
-    data: {},
   };
 };
-
-const createOutputNode = (id, position, sourcePosition, targetPosition) => {
-  return {
-    id,
-    type: 'selectorOutputNode',
-
-    position,
-    sourcePosition,
-  };
-};
-
-export const initialElements = [
-  {
-    id: '1',
-    type: 'selectorInputNode',
-    data: {
-      name: 'Welcoming',
-      intent: 'welcoming_greetings',
-      speak: [
-        "Hey, I'm - a robotic assistant for this center, what is your name? ",
-        'Hello there, how are you doing today? do you mind tell me your name?',
-        "Hey, welcome to Kadar design and technology center, I'd love to hear your name to get to know you better",
-      ],
-    },
-    position: { x: 0, y: 50 },
-  },
-  {
-    id: '2',
-    type: 'selectorInputNode',
-    data: {
-      name: 'Welcoming',
-      intent: 'welcoming_getName',
-      speak: [
-        'Hey {{name}}! let me share a little background about me',
-        'Nice to meet you {{name}}, would you like to hear a little background about me?',
-        'That is a beautiful name! Let me tell you a little bit about the center',
-      ],
-    },
-    position: { x: 300, y: 0 },
-  },
-  {
-    id: '3',
-    type: 'selectorInputNode',
-    data: {
-      name: 'Welcoming',
-      intent: 'welcoming_purpose',
-      entities: ['soldering', 'schedule', 'projects', 'study'],
-      speak: [
-        'Do you know how to solder? rank yourself from 1 to 10',
-        'The center schedule for today is {{entity=schedule}}',
-        'Take me to {{position-with laser}} and I will display our projects',
-        'Feel comfortable in the center, for any assistance please fell free to talk to me',
-      ],
-    },
-    position: { x: 600, y: 0 },
-  },
-  {
-    id: 'e1-2',
-    source: '1',
-    target: '2',
-    animated: true,
-    style: { stroke: '#fff' },
-  },
-  {
-    id: 'e2-3',
-    source: '2',
-    target: '3',
-    animated: true,
-    style: { stroke: '#fff' },
-  },
-  // {
-  //   id: '1',
-  //   type: 'selectorOutputNode',
-  //   data: {
-  //     label: (
-  //       <div>
-  //         <div>Welcome</div>
-  //         <TextField
-  //           id='outlined-textarea'
-  //           label='Speak'
-  //           placeholder='Placeholder'
-  //           multiline
-  //           variant='outlined'
-  //         />
-  //       </div>
-  //     ),
-  //   },
-  //   position: { x: 0, y: 50 },
-  //   // sourcePosition: 'left',
-  //   // targetPosition:'right'
-  // },
-  // {
-  //   id: '2',
-  //   type: 'selectorInputNode',
-  //   style: {
-  //     border: '1px solid #777',
-  //     padding: 10,
-  //     backgroundColor: 'white',
-  //   },
-  //   position: { x: 300, y: 50 },
-  //   targetPosition: 'left',
-  // },
-  // {
-  //   id: '3',
-  //   type: 'output',
-  //   data: { label: 'alert-Hello' },
-  //   position: { x: 650, y: 25 },
-  //   targetPosition: 'left',
-  // },
-  // {
-  //   id: '4',
-  //   type: 'output',
-  //   data: { label: 'Output B' },
-  //   position: { x: 650, y: 100 },
-  //   targetPosition: 'left', // where the edge is going to
-  // },
-  // {
-  //   id: 'e1-2',
-  //   source: '1',
-  //   target: '2',
-  //   animated: true,
-  //   style: { stroke: '#fff' },
-  // },
-  // {
-  //   id: 'e1-2',
-  //   source: '1',
-  //   target: '2',
-  //   animated: true,
-  //   style: { stroke: '#fff' },
-  // },
-  // {
-  //   id: 'e2a-3',
-  //   source: '2',
-  //   target: '3',
-  //   sourceHandle: 'a',
-  //   animated: true,
-  //   style: { stroke: '#fff' },
-  // },
-  // {
-  //   id: 'e2b-4',
-  //   source: '2',
-  //   target: '4',
-  //   sourceHandle: 'b',
-  //   animated: true,
-  //   style: { stroke: '#fff' },
-  // },
-];
 
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -188,7 +40,7 @@ export const getLayoutElements = (elements, direction = 'TB', isNode) => {
   return elements.map((el) => {
     if (isNode(el)) {
       const nodeWithPosition = dagreGraph.node(el.id);
-      el.targetPosition = isHorizontal ? 'left' : 'top';
+      el.targetPosition = isHorizontal ? 'top' : 'left';
       el.sourcePosition = isHorizontal ? 'right' : 'bottom';
       // unfortunately we need this little hack to pass a slighltiy different position
       // in order to notify react flow about the change
@@ -222,7 +74,6 @@ export const connectionLineStyle = { stroke: '#fff' };
 export const snapGrid = [20, 20];
 export const nodeTypes = {
   selectorInputNode: InputNode,
-  selectorOutputNode: OutputNode,
 };
 
 export const handleOnDrop = (
@@ -239,7 +90,6 @@ export const handleOnDrop = (
     y: event.clientY - reactFlowBounds.top,
   });
   if (type === 'input') return createInputNode(getNodeId(), position, elements);
-  if (type === 'output') return createOutputNode(getNodeId(), position);
   if (type === 'default')
     return { id: getNodeId(), type, position, data: { label: `${type} node` } };
   return {};
@@ -251,7 +101,90 @@ export const handleOnAdd = (node) => {
     y: Math.random() * window.innerHeight,
   };
   let id = getNodeId();
-  console.log(position);
   if (node === 'input') return createInputNode(id, position);
-  if (node === 'output') return createOutputNode(id, position, 'Right');
 };
+
+export const handleDrawer = (
+  side,
+  prevState,
+  setOpen,
+  drawerWidth,
+  drawerSize,
+  conversationSize
+) => {
+  if (side === 'left') {
+    return {
+      ...prevState,
+      openLeft: setOpen,
+      leftDrawerWidth: drawerWidth,
+      leftDrawer: drawerSize,
+      conversationBuilder: prevState.conversationBuilder + conversationSize,
+    };
+  }
+  return {
+    ...prevState,
+    openRight: setOpen,
+    rightDrawerWidth: drawerWidth,
+    rightDrawer: drawerSize,
+    conversationBuilder: prevState.conversationBuilder + conversationSize,
+  };
+};
+// left Drawer buttons
+// const actions = [
+//   {
+//     name: 'calendar',
+//     title: 'Calendar',
+//     handler: () => {
+//       console.log('handler');
+//     },
+//     icon: <CalendarTodayIcon />,
+//   },
+//   {
+//     name: 'laser',
+//     title: 'Laser Pointer',
+//     handler: () => {
+//       console.log('handler');
+//     },
+//     icon: <BrushIcon />,
+//   },
+//   {
+//     name: 'equipment',
+//     title: 'Equipment List',
+//     handler: () => {
+//       console.log('handler');
+//     },
+//     icon: <ListIcon />,
+//   },
+//   {
+//     name: 'video',
+//     title: 'Video Library',
+//     handler: () => {
+//       console.log('handler');
+//     },
+//     icon: <MovieIcon />,
+//   },
+//   {
+//     name: 'locations',
+//     title: 'Location of Positions',
+//     handler: () => {
+//       console.log('handler');
+//     },
+//     icon: <LocationOnIcon />,
+//   },
+// ];
+// const utils = [
+//   {
+//     name: 'vertical layout',
+//     title: 'Vertical Layout',
+//     handler: onLayout,
+//     icon: <SwapVerticalCircleIcon />,
+//     isDraggable: false,
+//   },
+//   {
+//     name: 'horizontal layout',
+//     title: 'Horizontal Layout',
+//     handler: onLayout,
+//     icon: <SwapHorizontalCircleIcon />,
+//     isDraggable: false,
+//   },
+// ];
