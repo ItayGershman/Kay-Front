@@ -75,8 +75,12 @@ const sendResult = async (data, state) => {
       saveHistory("kay", textToSpeak, witResponse.intent, state);
 
       //Speak text
-      speak(textToSpeak, state);
-      actions(witResponse.intent);
+      const text = await actions(witResponse.intent,entities);
+      console.log('text:',text)
+      if(text && text.length > 0){
+        speak(text, state);
+      }
+      else speak(textToSpeak, state);
       //Laser to the coordiantes
       // if (witResponse.intent === "wit_consent") {
       //   setTimeout(() => {
