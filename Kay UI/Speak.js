@@ -47,7 +47,7 @@ const sendResult = async (data, state) => {
       scenario = intentObj?.scenarioConnection;
     }
     console.log("intentObj: ", intentObj);
-
+    
     let currentNode = `${scenario}_${witResponse.intent}`;
     //Check if the intent returned itself
     const found = state.history.find((el) => el.intent === witResponse.intent);
