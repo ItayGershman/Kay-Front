@@ -2,7 +2,6 @@ require("dotenv").config();
 const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
-
 const witToken = process.env.WIT_ACCESS_TOKEN;
 
 const reqData = {
@@ -14,19 +13,19 @@ const reqData = {
   },
 };
 
-const sleep = (ms) =>{
-  return new Promise(resolve => setTimeout(resolve,ms))
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 const WitAISpeechRecognition = async () => {
   let conversation = true;
   const startRecording = async () => {
     let state = {
-      isKaySpeaking:false,
-      conversationStarted:false,
-      history:[],
-      configuration:{},
-      lastNode:{}
+      isKaySpeaking: false,
+      conversationStarted: false,
+      history: [],
+      configuration: {},
+      lastNode: {}
     }
     while (conversation) {
       if (!state.isKaySpeaking) {
@@ -36,8 +35,10 @@ const WitAISpeechRecognition = async () => {
             reqData.url,
             rec.start({
               recordProgram: "rec",
-              silence: "0.7",
-              threshold:0.7
+              silence: "0.5",
+              threshold: 0.7,
+              channels: 4,
+              sampleRate: 48000,
             }),
             {
               headers: {
@@ -58,7 +59,7 @@ const WitAISpeechRecognition = async () => {
       }
       else {
         console.log(state.isKaySpeaking)
-        await sleep(500)
+        await sleep(100)
       }
     }
   };
