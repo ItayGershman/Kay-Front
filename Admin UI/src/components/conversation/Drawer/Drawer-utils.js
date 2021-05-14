@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
@@ -29,7 +29,7 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     padding: '5px',
     width: '100%',
-    marginBottom:5
+    marginBottom: 5,
   },
   button: {
     marginTop: '10px',
@@ -62,6 +62,7 @@ export const setInitialValues = (node) => {
 
 const LaserAction = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+
   return (
     <div
       style={{
@@ -164,6 +165,7 @@ export const ControlledTextFields = ({
   defaultValue,
   isDisabled,
   isMultiline,
+  placeholder
 }) => {
   return (
     <Controller
@@ -176,6 +178,7 @@ export const ControlledTextFields = ({
             disabled={isDisabled}
             label={label}
             multiline={isMultiline}
+            placeholder={placeholder}
             variant='outlined'
             name={name}
             onChange={(e) => {
@@ -207,7 +210,7 @@ export const SpeakTextField = ({
       defaultValue={defaultValue}
       render={({ onChange, value, name }) => {
         return (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <TextField
               style={{
                 height: '100%',
@@ -231,10 +234,13 @@ export const SpeakTextField = ({
               value={value}
             />
             {capturedEntity === 1 && (
-              <Select
-                options={entitiesOptions}
-                onChange={(val) => setValue(name, `${value}${val.label}}`)}
-              />
+              <div style={{ padding: 10 }}>
+                {console.log(entitiesOptions)}
+                <Select
+                  options={entitiesOptions}
+                  onChange={(val) => setValue(name, `${value}${val.label}}`)}
+                />
+              </div>
             )}
           </div>
         );
@@ -307,7 +313,7 @@ export const RemoveButton = ({ handler, index, classes, title }) => {
 
 export const getWitEntities = async () => {
   const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
-  const { data } = await axios.get(`https://api.wit.ai/entities?v=20200513`, {
+  const { data } = await axios.get(`https://api.wit.ai/entities`, {
     headers: {
       Authorization: `Bearer ${witToken}`,
     },

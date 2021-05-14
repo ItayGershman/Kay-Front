@@ -84,8 +84,27 @@ class API {
   static deleteConfiguration(scenarioID) {
     return axios.delete(`/routes/scenario_config/${scenarioID}`);
   }
-  static getHistory(){
-    return axios.get(`routes/conversation`)
+  static getHistory() {
+    return axios.get(`routes/conversation`);
+  }
+  static createWitIntent(intentName,config) {
+    return axios.post(
+      `https://api.wit.ai/intents`,
+      {
+        name: intentName,
+      },
+      config
+    );
+  }
+  static createWitEntity(entity,config) {
+    return axios.post(
+      `https://api.wit.ai/entities`,
+      {
+        entity: entity,
+        roles:[]
+      },
+      config
+    );
   }
 }
 export default API;

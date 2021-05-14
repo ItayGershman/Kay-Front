@@ -95,7 +95,8 @@ const RightDrawer = ({
     entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
   useEffect(async () => {
-    setEntities(getWitEntities());
+    const witEntities = await getWitEntities()
+    setEntities(witEntities);
   }, []);
 
   return (
@@ -203,6 +204,7 @@ const RightDrawer = ({
                 { value: 'laser', label: 'Laser' },
                 { value: 'video', label: 'Video' },
                 { value: 'calendar', label: 'Calendar' },
+                { value: 'equipment', label: 'Equipment' },
               ]}
             />
           </div>

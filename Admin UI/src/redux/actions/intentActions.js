@@ -21,9 +21,9 @@ import {
 const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
 const config = {
   headers: {
-    Accept: 'application/vnd.wit.20160202+json',
+    // Accept: 'application/vnd.wit.20160202+json',
     Authorization: `Bearer ${witToken}`,
-    'Content-Type': 'audio/wav',
+    'Content-Type': 'application/json',
   },
 };
 
@@ -37,17 +37,17 @@ const createIntent = ({ name, intent, speak, entities }, isExist) => async (
     dispatch({ type: INTENT_CREATE_SUCCESS, payload: data });
     const intentName = `wit_${intent}`;
     //Check if intent already exist in Wit.ai
-    if (!isExist)
-      axios
-        .post(
-          `https://api.wit.ai/intents`,
-          {
-            name: intentName,
-          },
-          config
-        )
-        .then((res) => res.json())
-        .then((data) => console.log(data));
+    if (!isExist) {
+      await API.createWitIntent(intentName, config)
+        .then((res) => console.log(res.data))
+        .catch((e) => console.log(e));
+    }
+    if (entities.length > 0) {
+      console.log(entities[0].entity);
+      await API.createWitEntity(entities[0].entity, config)
+        .then((data) => console.log(data))
+        .catch((e) => console.log(e));
+    }
   } catch (error) {
     console.log(error);
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
@@ -64,15 +64,15 @@ const updateIntent = ({ name, intent, speak, entities }, isExist) => async (
     const intentName = `wit_${intent}`;
     //Check if intent already exist in Wit.ai
     if (!isExist) {
-      axios
-        .post(
-          `https://api.wit.ai/intents`,
-          {
-            name: intentName,
-          },
-          config
-        )
-        .then((res) => console.log(res.data));
+      await API.createWitIntent(intentName, config)
+        .then((res) => console.log(res.data))
+        .catch((e) => console.log(e));
+    }
+    if (entities.length > 0) {
+      console.log(entities[0].entity);
+      await API.createWitEntity(entities[0].entity, config)
+        .then((data) => console.log(data))
+        .catch((e) => console.log(e));
     }
   } catch (error) {
     dispatch({ type: INTENT_UPDATE_FAIL, payload: error.message });

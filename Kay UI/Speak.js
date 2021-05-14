@@ -1,5 +1,5 @@
-const { getLaser } = require("./Laser");
-const { getPosition } = require("./Position");
+// const { getLaser } = require("./Laser");
+// const { getPosition } = require("./Position");
 const actions = require("./actions");
 const KayAPI = require("./KayAPI");
 const {
@@ -11,7 +11,7 @@ const {
 } = require("./conversation-utils");
 
 const sendResult = async (data, state) => {
-  //Extract Intent and entiites
+  //Extract Intent and entities
   let scenario = "Welcoming";
   let { intents, entities, text } = data;
 
@@ -44,7 +44,7 @@ const sendResult = async (data, state) => {
       intentObj = intentsByScenrio.data.find((elem) => {
         return `wit_${elem.intentName}` === witResponse.intent;
       });
-      scenario = intentObj?.scenarioConnection;
+      scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
     }
     console.log("intentObj: ", intentObj);
 
@@ -56,11 +56,14 @@ const sendResult = async (data, state) => {
     }
     //insert last node
     if (Object.keys(state.configuration).length !== 0) {
-      state.lastNode = state.configuration[scenario]?.find((elem) => {
-        if (elem?.id.includes(currentNode.replace("_wit", ""))) {
-          return elem;
-        }
-      });
+      let config = state.configuration[scenario];
+      if(config){
+        state.lastNode = config.find((elem) => {
+          if (elem.id && elem.id.includes(currentNode.replace("_wit", ""))) {
+            return elem;
+          }
+        })
+      }
     }
     if (intentObj && witResponse.confidence > 0.8) {
       //Get array of outputs
@@ -77,7 +80,7 @@ const sendResult = async (data, state) => {
       //Speak text
       speak(textToSpeak, state);
       actions(witResponse.intent);
-      //Laser to the coordiantes
+      //Laser to the coordinates
       // if (witResponse.intent === "wit_consent") {
       //   setTimeout(() => {
       //     getLaser(60, 20);
