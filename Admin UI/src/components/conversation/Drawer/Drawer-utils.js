@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { makeStyles } from '@material-ui/core/styles';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 import axios from 'axios';
+import {
+  TextField,
+  Button,
+  Grid,
+  makeStyles,
+  IconButton,
+} from '@material-ui/core';
+
 import 'date-fns';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
-import { IconButton } from '@material-ui/core';
 import mqtt from 'mqtt';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
@@ -47,7 +50,6 @@ export const useStyles = makeStyles((theme) => ({
 
 export const setInitialValues = (node) => {
   if (node?.data) {
-    console.log('node.data:', node.data);
     const { name, intent, entities, speak, action } = node.data;
     const speakArray = speak.map((text) => text.speak);
     const entitiesArray = entities.map(({ entity }) => entity);
@@ -343,12 +345,12 @@ export const ActionField = ({
   options,
   defaultValue,
 }) => {
+  console.log('defaultValue:', defaultValue);
   const [action, setAction] = useState(defaultValue);
   return (
     <Controller
       control={control}
       name={name}
-      // defaultValue={action}
       render={({ onChange }) => {
         return (
           <div>

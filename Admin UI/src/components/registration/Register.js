@@ -1,6 +1,5 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import { Button, TextField } from '@material-ui/core';
 import useStyles from './RegistrationStyle';
 import { useForm } from 'react-hook-form';
 import API from '../../API/API-requests';

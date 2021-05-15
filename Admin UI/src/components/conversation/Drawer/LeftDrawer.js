@@ -1,8 +1,5 @@
 import React from 'react';
-import List from '@material-ui/core/List';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
+import { List, ListItemText, ListItemIcon, ListItem } from '@material-ui/core';
 
 const LeftDrawer = ({ actions, utils }) => {
   return (

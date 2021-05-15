@@ -7,7 +7,6 @@ import {
 } from '../../redux/actions/conversationActions';
 import useStyles from './conversationStyle';
 import SideDrawer from './Drawer/Drawer';
-import TrainIntents from './TrainIntents';
 import TrainDialog from './TrainDialog';
 import ConversationHeader from './ConversationHeader';
 import ReactFlow, {
@@ -19,6 +18,7 @@ import ReactFlow, {
   isNode,
 } from 'react-flow-renderer';
 import {
+  defaultLayout,
   graphStyles,
   handleNodeStrokeColor,
   onNodeDragStop,
@@ -32,37 +32,25 @@ import {
   handleDrawer,
   getLayoutElements,
 } from './conversation-utils';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import PeopleIcon from '@material-ui/icons/People';
+import { Paper, Grid } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import RestoreIcon from '@material-ui/icons/Restore';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 
 const CustomNodeFlow = () => {
-  const [mainElementsSize, setMainElementsSize] = useState({
-    leftDrawer: 1,
-    rightDrawer: 1,
-    conversationBuilder: 10,
-    openLeft: false,
-    openRight: false,
-    leftDrawerWidth: 0,
-    rightDrawerWidth: 0,
-  });
+  const [mainElementsSize, setMainElementsSize] = useState(defaultLayout);
   const [reactflowInstance, setReactflowInstance] = useState(null);
   const [elements, setElements] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const reactFlowWrapper = useRef(null);
   const [trainDialog, setTrainDialog] = useState(false);
+  const reactFlowWrapper = useRef(null);
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const scenarioSelector = useSelector((state) => state.scenario);
   const classes = useStyles({
     left: mainElementsSize.leftDrawerWidth,
     right: mainElementsSize.rightDrawerWidth,
   });
-  // const { transform } = useZoomPanHelper();
-  const dispatch = useDispatch();
-  const location = useLocation();
-  const scenarioSelector = useSelector((state) => state.scenario);
 
   const leftButtons = [
     {
@@ -93,24 +81,7 @@ const CustomNodeFlow = () => {
       isDraggable: false,
     },
   ];
-  const rightButtons = [
-    {
-      name: 'intents',
-      title: 'Intents',
-      handler: () => {
-        setTrainDialog(true);
-      },
-      icon: <AccountCircleIcon />,
-    },
-    {
-      name: 'entities',
-      title: 'Entities',
-      handler: () => {
-        console.log('entities');
-      },
-      icon: <PeopleIcon />,
-    },
-  ];
+
   const onDrawerOpen = (side) => {
     if (side === 'left') {
       setMainElementsSize((prevState) => {
@@ -171,7 +142,6 @@ const CustomNodeFlow = () => {
     },
     [elements]
   );
-
   const onDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
@@ -193,17 +163,18 @@ const CustomNodeFlow = () => {
       const { scenarioConfigName } = scenarioSelector.currentScenario;
 
       // Change nodes name for building strong relations between nodes
-      const mappedElements = {}
-      flow.elements.forEach((element,i)=>{
-        if(element.data){
-          mappedElements[element.id] = `${element.data.name}_${element.data.intent}_${i}`
-          element.id = `${element.data.name}_${element.data.intent}_${i}`
+      const mappedElements = {};
+      flow.elements.forEach((element, i) => {
+        if (element.data) {
+          mappedElements[
+            element.id
+          ] = `${element.data.name}_${element.data.intent}_${i}`;
+          element.id = `${element.data.name}_${element.data.intent}_${i}`;
+        } else {
+          element.source = mappedElements[element.source];
+          element.target = mappedElements[element.target];
         }
-        else{
-          element.source = mappedElements[element.source]
-          element.target = mappedElements[element.target]
-        }
-      })
+      });
       dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
@@ -254,9 +225,7 @@ const CustomNodeFlow = () => {
             handleDrawerClose={() => onDrawerClose('left')}
             onDrawerOpen={() => onDrawerOpen('left')}
             buttons={leftButtons}
-            // actions={actions}
             classes={classes}
-            // utils={utils}
             side='left'
           />
         </Grid>
@@ -283,7 +252,6 @@ const CustomNodeFlow = () => {
               connectionLineStyle={connectionLineStyle}
               snapToGrid={true}
               snapGrid={snapGrid}
-              defaultZoom={0}
               style={graphStyles}
             >
               <Controls />
@@ -305,7 +273,6 @@ const CustomNodeFlow = () => {
             drawerClose={classes.drawerRightClose}
             handleDrawerClose={() => onDrawerClose('right')}
             handleDrawerOpen={() => onDrawerOpen('right')}
-            // buttons={rightButtons}
             classes={classes}
             defaultZoom={1}
             node={selectedNode}

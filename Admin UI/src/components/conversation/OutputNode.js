@@ -1,10 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Handle } from 'react-flow-renderer';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { makeStyles } from '@material-ui/core/styles';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import { TextField, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   node: {

@@ -1,11 +1,13 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
+import {
+  Avatar,
+  CssBaseline,
+  Paper,
+  Box,
+  Grid,
+  Typography,
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 import useStyles from './RegistrationStyle';
 import Copyright from './registration-utils';
 import { useLocation } from 'react-router-dom';

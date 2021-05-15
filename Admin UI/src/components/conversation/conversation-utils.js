@@ -1,8 +1,16 @@
-import React from 'react';
-import TextField from '@material-ui/core/TextField';
+
 import dagre from 'dagre';
 import InputNode from './InputNode';
-import OutputNode from './OutputNode';
+
+export const defaultLayout = {
+  leftDrawer: 1,
+  rightDrawer: 1,
+  conversationBuilder: 10,
+  openLeft: false,
+  openRight: false,
+  leftDrawerWidth: 0,
+  rightDrawerWidth: 0,
+}
 
 export const createEdge = (source, target, sourceHandle) => {
   return {
