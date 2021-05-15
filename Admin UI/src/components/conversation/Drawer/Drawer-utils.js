@@ -15,6 +15,12 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import { IconButton } from '@material-ui/core';
+import mqtt from 'mqtt';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -41,14 +47,17 @@ export const useStyles = makeStyles((theme) => ({
 
 export const setInitialValues = (node) => {
   if (node?.data) {
-    const { name, intent, entities, speak } = node.data;
+    console.log('node.data:', node.data);
+    const { name, intent, entities, speak, action } = node.data;
     const speakArray = speak.map((text) => text.speak);
     const entitiesArray = entities.map(({ entity }) => entity);
+    const defaultAction = action ? { value: action, label: action } : null;
     return {
       intent: intent,
       entities: entitiesArray,
       name,
       speak: speakArray,
+      action: defaultAction,
     };
   } else {
     return {
@@ -56,12 +65,35 @@ export const setInitialValues = (node) => {
       entities: [],
       name: '',
       speak: [],
+      action: null,
     };
   }
 };
 
 const LaserAction = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  let x = 0;
+  let y = 0;
+
+  const client = mqtt.connect('wss://test.mosquitto.org:8081');
+  useEffect(() => {
+    client.on('connect', function () {
+      console.log('connected');
+      client.subscribe('CoreElectronics/move-x', (err) => {
+        if (!err) console.log('subscribed to CoreElectronics/move-x');
+      });
+      client.subscribe('CoreElectronics/move-y', (err) => {
+        if (!err) console.log('subscribed to CoreElectronics/move-y');
+      });
+    });
+    return () => {
+      client.unsubscribe('CoreElectronics/move-y', (err) => {
+        if (!err) console.log('unsubscribe from CoreElectronics/move-x');
+      });
+      client.unsubscribe('CoreElectronics/move-x', (err) => {
+        if (!err) console.log('unsubscribe from CoreElectronics/move-y');
+      });
+    };
+  }, []);
 
   return (
     <div
@@ -71,15 +103,65 @@ const LaserAction = () => {
         alignItems: 'center',
         flexDirection: 'column',
         marginTop: 20,
+        border: '1px solid',
       }}
     >
-      <TextField
+      <IconButton
+        style={{ top: 0 }}
+        onClick={() => {
+          client.publish('CoreElectronics/move-y', `${++y}`);
+        }}
+      >
+        <KeyboardArrowUpIcon />
+      </IconButton>
+      <div>
+        <IconButton
+          style={{ left: -10 }}
+          onClick={() => {
+            client.publish('CoreElectronics/move-x', `${--x}`);
+          }}
+        >
+          <KeyboardArrowLeftIcon />
+        </IconButton>
+        <IconButton
+          style={{ right: -10 }}
+          onClick={() => {
+            client.subscribe('CoreElectronics/move-x', function (err) {
+              if (!err) {
+                client.publish('CoreElectronics/move-x', `${++x}`);
+              }
+            });
+          }}
+        >
+          <KeyboardArrowRightIcon />
+        </IconButton>
+      </div>
+      <IconButton
+        style={{ bottom: 0 }}
+        onClick={() => {
+          client.subscribe('CoreElectronics/move-x', function (err) {
+            if (!err) {
+              client.publish('CoreElectronics/move-y', `${--y}`);
+            }
+          });
+        }}
+      >
+        <KeyboardArrowDownIcon />
+      </IconButton>
+
+      {/* <TextField
         style={{ marginBottom: 10 }}
         multiline={false}
         placeholder='32'
         label='Position x'
         variant='outlined'
         onChange={(e) => {
+          //useDebounce
+          client.subscribe('CoreElectronics/move-x', function (err) {
+            if (!err) {
+              client.publish('CoreElectronics/move-x', e.target.value);
+            }
+          });
           setPosition((prevState) => ({ ...prevState, x: e.target.value }));
         }}
         defaultValue={position.x}
@@ -90,10 +172,15 @@ const LaserAction = () => {
         label='Position y'
         variant='outlined'
         onChange={(e) => {
+          client.subscribe('CoreElectronics/move-y', function (err) {
+            if (!err) {
+              client.publish('CoreElectronics/move-y', e.target.value);
+            }
+          });
           setPosition((prevState) => ({ ...prevState, y: e.target.value }));
         }}
         value={position.y}
-      />
+      /> */}
     </div>
   );
 };
@@ -165,7 +252,7 @@ export const ControlledTextFields = ({
   defaultValue,
   isDisabled,
   isMultiline,
-  placeholder
+  placeholder,
 }) => {
   return (
     <Controller
@@ -249,16 +336,24 @@ export const SpeakTextField = ({
   );
 };
 
-export const ActionField = ({ control, name, label, options }) => {
-  const [action, setAction] = useState(null);
+export const ActionField = ({
+  control,
+  name,
+  label,
+  options,
+  defaultValue,
+}) => {
+  const [action, setAction] = useState(defaultValue);
   return (
     <Controller
       control={control}
       name={name}
+      // defaultValue={action}
       render={({ onChange }) => {
         return (
           <div>
             <Select
+              value={defaultValue}
               styles={{
                 container: (base, state) => ({
                   ...base,
@@ -277,7 +372,7 @@ export const ActionField = ({ control, name, label, options }) => {
             />
             {action && action.label === 'Laser' && <LaserAction />}
             {action && action.label === 'Calendar' && <CalendarAction />}
-            {action && action.label === 'Video' && <LaserAction />}
+            {/* {action && action.label === 'Video' && <LaserAction />} */}
           </div>
         );
       }}

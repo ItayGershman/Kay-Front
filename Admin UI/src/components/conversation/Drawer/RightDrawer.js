@@ -199,8 +199,8 @@ const RightDrawer = ({
               control={control}
               name={'action'}
               label={'Choose Action'}
+              defaultValue={setInitialValues(node).action}
               options={[
-                { value: '', label: '' },
                 { value: 'laser', label: 'Laser' },
                 { value: 'video', label: 'Video' },
                 { value: 'calendar', label: 'Calendar' },

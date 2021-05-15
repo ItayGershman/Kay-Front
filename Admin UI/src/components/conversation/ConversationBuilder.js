@@ -137,13 +137,11 @@ const CustomNodeFlow = () => {
   };
 
   const onElementsRemove = useCallback((elementsToRemove) => {
-    console.log(elementsToRemove);
     setElements((els) => removeElements(elementsToRemove, els));
   }, []);
 
   const onAdd = useCallback(
     (node) => {
-      console.log(node);
       const newNode = handleOnAdd(node);
       setElements((els) => els.concat(newNode));
     },
@@ -198,7 +196,6 @@ const CustomNodeFlow = () => {
       const mappedElements = {}
       flow.elements.forEach((element,i)=>{
         if(element.data){
-          console.log(element.data)
           mappedElements[element.id] = `${element.data.name}_${element.data.intent}_${i}`
           element.id = `${element.data.name}_${element.data.intent}_${i}`
         }
@@ -207,7 +204,6 @@ const CustomNodeFlow = () => {
           element.target = mappedElements[element.target]
         }
       })
-      console.log(flow.elements);
       dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);

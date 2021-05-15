@@ -12,6 +12,7 @@ import CardContent from '@material-ui/core/CardContent';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChatIcon from '@material-ui/icons/Chat';
 import CategoryIcon from '@material-ui/icons/Category';
+import GamesIcon from '@material-ui/icons/Games';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -61,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
   },
   speakIcon: {
     color: '#757575',
+  },
+  actionIcon: {
+    color: '#e84545',
   },
 }));
 
@@ -130,6 +134,16 @@ export default memo(({ data, id }) => {
                       </div>
                     );
                   })}
+                {data.action && (
+                  <div className={classes.input}>
+                    <GamesIcon
+                      className={`${classes.icon} ${classes.actionIcon}`}
+                    />
+                    <Typography variant='caption'>
+                      action: {data.action}
+                    </Typography>
+                  </div>
+                )}
               </div>
             ) : (
               <div>
@@ -160,6 +174,14 @@ export default memo(({ data, id }) => {
                       className={classes.placeholder}
                     >
                       "Speak"
+                    </Typography>
+                  </div>
+                  <div className={classes.input}>
+                    <GamesIcon
+                      className={`${classes.icon} ${classes.actionIcon}`}
+                    />
+                    <Typography className={classes.placeholder}>
+                      "Action"
                     </Typography>
                   </div>
                 </div>

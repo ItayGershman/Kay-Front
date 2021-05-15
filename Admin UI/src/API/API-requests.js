@@ -21,18 +21,20 @@ class API {
     scenarioConnection,
     intentName,
     outputTextIntent,
-    entities
+    entities,
+    action
   ) {
-    const req = { scenarioConnection, intentName, outputTextIntent, entities };
+    const req = { scenarioConnection, intentName, outputTextIntent, entities,action };
     return axios.post(`/routes/intent`, req);
   }
   static updateIntent(
     scenarioConnection,
     intentName,
     outputTextIntent,
-    entities
+    entities,
+    action
   ) {
-    const req = { scenarioConnection, intentName, outputTextIntent, entities };
+    const req = { scenarioConnection, intentName, outputTextIntent, entities,action };
     return axios.put(`/routes/intent/${scenarioConnection}/${intentName}`, req);
   }
 
