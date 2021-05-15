@@ -75,21 +75,16 @@ const sendResult = async (data, state) => {
       saveHistory("kay", textToSpeak, witResponse.intent, state);
 
       //Speak text
-      console.log("state-last-node:", state.lastNode)
       const action = state.configuration[scenario].find((node)=> {
-        console.log("node:", node.data.intent)
-        console.log("wit-response:", witResponse.intent)
+
         return `wit_${node.data.intent}` === witResponse.intent
       })
-      console.log("action:", action.data)
       if (action.data.action) {
         console.log('action of action:', action.data.action)
       }
-      console.log("state-conf:", state.configuration)
-      console.log("current-node:", currentNode)
 
-      const text = await actions(witResponse.intent,entities);
-      console.log('text:',text)
+
+      const text = await actions(action.data.action,entities);
       if(text && text.length > 0){
         speak(text, state);
       }
