@@ -15,8 +15,8 @@ const actions = (action, payload) => {
       });
       console.log("Video!!!!");
       break;
-    case "wit_ready":
-      console.log("Ready");
+    case "laser":
+      console.log("Laser!!!");
       break;
     case "wit_searchEquipment":
       const text = getEquipment(payload)
