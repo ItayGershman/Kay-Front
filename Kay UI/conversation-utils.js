@@ -23,17 +23,7 @@ const speak = (text, state) => {
       throw new Error(err);
     }
     console.log("Success! Open file result.mp3 to hear result.");
-    // const res = exec('nvlc result.mp3')
     try {
-      // const say = new Say('linux');
-      // const voices = ['voice_rab_diphone','voice_ked_diphone','voice_don_diphone',]
-      // say.speak(text,'voice_us1_mbrola',1.0,(err) =>{
-      //   if(err){
-      //     return console.error(err)
-      //   }
-      //   state.isKaySpeaking= false
-      // })
-      // console.log('done speaking')
 
       return await player.play("./result.mp3", () => {
         state.isKaySpeaking = false;
@@ -78,7 +68,8 @@ const saveHistory = (speaker, text, intent, state) => {
 
 const changeNode = (state, currentNode, intentObj,scenario,witResponse) => {
   const sourceNode = state.configuration[scenario].find((elem) => {
-    if (state.lastNode.id === elem?.source) return elem;
+    const source = elem && elem.source;
+    if (state.lastNode.id === source) return elem;
   });
   //only if sourceNode was found!
   //Change current Node with the same intent

@@ -279,7 +279,7 @@ const CustomNodeFlow = () => {
             elements={elements}
             setElements={setElements}
             side='right'
-            title={scenarioSelector?.currentScenario?.scenarioConfigName}
+            title={scenarioSelector && scenarioSelector.currentScenario && scenarioSelector.currentScenario.scenarioConfigName}
           />
         </Grid>
       </Grid>

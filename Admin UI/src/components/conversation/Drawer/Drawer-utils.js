@@ -49,7 +49,7 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 export const setInitialValues = (node) => {
-  if (node?.data) {
+  if (node && node.data) {
     const { name, intent, entities, speak, action } = node.data;
     const speakArray = speak.map((text) => text.speak);
     const entitiesArray = entities.map(({ entity }) => entity);
@@ -73,26 +73,26 @@ export const setInitialValues = (node) => {
 };
 
 const LaserAction = () => {
-  let x = 0;
+  let x = 90;
   let y = 0;
 
   const client = mqtt.connect('wss://test.mosquitto.org:8081');
   useEffect(() => {
     client.on('connect', function () {
       console.log('connected');
-      client.subscribe('CoreElectronics/move-x', (err) => {
-        if (!err) console.log('subscribed to CoreElectronics/move-x');
+      client.subscribe('KAY/move-x', (err) => {
+        if (!err) console.log('subscribed to KAY/move-x');
       });
-      client.subscribe('CoreElectronics/move-y', (err) => {
-        if (!err) console.log('subscribed to CoreElectronics/move-y');
+      client.subscribe('KAY/move-y', (err) => {
+        if (!err) console.log('subscribed to KAY/move-y');
       });
     });
     return () => {
-      client.unsubscribe('CoreElectronics/move-y', (err) => {
-        if (!err) console.log('unsubscribe from CoreElectronics/move-x');
+      client.unsubscribe('KAY/move-y', (err) => {
+        if (!err) console.log('unsubscribe from KAY/move-x');
       });
-      client.unsubscribe('CoreElectronics/move-x', (err) => {
-        if (!err) console.log('unsubscribe from CoreElectronics/move-y');
+      client.unsubscribe('KAY/move-x', (err) => {
+        if (!err) console.log('unsubscribe from KAY/move-y');
       });
     };
   }, []);
@@ -111,7 +111,7 @@ const LaserAction = () => {
       <IconButton
         style={{ top: 0 }}
         onClick={() => {
-          client.publish('CoreElectronics/move-y', `${++y}`);
+          client.publish('KAY/move-y', `${++y}`);
         }}
       >
         <KeyboardArrowUpIcon />
@@ -120,7 +120,7 @@ const LaserAction = () => {
         <IconButton
           style={{ left: -10 }}
           onClick={() => {
-            client.publish('CoreElectronics/move-x', `${--x}`);
+            client.publish('KAY/move-x', `${--x}`);
           }}
         >
           <KeyboardArrowLeftIcon />
@@ -128,11 +128,7 @@ const LaserAction = () => {
         <IconButton
           style={{ right: -10 }}
           onClick={() => {
-            client.subscribe('CoreElectronics/move-x', function (err) {
-              if (!err) {
-                client.publish('CoreElectronics/move-x', `${++x}`);
-              }
-            });
+            client.publish('KAY/move-x', `${++x}`);
           }}
         >
           <KeyboardArrowRightIcon />
@@ -141,11 +137,8 @@ const LaserAction = () => {
       <IconButton
         style={{ bottom: 0 }}
         onClick={() => {
-          client.subscribe('CoreElectronics/move-x', function (err) {
-            if (!err) {
-              client.publish('CoreElectronics/move-y', `${--y}`);
-            }
-          });
+              client.publish('KAY/move-y', `${--y}`);
+            
         }}
       >
         <KeyboardArrowDownIcon />
@@ -159,9 +152,9 @@ const LaserAction = () => {
         variant='outlined'
         onChange={(e) => {
           //useDebounce
-          client.subscribe('CoreElectronics/move-x', function (err) {
+          client.subscribe('KAY/move-x', function (err) {
             if (!err) {
-              client.publish('CoreElectronics/move-x', e.target.value);
+              client.publish('KAY/move-x', e.target.value);
             }
           });
           setPosition((prevState) => ({ ...prevState, x: e.target.value }));
@@ -174,9 +167,9 @@ const LaserAction = () => {
         label='Position y'
         variant='outlined'
         onChange={(e) => {
-          client.subscribe('CoreElectronics/move-y', function (err) {
+          client.subscribe('KAY/move-y', function (err) {
             if (!err) {
-              client.publish('CoreElectronics/move-y', e.target.value);
+              client.publish('KAY/move-y', e.target.value);
             }
           });
           setPosition((prevState) => ({ ...prevState, y: e.target.value }));
@@ -324,7 +317,6 @@ export const SpeakTextField = ({
             />
             {capturedEntity === 1 && (
               <div style={{ padding: 10 }}>
-                {console.log(entitiesOptions)}
                 <Select
                   options={entitiesOptions}
                   onChange={(val) => setValue(name, `${value}${val.label}}`)}
@@ -369,7 +361,6 @@ export const ActionField = ({
               onChange={(value) => {
                 onChange(value);
                 setAction(value);
-                console.log(value);
               }}
             />
             {action && action.label === 'Laser' && <LaserAction />}

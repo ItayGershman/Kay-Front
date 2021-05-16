@@ -17,7 +17,6 @@ const getAllHistory = () => async (dispatch) => {
   dispatch({ type: HISTORY_GET_ALL_REQUEST });
   try {
     const {data} = await API.getHistory();
-    console.log('history:',data);
     dispatch({ type: HISTORY_GET_ALL_SUCCESS, payload: data });
   } catch (error) {
     dispatch({ type: HISTORY_GET_ALL_FAIL, payload: error.message });

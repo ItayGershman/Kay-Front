@@ -37,7 +37,6 @@ const ScenarioDialog = ({
     setScenarios((prevState) => [...prevState, scenario]);
   };
   useEffect(() => {
-    console.log(content);
     if (Object.keys(content).length !== 0) {
       setName(content.title);
       setDescription(content.description);

@@ -69,13 +69,11 @@ const TrainIntents = () => {
       ],
       traits: [],
     };
-    console.log(data);
     const res = await axios.post(
       `https://api.wit.ai/utterances`,
       [data],
       config
     );
-    console.log('utterance:', res);
     e.target.reset();
   };
 

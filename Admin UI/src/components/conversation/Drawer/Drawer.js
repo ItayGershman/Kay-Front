@@ -24,7 +24,7 @@ const SideDrawer = ({
   drawerClose,
   handleDrawerClose,
   handleDrawerOpen,
-  buttons,
+  buttons = [],
   actions,
   classes,
   utils,
@@ -78,7 +78,7 @@ const SideDrawer = ({
       )}
 
       <List>
-        {buttons?.map((button, index) => (
+        {buttons.map((button, index) => (
           <ListItem
             button
             key={index}

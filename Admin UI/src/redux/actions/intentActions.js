@@ -50,13 +50,11 @@ const createIntent = (
         .catch((e) => console.log(e));
     }
     if (entities.length > 0) {
-      console.log(entities[0].entity);
       await API.createWitEntity(entities[0].entity, config)
         .then((data) => console.log(data))
         .catch((e) => console.log(e));
     }
   } catch (error) {
-    console.log(error);
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
   }
 };
@@ -64,7 +62,6 @@ const updateIntent = (
   { name, intent, speak, entities, action },
   isExist
 ) => async (dispatch) => {
-  console.log('update');
   dispatch({ type: INTENT_UPDATE_REQUEST }); //loading =>true
   try {
     const res = await API.updateIntent(name, intent, speak, entities, action);
@@ -77,7 +74,6 @@ const updateIntent = (
         .catch((e) => console.log(e));
     }
     if (entities.length > 0) {
-      console.log(entities[0].entity);
       await API.createWitEntity(entities[0].entity, config)
         .then((data) => console.log(data))
         .catch((e) => console.log(e));
@@ -97,11 +93,9 @@ const getAllIntents = () => async (dispatch) => {
       },
     };
     const { data } = await axios.get(`https://api.wit.ai/intents`, config);
-    console.log(data);
     dispatch({ type: INTENTS_GET_SUCCESS, payload: data });
   } catch (error) {
-    console.log(error);
-    dispatch({ type: INTENTS_GET_FAIL });
+    dispatch({ type: INTENTS_GET_FAIL,payload:error });
   }
 };
 

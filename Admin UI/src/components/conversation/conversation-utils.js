@@ -68,7 +68,7 @@ export const graphStyles = {
 };
 
 export const handleNodeStrokeColor = (n) => {
-  if (n.style?.background) return n.style.background;
+  if (n.style && n.style.background) return n.style.background;
   if (n.type === 'input') return '#0041d0';
   if (n.type === 'selectorInputNode') return '#0041d0';
   if (n.type === 'output') return '#ff0072';
@@ -137,62 +137,3 @@ export const handleDrawer = (
     conversationBuilder: prevState.conversationBuilder + conversationSize,
   };
 };
-// left Drawer buttons
-// const actions = [
-//   {
-//     name: 'calendar',
-//     title: 'Calendar',
-//     handler: () => {
-//       console.log('handler');
-//     },
-//     icon: <CalendarTodayIcon />,
-//   },
-//   {
-//     name: 'laser',
-//     title: 'Laser Pointer',
-//     handler: () => {
-//       console.log('handler');
-//     },
-//     icon: <BrushIcon />,
-//   },
-//   {
-//     name: 'equipment',
-//     title: 'Equipment List',
-//     handler: () => {
-//       console.log('handler');
-//     },
-//     icon: <ListIcon />,
-//   },
-//   {
-//     name: 'video',
-//     title: 'Video Library',
-//     handler: () => {
-//       console.log('handler');
-//     },
-//     icon: <MovieIcon />,
-//   },
-//   {
-//     name: 'locations',
-//     title: 'Location of Positions',
-//     handler: () => {
-//       console.log('handler');
-//     },
-//     icon: <LocationOnIcon />,
-//   },
-// ];
-// const utils = [
-//   {
-//     name: 'vertical layout',
-//     title: 'Vertical Layout',
-//     handler: onLayout,
-//     icon: <SwapVerticalCircleIcon />,
-//     isDraggable: false,
-//   },
-//   {
-//     name: 'horizontal layout',
-//     title: 'Horizontal Layout',
-//     handler: onLayout,
-//     icon: <SwapHorizontalCircleIcon />,
-//     isDraggable: false,
-//   },
-// ];

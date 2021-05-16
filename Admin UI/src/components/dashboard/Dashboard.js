@@ -100,7 +100,6 @@ const Dashboard = () => {
             })}
         </div>
       )}
-      {console.log(content)}
       <ScenarioDialog
         dialogStatus={dialogStatus}
         handleCloseDialog={handleCloseDialog}

@@ -59,9 +59,8 @@ const RightDrawer = ({
   } = useFieldArray({ control, name: 'speak' });
 
   const onSubmit = (data) => {
-    console.log(data);
     //set new node
-    data["action"] = data?.action?.value;
+    data["action"] = data.action.value;
     const keys = Object.keys(data);
     let newNode = { name: title, intent: '', entities: [], speak: [],action:{} };
     keys.forEach((key) => (newNode[key] = data[key]));
@@ -70,8 +69,6 @@ const RightDrawer = ({
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
-    console.log(isExist)
-    console.log(newNode);
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));

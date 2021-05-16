@@ -166,7 +166,6 @@ function historyReducer(state = initialState, action) {
     case HISTORY_GET_ALL_REQUEST:
       return { ...state, loading: true };
     case HISTORY_GET_ALL_SUCCESS:
-      console.log('reducer history: ',action.payload)
       return {
         ...state,
         loading: false,
@@ -179,7 +178,6 @@ function historyReducer(state = initialState, action) {
     case HISTORY_GET_REQUEST:
       return { ...state, loading: true };
     case HISTORY_GET_SUCCESS:
-      console.log(state.conversations)
       let conversation = state.conversations.find(
         (con) => con._id === action.payload
       );

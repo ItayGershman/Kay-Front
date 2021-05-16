@@ -126,7 +126,7 @@ export default memo(({ data, id }) => {
                       </div>
                     );
                   })}
-                {data?.action && (
+                {data.action && (
                   <div className={classes.input}>
                     <GamesIcon
                       className={`${classes.icon} ${classes.actionIcon}`}

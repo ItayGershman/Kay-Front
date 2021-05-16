@@ -17,7 +17,6 @@ export default function Login() {
   const { register, handleSubmit, watch, errors } = useForm();
   const dispatch = useDispatch();
   const userSelector = useSelector((state) => state.userSignin);
-  console.log(userSelector);
   const onSubmit = (data) => dispatch(signin(data));
 
   return (
