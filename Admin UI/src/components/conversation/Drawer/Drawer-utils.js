@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 import axios from 'axios';
+import {
+  TextField,
+  Button,
+  Grid,
+  makeStyles,
+  IconButton,
+} from '@material-ui/core';
+
 import 'date-fns';
-import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import mqtt from 'mqtt';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -29,7 +38,7 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     padding: '5px',
     width: '100%',
-    marginBottom:5
+    marginBottom: 5,
   },
   button: {
     marginTop: '10px',
@@ -40,15 +49,17 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 export const setInitialValues = (node) => {
-  if (node?.data) {
-    const { name, intent, entities, speak } = node.data;
+  if (node && node.data) {
+    const { name, intent, entities, speak, action } = node.data;
     const speakArray = speak.map((text) => text.speak);
     const entitiesArray = entities.map(({ entity }) => entity);
+    const defaultAction = action ? { value: action, label: action } : null;
     return {
       intent: intent,
       entities: entitiesArray,
       name,
       speak: speakArray,
+      action: defaultAction,
     };
   } else {
     return {
@@ -56,12 +67,36 @@ export const setInitialValues = (node) => {
       entities: [],
       name: '',
       speak: [],
+      action: null,
     };
   }
 };
 
 const LaserAction = () => {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  let x = 90;
+  let y = 0;
+
+  const client = mqtt.connect('wss://test.mosquitto.org:8081');
+  useEffect(() => {
+    client.on('connect', function () {
+      console.log('connected');
+      client.subscribe('KAY/move-x', (err) => {
+        if (!err) console.log('subscribed to KAY/move-x');
+      });
+      client.subscribe('KAY/move-y', (err) => {
+        if (!err) console.log('subscribed to KAY/move-y');
+      });
+    });
+    return () => {
+      client.unsubscribe('KAY/move-y', (err) => {
+        if (!err) console.log('unsubscribe from KAY/move-x');
+      });
+      client.unsubscribe('KAY/move-x', (err) => {
+        if (!err) console.log('unsubscribe from KAY/move-y');
+      });
+    };
+  }, []);
+
   return (
     <div
       style={{
@@ -70,15 +105,58 @@ const LaserAction = () => {
         alignItems: 'center',
         flexDirection: 'column',
         marginTop: 20,
+        border: '1px solid',
       }}
     >
-      <TextField
+      <IconButton
+        style={{ top: 0 }}
+        onClick={() => {
+          client.publish('KAY/move-y', `${++y}`);
+        }}
+      >
+        <KeyboardArrowUpIcon />
+      </IconButton>
+      <div>
+        <IconButton
+          style={{ left: -10 }}
+          onClick={() => {
+            client.publish('KAY/move-x', `${--x}`);
+          }}
+        >
+          <KeyboardArrowLeftIcon />
+        </IconButton>
+        <IconButton
+          style={{ right: -10 }}
+          onClick={() => {
+            client.publish('KAY/move-x', `${++x}`);
+          }}
+        >
+          <KeyboardArrowRightIcon />
+        </IconButton>
+      </div>
+      <IconButton
+        style={{ bottom: 0 }}
+        onClick={() => {
+              client.publish('KAY/move-y', `${--y}`);
+            
+        }}
+      >
+        <KeyboardArrowDownIcon />
+      </IconButton>
+
+      {/* <TextField
         style={{ marginBottom: 10 }}
         multiline={false}
         placeholder='32'
         label='Position x'
         variant='outlined'
         onChange={(e) => {
+          //useDebounce
+          client.subscribe('KAY/move-x', function (err) {
+            if (!err) {
+              client.publish('KAY/move-x', e.target.value);
+            }
+          });
           setPosition((prevState) => ({ ...prevState, x: e.target.value }));
         }}
         defaultValue={position.x}
@@ -89,10 +167,15 @@ const LaserAction = () => {
         label='Position y'
         variant='outlined'
         onChange={(e) => {
+          client.subscribe('KAY/move-y', function (err) {
+            if (!err) {
+              client.publish('KAY/move-y', e.target.value);
+            }
+          });
           setPosition((prevState) => ({ ...prevState, y: e.target.value }));
         }}
         value={position.y}
-      />
+      /> */}
     </div>
   );
 };
@@ -164,6 +247,7 @@ export const ControlledTextFields = ({
   defaultValue,
   isDisabled,
   isMultiline,
+  placeholder,
 }) => {
   return (
     <Controller
@@ -176,6 +260,7 @@ export const ControlledTextFields = ({
             disabled={isDisabled}
             label={label}
             multiline={isMultiline}
+            placeholder={placeholder}
             variant='outlined'
             name={name}
             onChange={(e) => {
@@ -207,7 +292,7 @@ export const SpeakTextField = ({
       defaultValue={defaultValue}
       render={({ onChange, value, name }) => {
         return (
-          <div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <TextField
               style={{
                 height: '100%',
@@ -231,10 +316,12 @@ export const SpeakTextField = ({
               value={value}
             />
             {capturedEntity === 1 && (
-              <Select
-                options={entitiesOptions}
-                onChange={(val) => setValue(name, `${value}${val.label}}`)}
-              />
+              <div style={{ padding: 10 }}>
+                <Select
+                  options={entitiesOptions}
+                  onChange={(val) => setValue(name, `${value}${val.label}}`)}
+                />
+              </div>
             )}
           </div>
         );
@@ -243,8 +330,15 @@ export const SpeakTextField = ({
   );
 };
 
-export const ActionField = ({ control, name, label, options }) => {
-  const [action, setAction] = useState(null);
+export const ActionField = ({
+  control,
+  name,
+  label,
+  options,
+  defaultValue,
+}) => {
+  console.log('defaultValue:', defaultValue);
+  const [action, setAction] = useState(defaultValue);
   return (
     <Controller
       control={control}
@@ -253,6 +347,7 @@ export const ActionField = ({ control, name, label, options }) => {
         return (
           <div>
             <Select
+              value={defaultValue}
               styles={{
                 container: (base, state) => ({
                   ...base,
@@ -266,12 +361,11 @@ export const ActionField = ({ control, name, label, options }) => {
               onChange={(value) => {
                 onChange(value);
                 setAction(value);
-                console.log(value);
               }}
             />
             {action && action.label === 'Laser' && <LaserAction />}
             {action && action.label === 'Calendar' && <CalendarAction />}
-            {action && action.label === 'Video' && <LaserAction />}
+            {/* {action && action.label === 'Video' && <LaserAction />} */}
           </div>
         );
       }}
@@ -307,7 +401,7 @@ export const RemoveButton = ({ handler, index, classes, title }) => {
 
 export const getWitEntities = async () => {
   const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
-  const { data } = await axios.get(`https://api.wit.ai/entities?v=20200513`, {
+  const { data } = await axios.get(`https://api.wit.ai/entities`, {
     headers: {
       Authorization: `Bearer ${witToken}`,
     },

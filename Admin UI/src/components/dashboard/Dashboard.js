@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ScenarioCard from './ScenarioCard';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import { Button, Typography } from '@material-ui/core';
 import PlaylistAddIcon from '@material-ui/icons/PlaylistAdd';
 import ScenarioDialog from './ScenarioDialog';
 import { useDispatch, useSelector } from 'react-redux';
@@ -101,7 +100,6 @@ const Dashboard = () => {
             })}
         </div>
       )}
-      {console.log(content)}
       <ScenarioDialog
         dialogStatus={dialogStatus}
         handleCloseDialog={handleCloseDialog}

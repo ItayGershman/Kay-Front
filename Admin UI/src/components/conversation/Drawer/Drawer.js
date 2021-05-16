@@ -1,19 +1,20 @@
 import React from 'react';
 import clsx from 'clsx';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import {
+  Drawer,
+  Divider,
+  List,
+  IconButton,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from '@material-ui/core';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import LeftDrawer from './LeftDrawer';
-// import RightDrawer from './RightDrawer';
 import RightDrawer from './RightDrawer';
 import { useStoreActions } from 'react-flow-renderer';
 
@@ -23,7 +24,7 @@ const SideDrawer = ({
   drawerClose,
   handleDrawerClose,
   handleDrawerOpen,
-  buttons,
+  buttons = [],
   actions,
   classes,
   utils,
@@ -77,7 +78,7 @@ const SideDrawer = ({
       )}
 
       <List>
-        {buttons?.map((button, index) => (
+        {buttons.map((button, index) => (
           <ListItem
             button
             key={index}

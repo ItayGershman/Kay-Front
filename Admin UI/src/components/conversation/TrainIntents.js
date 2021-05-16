@@ -5,6 +5,33 @@ import { Controller, useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import Select from 'react-select';
 import axios from 'axios';
+import { getWitEntities, ControlledTextFields } from './Drawer/Drawer-utils';
+
+const CustomSearchField = ({ control, name, options }) => (
+  <Controller
+    control={control}
+    name={name}
+    render={({ onChange, value, name }) => {
+      return (
+        <div
+          style={{
+            width: '330px',
+            marginBottom: '10px',
+            marginTop: '10px',
+          }}
+        >
+          <Select
+            maxMenuHeight={170}
+            options={options}
+            onChange={(value) => {
+              onChange(value);
+            }}
+          />
+        </div>
+      );
+    }}
+  />
+);
 
 const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
 const config = {
@@ -21,15 +48,25 @@ const intentsOptions = (intents) => {
 
 const TrainIntents = () => {
   const { allIntents } = useSelector((state) => state.intent);
-
+  const [witEntities, setWitEntities] = useState([]);
   const { handleSubmit, control, reset } = useForm({
     defaultValues: { intent: '', utterance: '' },
   });
   const onSubmit = async (values, e) => {
+    let start = values.utterance.indexOf(values.entity_value);
+    let end = start + values.entity_value.length - 1;
     const data = {
       text: values.utterance,
       intent: values.intent.value,
-      entities: [],
+      entities: [
+        {
+          entity: `${values.entity.value}:${values.entity.value}`,
+          body: values.entity_value,
+          entities: [],
+          start,
+          end,
+        },
+      ],
       traits: [],
     };
     const res = await axios.post(
@@ -40,6 +77,10 @@ const TrainIntents = () => {
     e.target.reset();
   };
 
+  useEffect(async () => {
+    setWitEntities(await getWitEntities());
+  }, []);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -48,56 +89,44 @@ const TrainIntents = () => {
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'column',
-        height: 200,
       }}
     >
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        <Controller
+        <CustomSearchField
           control={control}
-          name='intent'
-          render={({ onChange, value, name }) => {
-            return (
-              <div
-                style={{
-                  width: '300px',
-                  marginBottom: '10px',
-                  // marginRight: '30px',
-                }}
-              >
-                <Select
-                  maxMenuHeight={170}
-                  options={intentsOptions(allIntents)}
-                  onChange={(value) => {
-                    onChange(value);
-                  }}
-                />
-              </div>
-            );
-          }}
+          name={'intent'}
+          options={intentsOptions(allIntents)}
         />
-        <Controller
+        <ControlledTextFields
           control={control}
-          name='utterance'
-          render={({ onChange }) => {
-            return (
-              <div>
-                <TextField
-                  variant='outlined'
-                  multiline
-                  rowsMax={3}
-                  placeholder='Utterance: My name is John'
-                  fullWidth
-                  onChange={(e) => {
-                    onChange(e.target.value);
-                  }}
-                  defaultValue=''
-                />
-              </div>
-            );
-          }}
+          label=''
+          name={'utterance'}
+          defaultValue=''
+          isDisabled={false}
+          isMultiline={true}
+          placeholder={'Utterance: My name is John'}
+        />
+        <CustomSearchField
+          control={control}
+          name={'entity'}
+          options={witEntities}
+        />
+        <ControlledTextFields
+          control={control}
+          label=''
+          name={'entity_value'}
+          defaultValue=''
+          isDisabled={false}
+          isMultiline={true}
+          placeholder={'Entity: John'}
         />
       </div>
-      <Button variant='contained' color='primary' type='submit'>
+      <Button
+        variant='contained'
+        color='primary'
+        type='submit'
+        style={{ marginTop: 10 }}
+      >
         Train Kay
       </Button>
     </form>

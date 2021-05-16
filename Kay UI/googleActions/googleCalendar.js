@@ -24,7 +24,6 @@ fs.readFile('/home/pi/Downloads/client_secret_554775110521-pel3hn888l5cn3i0u11qh
  */
 function authorize(credentials, callback) {
   const {client_secret, client_id, redirect_uris} = credentials.installed;
-  console.log(redirect_uris)
   const oAuth2Client = new google.auth.OAuth2(
       client_id, client_secret, redirect_uris[0]);
 

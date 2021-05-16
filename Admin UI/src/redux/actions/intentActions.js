@@ -21,58 +21,62 @@ import {
 const witToken = process.env.REACT_APP_WIT_ACCESS_TOKEN;
 const config = {
   headers: {
-    Accept: 'application/vnd.wit.20160202+json',
+    // Accept: 'application/vnd.wit.20160202+json',
     Authorization: `Bearer ${witToken}`,
-    'Content-Type': 'audio/wav',
+    'Content-Type': 'application/json',
   },
 };
 
-const createIntent = ({ name, intent, speak, entities }, isExist) => async (
-  dispatch
-) => {
+const createIntent = (
+  { name, intent, speak, entities, action },
+  isExist
+) => async (dispatch) => {
   dispatch({ type: INTENT_CREATE_REQUEST });
   try {
-    console.log(entities);
-    const { data } = await API.createIntent(name, intent, speak, entities);
+    console.log('action:', action);
+    const { data } = await API.createIntent(
+      name,
+      intent,
+      speak,
+      entities,
+      action
+    );
     dispatch({ type: INTENT_CREATE_SUCCESS, payload: data });
     const intentName = `wit_${intent}`;
     //Check if intent already exist in Wit.ai
-    if (!isExist)
-      axios
-        .post(
-          `https://api.wit.ai/intents`,
-          {
-            name: intentName,
-          },
-          config
-        )
-        .then((res) => res.json())
-        .then((data) => console.log(data));
+    if (!isExist) {
+      await API.createWitIntent(intentName, config)
+        .then((res) => console.log(res.data))
+        .catch((e) => console.log(e));
+    }
+    if (entities.length > 0) {
+      await API.createWitEntity(entities[0].entity, config)
+        .then((data) => console.log(data))
+        .catch((e) => console.log(e));
+    }
   } catch (error) {
-    console.log(error);
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
   }
 };
-const updateIntent = ({ name, intent, speak, entities }, isExist) => async (
-  dispatch
-) => {
-  console.log('update');
+const updateIntent = (
+  { name, intent, speak, entities, action },
+  isExist
+) => async (dispatch) => {
   dispatch({ type: INTENT_UPDATE_REQUEST }); //loading =>true
   try {
-    const res = await API.updateIntent(name, intent, speak, entities);
+    const res = await API.updateIntent(name, intent, speak, entities, action);
     dispatch({ type: INTENT_UPDATE_SUCCESS, payload: res });
     const intentName = `wit_${intent}`;
     //Check if intent already exist in Wit.ai
     if (!isExist) {
-      axios
-        .post(
-          `https://api.wit.ai/intents`,
-          {
-            name: intentName,
-          },
-          config
-        )
-        .then((res) => console.log(res.data));
+      await API.createWitIntent(intentName, config)
+        .then((res) => console.log(res.data))
+        .catch((e) => console.log(e));
+    }
+    if (entities.length > 0) {
+      await API.createWitEntity(entities[0].entity, config)
+        .then((data) => console.log(data))
+        .catch((e) => console.log(e));
     }
   } catch (error) {
     dispatch({ type: INTENT_UPDATE_FAIL, payload: error.message });
@@ -89,11 +93,9 @@ const getAllIntents = () => async (dispatch) => {
       },
     };
     const { data } = await axios.get(`https://api.wit.ai/intents`, config);
-    console.log(data);
     dispatch({ type: INTENTS_GET_SUCCESS, payload: data });
   } catch (error) {
-    console.log(error);
-    dispatch({ type: INTENTS_GET_FAIL });
+    dispatch({ type: INTENTS_GET_FAIL,payload:error });
   }
 };
 

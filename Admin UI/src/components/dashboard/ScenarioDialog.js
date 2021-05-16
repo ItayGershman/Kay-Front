@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import LinkIcon from '@material-ui/icons/Link';
 import { useDispatch } from 'react-redux';
 import {
   createScenario,
   updateScenario,
 } from '../../redux/actions/conversationActions';
+import {
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Button,
+  InputAdornment,
+} from '@material-ui/core';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import LinkIcon from '@material-ui/icons/Link';
+
 
 const ScenarioDialog = ({
   dialogStatus,
@@ -34,7 +37,6 @@ const ScenarioDialog = ({
     setScenarios((prevState) => [...prevState, scenario]);
   };
   useEffect(() => {
-    console.log(content);
     if (Object.keys(content).length !== 0) {
       setName(content.title);
       setDescription(content.description);

@@ -59,9 +59,8 @@ const RightDrawer = ({
   } = useFieldArray({ control, name: 'speak' });
 
   const onSubmit = (data) => {
-    console.log(data);
     //set new node
-    data["action"] = data?.action?.value;
+    data["action"] = data.action.value;
     const keys = Object.keys(data);
     let newNode = { name: title, intent: '', entities: [], speak: [],action:{} };
     keys.forEach((key) => (newNode[key] = data[key]));
@@ -70,8 +69,6 @@ const RightDrawer = ({
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
-    console.log(isExist)
-    console.log(newNode);
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));
@@ -95,7 +92,8 @@ const RightDrawer = ({
     entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
   useEffect(async () => {
-    setEntities(getWitEntities());
+    const witEntities = await getWitEntities()
+    setEntities(witEntities);
   }, []);
 
   return (
@@ -198,11 +196,12 @@ const RightDrawer = ({
               control={control}
               name={'action'}
               label={'Choose Action'}
+              defaultValue={setInitialValues(node).action}
               options={[
-                { value: '', label: '' },
                 { value: 'laser', label: 'Laser' },
                 { value: 'video', label: 'Video' },
                 { value: 'calendar', label: 'Calendar' },
+                { value: 'equipment', label: 'Equipment' },
               ]}
             />
           </div>
