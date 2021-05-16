@@ -15,6 +15,7 @@
     "axios": "^0.21.1",
     "dotenv": "^8.2.0",
     "execution-time": "^1.4.1",
+    "googleapis": "^39.2.0",
     "gtts": "^0.2.1",
     "moment": "^2.29.1",
     "node-audiorecorder": "^2.2.0",

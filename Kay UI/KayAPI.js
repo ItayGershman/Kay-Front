@@ -21,6 +21,9 @@ class KayAPI {
       text:conversation
     })
   }
+  static getEquipments(){
+    return axios.get(`https://spreadsheets.google.com/feeds/cells/1peROQvZeewIYwHBskuFl45f5jlJJvWADOSFhfoqqaaU/1/public/full?alt=json`)
+  }
 }
 
 module.exports = KayAPI;
