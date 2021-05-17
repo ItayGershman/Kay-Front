@@ -6,14 +6,17 @@ import paho.mqtt.client as mqtt
 import os
 import time
 import subprocess
-from CalibrateGUI import *
+from CalibrateGUIclass import Calibrate
 
-x = 7.5
-y = 2.5
+x = 90
+y = 0
+calibrate = None
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
+    global calibrate
+    calibrate = Calibrate()
  
     # Subscribing in on_connect() - if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -28,6 +31,7 @@ def on_message(client, userdata, msg):
     
     if msg.topic == "KAY/move-x":
         global x
+        global calibrate
         print('msg.payload:', msg.payload )
         x = msg.payload
         x = float(x)
@@ -35,10 +39,12 @@ def on_message(client, userdata, msg):
         x = ((x/18)+2.5)
         x = round(x,3)
         print("before calibrate:", x,y)
-        CalibrateGUI(x,y)
+        # CalibrateGUI(x,y)
+        calibrate.move_x(x)
 
     if msg.topic == "KAY/move-y":
         global y 
+        global calibrate
         print('msg.payload:', msg.payload )
         y = msg.payload
         y = float(y)
@@ -47,7 +53,8 @@ def on_message(client, userdata, msg):
         y = round(y,3)
         print("before calibrate:", x,y)
 
-        CalibrateGUI(x,y)
+        # CalibrateGUI(x,y)
+        calibrate.move_y(y)
 
 # Create an MQTT client and attach our routines to it.
 client = mqtt.Client()
