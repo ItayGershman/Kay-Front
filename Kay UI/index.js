@@ -18,6 +18,7 @@ const sleep = (ms) =>{
   return new Promise(resolve => setTimeout(resolve,ms))
 }
 
+
 const WitAISpeechRecognition = async () => {
   let conversation = true;
   const startRecording = async () => {
@@ -26,7 +27,8 @@ const WitAISpeechRecognition = async () => {
       conversationStarted:false,
       history:[],
       configuration:{},
-      lastNode:{}
+      lastNode:{},
+      position:A
     }
     while (conversation) {
       if (!state.isKaySpeaking) {

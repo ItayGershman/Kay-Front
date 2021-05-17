@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Handle } from 'react-flow-renderer';
-import {Typography,Card,CardContent,makeStyles} from '@material-ui/core'
+import { Typography, Card, CardContent, makeStyles } from '@material-ui/core';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ChatIcon from '@material-ui/icons/Chat';
 import CategoryIcon from '@material-ui/icons/Category';
@@ -60,8 +60,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default memo(({ data, id }) => {
-  console.log(data);
+export default memo(({ data }) => {
   const classes = useStyles();
   return (
     <>
@@ -81,7 +80,7 @@ export default memo(({ data, id }) => {
                 gutterBottom
                 className={classes.title}
                 color='textSecondary'
-                multiline
+                paragraph
               >
                 {data.name}
               </Typography>
@@ -103,9 +102,9 @@ export default memo(({ data, id }) => {
                   </div>
                 )}
                 {data.entities &&
-                  data.entities.map(({ entity }) => {
+                  data.entities.map(({ entity }, i) => {
                     return (
-                      <div className={classes.input}>
+                      <div className={classes.input} key={`${entity}_${i}`}>
                         <CategoryIcon
                           className={`${classes.icon} ${classes.entityIcon}`}
                         />
@@ -116,9 +115,9 @@ export default memo(({ data, id }) => {
                     );
                   })}
                 {data.speak &&
-                  data.speak.map(({ speak }) => {
+                  data.speak.map(({ speak }, i) => {
                     return (
-                      <div className={`${classes.input}`}>
+                      <div className={classes.input} key={`${speak}_${i}`}>
                         <ChatIcon
                           className={`${classes.icon} ${classes.speakIcon}`}
                         />

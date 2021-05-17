@@ -7,7 +7,6 @@ import {
 } from '../../redux/actions/conversationActions';
 import useStyles from './conversationStyle';
 import SideDrawer from './Drawer/Drawer';
-import TrainDialog from './TrainDialog';
 import ConversationHeader from './ConversationHeader';
 import ReactFlow, {
   removeElements,
@@ -42,7 +41,6 @@ const CustomNodeFlow = () => {
   const [reactflowInstance, setReactflowInstance] = useState(null);
   const [elements, setElements] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [trainDialog, setTrainDialog] = useState(false);
   const reactFlowWrapper = useRef(null);
   const dispatch = useDispatch();
   const location = useLocation();
@@ -217,7 +215,7 @@ const CustomNodeFlow = () => {
         handleRightDrawerOpen={() => onDrawerOpen('right')}
       />
       <Grid container spacing={3}>
-        <Grid xs={mainElementsSize.leftDrawer}>
+        <Grid item xs={mainElementsSize.leftDrawer}>
           <SideDrawer
             open={mainElementsSize.openLeft}
             drawerOpen={classes.drawerLeftOpen}
@@ -266,7 +264,7 @@ const CustomNodeFlow = () => {
             </ReactFlow>
           </main>
         </Grid>
-        <Grid xs={mainElementsSize.rightDrawer}>
+        <Grid item xs={mainElementsSize.rightDrawer}>
           <SideDrawer
             open={mainElementsSize.openRight}
             drawerOpen={classes.drawerRightOpen}
@@ -283,7 +281,6 @@ const CustomNodeFlow = () => {
           />
         </Grid>
       </Grid>
-      <TrainDialog openDialog={trainDialog} handleClickClose={setTrainDialog} />
     </div>
   );
 };

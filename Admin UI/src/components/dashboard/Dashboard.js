@@ -87,7 +87,7 @@ const Dashboard = () => {
           {displayScenarios.length > 0 &&
             displayScenarios.map((scenario) => {
               return (
-                <div style={{ margin: '20px' }}>
+                <div style={{ margin: '20px' }} key={scenario._id}>
                   <ScenarioCard
                     title={scenario.scenarioName}
                     image={scenario.scenarioImage}

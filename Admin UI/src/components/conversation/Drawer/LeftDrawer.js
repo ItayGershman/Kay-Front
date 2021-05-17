@@ -19,22 +19,6 @@ const LeftDrawer = ({ actions, utils }) => {
             </ListItem>
           ))}
       </List>
-      {/* <Divider /> */}
-      {/* <List>
-        {utils &&
-          utils.map((util, index) => (
-            <ListItem
-              button
-              key={index}
-              onClick={() => {
-                util.handler(util.name);
-              }}
-            >
-              <ListItemIcon>{util.icon}</ListItemIcon>
-              <ListItemText primary={util.title} />
-            </ListItem>
-          ))}
-      </List> */}
     </>
   );
 };
