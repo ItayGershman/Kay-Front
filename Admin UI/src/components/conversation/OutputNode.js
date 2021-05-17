@@ -48,9 +48,10 @@ export default memo(({ data }) => {
         onConnect={(params) => console.log('handle onConnect', params)}
       />
       <div>{scenarioName}</div>
-      {textToSpeak.map((text) => {
+      {textToSpeak.map((text, i) => {
         return (
           <div
+            key={`${text}_${i}`}
             className={classes.input}
             onChange={(e) => {
               console.log(`${e.target.value} ->value of the input`);
