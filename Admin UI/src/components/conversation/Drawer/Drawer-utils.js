@@ -72,10 +72,9 @@ export const setInitialValues = (node) => {
   }
 };
 
-const LaserAction = () => {
-  let x = 90;
-  let y = 0;
-
+export const LaserAction = () => {
+  const [x, setX] = useState(90);
+  const [y, setY] = useState(0);
   const client = mqtt.connect('wss://test.mosquitto.org:8081');
   useEffect(() => {
     client.on('connect', function () {
@@ -86,13 +85,19 @@ const LaserAction = () => {
       client.subscribe('KAY/move-y', (err) => {
         if (!err) console.log('subscribed to KAY/move-y');
       });
+      client.subscribe('KAY/submit', (err) => {
+        if (!err) console.log('subscribed to KAY/submit');
+      });
     });
     return () => {
-      client.unsubscribe('KAY/move-y', (err) => {
+      client.unsubscribe('KAY/move-x', (err) => {
         if (!err) console.log('unsubscribe from KAY/move-x');
       });
-      client.unsubscribe('KAY/move-x', (err) => {
+      client.unsubscribe('KAY/move-y', (err) => {
         if (!err) console.log('unsubscribe from KAY/move-y');
+      });
+      client.unsubscribe('KAY/submit', (err) => {
+        if (!err) console.log('unsubscribe from KAY/submit');
       });
     };
   }, []);
@@ -103,79 +108,81 @@ const LaserAction = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection: 'column',
-        marginTop: 20,
-        border: '1px solid',
+        flexDirection:'column',
+        padding:10
       }}
     >
-      <IconButton
-        style={{ top: 0 }}
-        onClick={() => {
-          client.publish('KAY/move-y', `${++y}`);
+      <div>Laser</div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          marginTop: 20,
+          width:'100%',
+          border: '1px solid',
         }}
       >
-        <KeyboardArrowUpIcon />
-      </IconButton>
-      <div>
         <IconButton
-          style={{ left: -10 }}
+          style={{ top: 0 }}
           onClick={() => {
-            client.publish('KAY/move-x', `${--x}`);
+            let tempY = y + 1;
+            setY(tempY);
+            client.publish('KAY/move-y', `${--tempY}`);
           }}
         >
-          <KeyboardArrowLeftIcon />
+          <KeyboardArrowUpIcon />
         </IconButton>
+        <div>
+          <IconButton
+            style={{ left: -10 }}
+            onClick={() => {
+              let tempX = x - 1;
+              setX(tempX);
+              client.publish('KAY/move-x', `${tempX}`);
+            }}
+          >
+            <KeyboardArrowLeftIcon />
+          </IconButton>
+          <IconButton
+            style={{ right: -10 }}
+            onClick={() => {
+              let tempX = x + 1;
+              setX(tempX);
+              client.publish('KAY/move-x', `${tempX}`);
+            }}
+          >
+            <KeyboardArrowRightIcon />
+          </IconButton>
+        </div>
         <IconButton
-          style={{ right: -10 }}
+          style={{ bottom: 0 }}
           onClick={() => {
-            client.publish('KAY/move-x', `${++x}`);
+            let tempY = y - 1;
+            setY(tempY);
+            client.publish('KAY/move-y', `${tempY}`);
           }}
         >
-          <KeyboardArrowRightIcon />
+          <KeyboardArrowDownIcon />
         </IconButton>
       </div>
-      <IconButton
-        style={{ bottom: 0 }}
+      <span>X: {x}</span>
+      <span>Y: {y}</span>
+      <Button
+        variant='contained'
+        color='primary'
+        type='submit'
+        style={{ marginTop: 10 }}
         onClick={() => {
-              client.publish('KAY/move-y', `${--y}`);
-            
+          client.publish('KAY/submit', '');
+          setX(90);
+          setY(0);
         }}
       >
-        <KeyboardArrowDownIcon />
-      </IconButton>
-
-      {/* <TextField
-        style={{ marginBottom: 10 }}
-        multiline={false}
-        placeholder='32'
-        label='Position x'
-        variant='outlined'
-        onChange={(e) => {
-          //useDebounce
-          client.subscribe('KAY/move-x', function (err) {
-            if (!err) {
-              client.publish('KAY/move-x', e.target.value);
-            }
-          });
-          setPosition((prevState) => ({ ...prevState, x: e.target.value }));
-        }}
-        defaultValue={position.x}
-      />
-      <TextField
-        multiline={false}
-        placeholder='12'
-        label='Position y'
-        variant='outlined'
-        onChange={(e) => {
-          client.subscribe('KAY/move-y', function (err) {
-            if (!err) {
-              client.publish('KAY/move-y', e.target.value);
-            }
-          });
-          setPosition((prevState) => ({ ...prevState, y: e.target.value }));
-        }}
-        value={position.y}
-      /> */}
+        Set Laser
+      </Button>
+      <i>i - info</i>
     </div>
   );
 };

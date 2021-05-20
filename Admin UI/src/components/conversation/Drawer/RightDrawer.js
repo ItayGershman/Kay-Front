@@ -60,9 +60,18 @@ const RightDrawer = ({
 
   const onSubmit = (data) => {
     //set new node
-    data["action"] = data.action.value;
+    if (data.action) {
+      console.log(data.action)
+      data['action'] = data.action.value;
+    } else data['action'] = null;
     const keys = Object.keys(data);
-    let newNode = { name: title, intent: '', entities: [], speak: [],action:{} };
+    let newNode = {
+      name: title,
+      intent: '',
+      entities: [],
+      speak: [],
+      action: {},
+    };
     keys.forEach((key) => (newNode[key] = data[key]));
     newNode.name = title;
     if (newNode['intent'] === '') newNode['intent'] = intent;
@@ -72,7 +81,7 @@ const RightDrawer = ({
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));
-    } else dispatch(updateIntent(newNode,isExist));
+    } else dispatch(updateIntent(newNode, isExist));
     setElements((prevState) => {
       const elem = prevState.find((el) => el.id === node.id);
       elem.data = { ...elem.data, ...newNode };
@@ -92,7 +101,7 @@ const RightDrawer = ({
     entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
   useEffect(async () => {
-    const witEntities = await getWitEntities()
+    const witEntities = await getWitEntities();
     setEntities(witEntities);
   }, []);
 

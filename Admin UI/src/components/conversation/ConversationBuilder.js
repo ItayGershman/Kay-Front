@@ -221,7 +221,7 @@ const CustomNodeFlow = () => {
             drawerOpen={classes.drawerLeftOpen}
             drawerClose={classes.drawerLeftClose}
             handleDrawerClose={() => onDrawerClose('left')}
-            onDrawerOpen={() => onDrawerOpen('left')}
+            handleDrawerOpen={() => onDrawerOpen('left')}
             buttons={leftButtons}
             classes={classes}
             side='left'
