@@ -6,23 +6,20 @@ import paho.mqtt.client as mqtt
 import os
 import time
 import subprocess
-from CalibrateGUIclass import Calibrate
-
+from CalibrateGui import *
 x = 90
 y = 0
-calibrate = None
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    global calibrate
-    calibrate = Calibrate()
  
     # Subscribing in on_connect() - if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("KAY/video")
     client.subscribe("KAY/move-x")
     client.subscribe("KAY/move-y")
+    client.subscribe("KAY/submit")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -30,31 +27,23 @@ def on_message(client, userdata, msg):
     print(msg.topic+" "+str(msg.payload))
     
     if msg.topic == "KAY/move-x":
-        global x
-        global calibrate
+        global x, y
         print('msg.payload:', msg.payload )
         x = msg.payload
         x = float(x)
-        print("before devide:", x,y)
-        x = ((x/18)+2.5)
-        x = round(x,3)
-        print("before calibrate:", x,y)
-        # CalibrateGUI(x,y)
-        calibrate.move_x(x)
+        CalibrateGUI(x,y)
 
     if msg.topic == "KAY/move-y":
-        global y 
-        global calibrate
+        global x, y
         print('msg.payload:', msg.payload )
         y = msg.payload
         y = float(y)
-        print("before devide:", x,y)
-        y = ((y/18)+2.5)
-        y = round(y,3)
-        print("before calibrate:", x,y)
-
-        # CalibrateGUI(x,y)
-        calibrate.move_y(y)
+        CalibrateGUI(x,y)
+    
+    if msg.topic == "KAY/submit":
+        print('msg.payload:', msg.payload )
+        os.system('./LaserOff.py')
+        print('Laser OFF!')
 
 # Create an MQTT client and attach our routines to it.
 client = mqtt.Client()
