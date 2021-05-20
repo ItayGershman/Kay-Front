@@ -38,6 +38,7 @@ const speak = (text, state) => {
       return await player.play("./result.mp3", () => {
         state.isKaySpeaking = false;
         console.log("finish playing");
+        // ledSpeak.kill('SIGINT')
         return state.isKaySpeaking;
       });
     } catch (error) {
@@ -64,8 +65,6 @@ const getTextToSpeak = (entities, randomElement) => {
 };
 
 const saveHistory = (speaker, text, intent, state) => {
-  //date backend adds
-  let date = moment(new Date()).format("DD/MM/YYYY");
   let time = moment().format("h:mm:ss a");
   state.history.push({
     name: speaker,

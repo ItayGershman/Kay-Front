@@ -1,5 +1,4 @@
-const { getLaser } = require("./Laser");
-const { getPosition } = require("./Position");
+const { spawn } = require("child_process");
 const actions = require("./actions");
 const KayAPI = require("./KayAPI");
 const {
@@ -10,7 +9,12 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
-const sendResult = async (data, state) => {
+const sendResult = async (data, state, ledLights) => {
+  // const ledSpeak = spawn("python", ["/home/pi/4mics_hat/speak_led.py"]);
+  // in close event we are sure that stream from child process is closed
+  // ledSpeak.on("close", (code) => {
+  //   console.log(`child process close all stdio with code ${code}`);
+  // });
   //Extract Intent and entiites
   let scenario = "Welcoming";
   let { intents, entities, text } = data;
@@ -44,6 +48,13 @@ const sendResult = async (data, state) => {
       intentObj = intentsByScenrio.data.find((elem) => {
         return `wit_${elem.intentName}` === witResponse.intent;
       });
+      if(intnetObj === undefined){
+        await speak(
+          "Sorry, I did not understand, can you please say that again?",
+          state
+        );
+        return true
+      }
       scenario = intentObj?.scenarioConnection;
     }
     console.log("intentObj: ", intentObj);
@@ -56,12 +67,15 @@ const sendResult = async (data, state) => {
     }
     //insert last node
     if (Object.keys(state.configuration).length !== 0) {
-      state.lastNode = state.configuration[scenario]?.find((elem) => {
+      const node = state.configuration[scenario]?.find((elem) => {
         if (elem?.id.includes(currentNode.replace("_wit", ""))) {
           return elem;
         }
       });
+      console.log("node:",node);
+      state.lastNode = node;
     }
+    console.log("state:", state);
     if (intentObj && witResponse.confidence > 0.8) {
       //Get array of outputs
       const outputOptions = intentObj.outputTextIntent;
@@ -75,29 +89,19 @@ const sendResult = async (data, state) => {
       saveHistory("kay", textToSpeak, witResponse.intent, state);
 
       //Speak text
-      const text = await actions(witResponse.intent,entities);
-      console.log('text:',text)
-      if(text && text.length > 0){
+      const text = await actions(witResponse.intent, entities);
+      console.log("text:", text);
+      // ledLights.kill("SIGINT");
+
+      if (text && text.length > 0) {
         speak(text, state);
-      }
-      else speak(textToSpeak, state);
-      //Laser to the coordiantes
-      // if (witResponse.intent === "wit_consent") {
-      //   setTimeout(() => {
-      //     getLaser(60, 20);
-      //   }, 12000);
-      // }
-      // //Get Kay's position with RFID
-      // if (witResponse.intent === "wit_ready") {
-      //   console.log("history: ", state.history);
-      //   getPosition();
-      // }
+      } else speak(textToSpeak, state);
+
       if (witResponse.intent === "wit_bye") {
         console.log("history: ", state.history);
         try {
           const res = KayAPI.saveConversationHistory(state.history);
           console.log(res);
-          
         } catch (e) {
           console.log(e);
         }
