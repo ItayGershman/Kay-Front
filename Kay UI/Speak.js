@@ -10,6 +10,12 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
+const scenarioConfig = (state,scenario) =>{
+  KayAPI.getScenarioConfig(scenario).then(
+    (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
+  );
+}
+
 const sendResult = async (data, state) => {
   //Extract Intent and entities
   let scenario = "Welcoming";
@@ -20,9 +26,7 @@ const sendResult = async (data, state) => {
 
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
-    KayAPI.getScenarioConfig(scenario).then(
-      (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
-    );
+    scenarioConfig(state, scenario)
   }
   //check for hotword = wit_greetings
   if (
@@ -44,9 +48,18 @@ const sendResult = async (data, state) => {
       intentObj = intentsByScenrio.data.find((elem) => {
         return `wit_${elem.intentName}` === witResponse.intent;
       });
-      scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
+      // scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
+      if (intentObj === undefined){
+        await speak(
+          "Sorry, I did not understand, can you please say that again?",
+          state
+        );
+        return true
+      }
+      scenario = intentObj ? intentObj.scenarioConnection : undefined
     }
     console.log("intentObj: ", intentObj);
+    scenarioConfig(state, scenario)
     
     let currentNode = `${scenario}_${witResponse.intent}`;
     //Check if the intent returned itself
