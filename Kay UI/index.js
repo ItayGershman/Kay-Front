@@ -3,6 +3,9 @@ const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
 const witToken = process.env.WIT_ACCESS_TOKEN;
+const { exec } = require('child_process')
+
+exec('python clientGUI.py')
 
 const reqData = {
   url: "https://api.wit.ai/speech?client=chromium&lang=en-us&output=json",
@@ -37,7 +40,7 @@ const WitAISpeechRecognition = async () => {
             rec.start({
               recordProgram: "rec",
               silence: "0.5",
-              threshold: 0.7,
+              threshold: 1.7,
               channels: 4,
               sampleRate: 48000,
             }),
