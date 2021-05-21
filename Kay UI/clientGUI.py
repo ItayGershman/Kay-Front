@@ -21,7 +21,6 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe("KAY/move-x")
     client.subscribe("KAY/move-y")
     client.subscribe("KAY/submit")
-    client.subscribe("KAY/check")
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
@@ -47,11 +46,6 @@ def on_message(client, userdata, msg):
         os.system('./LaserOff.py')
         print('Laser OFF!')
     
-    if msg.topic == "KAY/check":
-        print('msg.payload:', msg.payload )
-        os.system('./LaserGUI.py')
-        print('CHECK!' )
-
 # Create an MQTT client and attach our routines to it.
 client = mqtt.Client()
 client.on_connect = on_connect
