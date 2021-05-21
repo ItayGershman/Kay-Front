@@ -32,26 +32,26 @@ const WitAISpeechRecognition = async () => {
     while (conversation) {
       if (!state.isKaySpeaking) {
         console.log("lisetning...");
-        // const ledLights = spawn("python", [
-        //   "/home/pi/4mics_hat/speak_led.py",
-        // ]);
-        // // collect data from script
-        // ledLights.stdout.on("data", function (data) {
-        //   console.log("Pipe data from python script ...");
-        //   // dataToSend = data.toString();
-        // });
-        // // in close event we are sure that stream from child process is closed
-        // ledLights.on("close", (code) => {
-        //   console.log(`child process close all stdio with code ${code}`);
-        //   // console.log("dataTosend:", dataToSend);
-        // });
+        const ledLights = spawn("python", [
+          "/home/pi/4mics_hat/speak_led.py",
+        ]);
+        // collect data from script
+        ledLights.stdout.on("data", function (data) {
+          console.log("Pipe data from python script ...");
+          // dataToSend = data.toString();
+        });
+        // in close event we are sure that stream from child process is closed
+        ledLights.on("close", (code) => {
+          console.log(`child process close all stdio with code ${code}`);
+          // console.log("dataTosend:", dataToSend);
+        });
         await axios
           .post(
             reqData.url,
             rec.start({
               recordProgram: "rec",
               // silence: "1",
-              // threshold: 0.7,
+              threshold: 1.0,
               verbose: true,
             }),
             {
@@ -66,7 +66,7 @@ const WitAISpeechRecognition = async () => {
             // letLights.kill()
             const { data } = res;
             if (data._text !== "") {
-              await sendResult(data, state);
+              await sendResult(data, state,ledLights);
               console.log(data);
             }
           })

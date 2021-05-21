@@ -9,9 +9,15 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
+const scenarioConfig = (state,scenario) =>{
+  KayAPI.getScenarioConfig(scenario).then(
+    (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
+  );
+}
+
 const sendResult = async (data, state, ledLights) => {
   // const ledSpeak = spawn("python", ["/home/pi/4mics_hat/speak_led.py"]);
-  // in close event we are sure that stream from child process is closed
+  // // in close event we are sure that stream from child process is closed
   // ledSpeak.on("close", (code) => {
   //   console.log(`child process close all stdio with code ${code}`);
   // });
@@ -24,9 +30,7 @@ const sendResult = async (data, state, ledLights) => {
 
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
-    KayAPI.getScenarioConfig(scenario).then(
-      (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
-    );
+    scenarioConfig(state,scenario)
   }
   //check for hotword = wit_greetings
   if (
@@ -48,7 +52,7 @@ const sendResult = async (data, state, ledLights) => {
       intentObj = intentsByScenrio.data.find((elem) => {
         return `wit_${elem.intentName}` === witResponse.intent;
       });
-      if(intnetObj === undefined){
+      if(intentObj === undefined){
         await speak(
           "Sorry, I did not understand, can you please say that again?",
           state
@@ -56,10 +60,12 @@ const sendResult = async (data, state, ledLights) => {
         return true
       }
       scenario = intentObj?.scenarioConnection;
+      scenarioConfig(state,scenario)
     }
     console.log("intentObj: ", intentObj);
     
     let currentNode = `${scenario}_${witResponse.intent}`;
+    console.log(currentNode)
     //Check if the intent returned itself
     const found = state.history.find((el) => el.intent === witResponse.intent);
     if (found) {
@@ -76,7 +82,7 @@ const sendResult = async (data, state, ledLights) => {
       state.lastNode = node;
     }
     console.log("state:", state);
-    if (intentObj && witResponse.confidence > 0.8) {
+    if (intentObj ) {
       //Get array of outputs
       const outputOptions = intentObj.outputTextIntent;
       //Random item from the array
@@ -91,7 +97,7 @@ const sendResult = async (data, state, ledLights) => {
       //Speak text
       const text = await actions(witResponse.intent, entities);
       console.log("text:", text);
-      // ledLights.kill("SIGINT");
+      ledLights.kill("SIGINT");
 
       if (text && text.length > 0) {
         speak(text, state);
