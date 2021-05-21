@@ -5,12 +5,15 @@ import { useForm } from 'react-hook-form';
 import API from '../../API/API-requests';
 import { useDispatch } from 'react-redux';
 import { signUp } from '../../redux/actions/userActions';
+import { useHistory } from 'react-router-dom';
 
 export default function Register() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const onSubmit = (data) => {
     dispatch(signUp(data));
+    history.push('/dashboard');
   };
   const { register, handleSubmit, watch, errors } = useForm();
 

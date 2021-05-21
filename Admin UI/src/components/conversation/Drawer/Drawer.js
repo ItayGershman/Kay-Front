@@ -14,9 +14,11 @@ import MailIcon from '@material-ui/icons/Mail';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
+import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import LeftDrawer from './LeftDrawer';
 import RightDrawer from './RightDrawer';
 import { useStoreActions } from 'react-flow-renderer';
+import {LaserAction} from "./Drawer-utils"
 
 const SideDrawer = ({
   open,
@@ -96,6 +98,11 @@ const SideDrawer = ({
           </ListItem>
         ))}
       </List>
+      {side === 'left' && !open && <div style={{display:'flex',justifyContent:'center',marginRight:15}}><TrackChangesIcon color='action'/></div>}
+      {side === 'left' && open && (
+        <LaserAction />
+      )}
+      
     </Drawer>
   );
 };
