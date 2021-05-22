@@ -16,7 +16,7 @@ const scenarioConfig = (state, scenario) => {
   );
 }
 
-const sendResult = async (data, state) => {
+const sendResult = async (data, state, ledLights) => {
   //Extract Intent and entities
   let scenario = "Welcoming";
   let { intents, entities, text } = data;
@@ -102,6 +102,7 @@ const sendResult = async (data, state) => {
 
 
       const text = await actions(action.data.action, entities);
+      ledLights.kill("SIGINT");
       if (text && text.length > 0) {
         speak(text, state);
       }

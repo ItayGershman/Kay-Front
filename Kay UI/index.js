@@ -3,7 +3,7 @@ const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
 const witToken = process.env.WIT_ACCESS_TOKEN;
-const { exec } = require('child_process')
+const { exec, spawn } = require('child_process')
 
 exec('python clientGUI.py')
 
@@ -34,15 +34,29 @@ const WitAISpeechRecognition = async () => {
     while (conversation) {
       if (!state.isKaySpeaking) {
         console.log("lisetning...");
+        const ledLights = spawn("python", [
+          "/home/pi/4mics_hat/pixels_demo.py",
+        ]);
+        // collect data from script
+        ledLights.stdout.on("data", function (data) {
+          console.log("Pipe data from python script ...");
+          // dataToSend = data.toString();
+        });
+        // in close event we are sure that stream from child process is closed
+        ledLights.on("close", (code) => {
+          console.log(`child process close all stdio with code ${code}`);
+          // console.log("dataTosend:", dataToSend);
+        });
         await axios
           .post(
             reqData.url,
             rec.start({
               recordProgram: "rec",
-              silence: "0.5",
-              threshold: 1.7,
-              channels: 4,
-              sampleRate: 48000,
+              // silence: "0.5",
+              threshold: 1.2,
+              // channels: 4,
+              // sampleRate: 48000,
+              verbose: true
             }),
             {
               headers: {
@@ -55,7 +69,7 @@ const WitAISpeechRecognition = async () => {
           .then(async (res) => {
             const { data } = res;
             if (data._text !== "") {
-              await sendResult(data, state);
+              await sendResult(data, state, ledLights);
               console.log(data)
             }
           })
