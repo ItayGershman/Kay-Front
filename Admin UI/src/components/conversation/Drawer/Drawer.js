@@ -18,7 +18,7 @@ import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import LeftDrawer from './LeftDrawer';
 import RightDrawer from './RightDrawer';
 import { useStoreActions } from 'react-flow-renderer';
-import {LaserAction} from "./Drawer-utils"
+import { LaserAction } from './Drawer-utils';
 
 const SideDrawer = ({
   open,
@@ -98,11 +98,31 @@ const SideDrawer = ({
           </ListItem>
         ))}
       </List>
-      {side === 'left' && !open && <div style={{display:'flex',justifyContent:'center',marginRight:15}}><TrackChangesIcon color='action'/></div>}
       {side === 'left' && open && (
-        <LaserAction />
+        <>
+          <div
+            style={{
+              display: 'flex',
+              marginRight: 15,
+              marginLeft: 15,
+              marginTop: -10,
+              alignItems: 'center',
+              flexDirection: 'row',
+            }}
+          >
+            <TrackChangesIcon color='action' />
+            <p style={{ marginLeft: 30, fontSize: 16 }}>Laser</p>
+          </div>
+          <LaserAction />
+        </>
       )}
-      
+      {side === 'left' && !open && (
+        <div
+          style={{ display: 'flex', justifyContent: 'center', marginRight: 15 }}
+        >
+          <TrackChangesIcon color='action' />
+        </div>
+      )}
     </Drawer>
   );
 };

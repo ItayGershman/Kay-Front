@@ -8,13 +8,13 @@ import {
   Grid,
   makeStyles,
   IconButton,
+  Typography,
 } from '@material-ui/core';
-
+import './drawer.css';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import mqtt from 'mqtt';
@@ -24,6 +24,9 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import Tooltip from '@material-ui/core/Tooltip';
+import InfoIcon from '@material-ui/icons/Info';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -108,20 +111,20 @@ export const LaserAction = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        flexDirection:'column',
-        padding:10
+        flexDirection: 'column',
+        padding: 10,
       }}
     >
-      <div>Laser</div>
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
-          marginTop: 20,
-          width:'100%',
+          marginTop: 10,
+          width: '100%',
           border: '1px solid',
+          borderRadius: 25,
         }}
       >
         <IconButton
@@ -145,6 +148,12 @@ export const LaserAction = () => {
           >
             <KeyboardArrowLeftIcon />
           </IconButton>
+          <IconButton style={{ left: 0 }}>
+            <FiberManualRecordIcon
+              className='tv-pulse-btn'
+              style={{ color: 'red' }}
+            />
+          </IconButton>
           <IconButton
             style={{ right: -10 }}
             onClick={() => {
@@ -159,30 +168,58 @@ export const LaserAction = () => {
         <IconButton
           style={{ bottom: 0 }}
           onClick={() => {
-            let tempY = y - 1;
-            setY(tempY);
-            client.publish('KAY/move-y', `${tempY}`);
+            if (y > 0) {
+              let tempY = y - 1;
+              setY(tempY);
+              client.publish('KAY/move-y', `${tempY}`);
+            }
           }}
         >
           <KeyboardArrowDownIcon />
         </IconButton>
       </div>
-      <span>X: {x}</span>
-      <span>Y: {y}</span>
-      <Button
-        variant='contained'
-        color='primary'
-        type='submit'
-        style={{ marginTop: 10 }}
-        onClick={() => {
-          client.publish('KAY/submit', '');
-          setX(90);
-          setY(0);
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          width: 100,
+          marginTop: 10,
         }}
       >
-        Set Laser
-      </Button>
-      <i>i - info</i>
+        <span>x : {x}</span>|<span>y : {y}</span>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: 150,
+        }}
+      >
+        <Button
+          variant='contained'
+          color='primary'
+          type='submit'
+          style={{ marginTop: 10 }}
+          onClick={() => {
+            client.publish('KAY/submit', '');
+            setX(90);
+            setY(0);
+          }}
+        >
+          Set Laser
+        </Button>
+        <Tooltip
+          title='This Laser tool assist in pointing and managing equipment location at the center'
+          style={{ marginTop: 15, fontSize: 16, fontWeight: 500 }}
+        >
+          <Typography>
+            <InfoIcon />
+          </Typography>
+        </Tooltip>
+      </div>
     </div>
   );
 };
