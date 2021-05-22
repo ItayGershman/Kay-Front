@@ -11,9 +11,12 @@ const {
 } = require("./conversation-utils");
 
 const scenarioConfig = async (state, scenario) => {
-  await KayAPI.getScenarioConfig(scenario).then(
-    (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
-  );
+  const {data} = await KayAPI.getScenarioConfig(scenario);
+  state.configuration[scenario] = data.scenarioConfigData
+  return data.scenarioConfigData
+  // await KayAPI.getScenarioConfig(scenario).then(
+  //   (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
+  // );
 }
 
 const sendResult = async (data, state, ledLights) => {
@@ -27,6 +30,7 @@ const sendResult = async (data, state, ledLights) => {
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
     await scenarioConfig(state, scenario)
+    console.log('inside if')
   }
   //check for hotword = wit_greetings
   if (
@@ -58,7 +62,8 @@ const sendResult = async (data, state, ledLights) => {
       }
       scenario = intentObj ? intentObj.scenarioConnection : undefined
       console.log("intentObj: ", intentObj);
-      scenarioConfig(state, scenario)
+      await scenarioConfig(state, scenario)
+      console.log("changed scenario")
     }
 
 
@@ -93,20 +98,22 @@ const sendResult = async (data, state, ledLights) => {
 
       //Speak text
       const action = state.configuration[scenario].find((node) => {
-
+        console.log("witResponse.intent:",witResponse.intent)
+        console.log(`wit_${node.data.intent}: `,`wit_${node.data.intent}`)
         return `wit_${node.data.intent}` === witResponse.intent
       })
+      console.log(action)
       if (action.data.action) {
         console.log('action of action:', action.data.action)
       }
       console.log(witResponse.intent)
-      if(witResponse.intent === "wit_getDepartment"){
+      if (witResponse.intent === "wit_getDepartment") {
         const department = entities["department:department"][0].body
         console.log(department)
         state.videoName = department
       }
 
-      const text = await actions(action.data.action, entities,state);
+      const text = await actions(action.data.action, entities, state);
       ledLights.kill("SIGINT");
       if (text && text.length > 0) {
         speak(text, state);
@@ -127,7 +134,7 @@ const sendResult = async (data, state, ledLights) => {
         }
 
         const position = getKayPosition()
-        
+
 
       }
       if (witResponse.intent === "wit_bye") {

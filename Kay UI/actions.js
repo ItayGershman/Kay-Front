@@ -30,7 +30,7 @@ const actions = (action, payload, state) => {
     case "laser":
       console.log("Laser!!!");
       break;
-    case "wit_searchEquipment":
+    case "equipment":
       const text = getEquipment(payload)
       console.log("text in actions:", text);
       return text;
