@@ -10,8 +10,8 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
-const scenarioConfig = (state, scenario) => {
-  KayAPI.getScenarioConfig(scenario).then(
+const scenarioConfig = async (state, scenario) => {
+  await KayAPI.getScenarioConfig(scenario).then(
     (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
   );
 }
@@ -26,7 +26,7 @@ const sendResult = async (data, state, ledLights) => {
 
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
-    scenarioConfig(state, scenario)
+    await scenarioConfig(state, scenario)
   }
   //check for hotword = wit_greetings
   if (
@@ -99,9 +99,14 @@ const sendResult = async (data, state, ledLights) => {
       if (action.data.action) {
         console.log('action of action:', action.data.action)
       }
+      console.log(witResponse.intent)
+      if(witResponse.intent === "wit_getDepartment"){
+        const department = entities["department:department"][0].body
+        console.log(department)
+        state.videoName = department
+      }
 
-
-      const text = await actions(action.data.action, entities);
+      const text = await actions(action.data.action, entities,state);
       ledLights.kill("SIGINT");
       if (text && text.length > 0) {
         speak(text, state);

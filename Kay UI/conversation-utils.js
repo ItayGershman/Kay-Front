@@ -3,6 +3,7 @@ const gTTS = require("gtts");
 const player = require("play-sound")((opts = {}));
 // const Say = require("say").Say;
 const moment = require("moment");
+const { quickStart } = require("./googleActions/googleSpeech");
 
 const getWitResponse = (intents, text) => {
   if (intents.length > 0)
@@ -17,6 +18,7 @@ const getWitResponse = (intents, text) => {
 const speak = (text, state) => {
   state.isKaySpeaking = true;
   console.log(text);
+  // quickStart(text, state)
   const gtts = new gTTS(text, "en-us");
   gtts.save("result.mp3", async function (err, result) {
     if (err) {

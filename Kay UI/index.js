@@ -29,7 +29,8 @@ const WitAISpeechRecognition = async () => {
       conversationStarted: false,
       history: [],
       configuration: {},
-      lastNode: {}
+      lastNode: {},
+      videoName:null
     }
     while (conversation) {
       if (!state.isKaySpeaking) {
@@ -53,7 +54,7 @@ const WitAISpeechRecognition = async () => {
             rec.start({
               recordProgram: "rec",
               // silence: "0.5",
-              threshold: 1.2,
+              threshold: 1,
               // channels: 4,
               // sampleRate: 48000,
               verbose: true
