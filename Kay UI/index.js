@@ -62,7 +62,6 @@ const WitAISpeechRecognition = async () => {
           .catch((e) => console.log(e));
       }
       else {
-        console.log(state.isKaySpeaking)
         await sleep(100)
       }
     }

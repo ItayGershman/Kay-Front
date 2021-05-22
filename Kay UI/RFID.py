@@ -19,11 +19,10 @@ def getRFID():
         if(rfid.getTagPresent()):
             flag = False
             rfid_ID = rfid.getLastTag()[0]
-            print('inside getRFID:', rfid_ID)
+            print(rfid_ID)
         time.sleep(0.15)
     return rfid_ID
 
 if __name__ == '__main__':
     position = getRFID()
-    print ('After getRFID position:', position)
-    # return position
+    print('After getRFID position:', position)

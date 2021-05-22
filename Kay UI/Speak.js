@@ -57,9 +57,10 @@ const sendResult = async (data, state) => {
         return true
       }
       scenario = intentObj ? intentObj.scenarioConnection : undefined
+      console.log("intentObj: ", intentObj);
+      scenarioConfig(state, scenario)
     }
-    console.log("intentObj: ", intentObj);
-    scenarioConfig(state, scenario)
+
 
     let currentNode = `${scenario}_${witResponse.intent}`;
     //Check if the intent returned itself
@@ -113,9 +114,15 @@ const sendResult = async (data, state) => {
       // }
       //Get Kay's position with RFID
       if (witResponse.intent === "wit_ready") {
-        console.log("history: ", state.history);
-        position = await getPosition();
-        console.log('position wit ready:', position)
+        const getKayPosition = async () => {
+          let position = await getPosition();
+          console.log('position wit ready:', position)
+          return position
+        }
+
+        const position = getKayPosition()
+        
+
       }
       if (witResponse.intent === "wit_bye") {
         console.log("history: ", state.history);
