@@ -11,7 +11,7 @@ const {
 } = require("./conversation-utils");
 
 const scenarioConfig = async (state, scenario) => {
-  const {data} = await KayAPI.getScenarioConfig(scenario);
+  const { data } = await KayAPI.getScenarioConfig(scenario);
   state.configuration[scenario] = data.scenarioConfigData
   return data.scenarioConfigData
   // await KayAPI.getScenarioConfig(scenario).then(
@@ -19,7 +19,7 @@ const scenarioConfig = async (state, scenario) => {
   // );
 }
 
-const sendResult = async (data, state, ledLights) => {
+const sendResult = async (data, state, ledLights, allLocations) => {
   //Extract Intent and entities
   let scenario = "Welcoming";
   let { intents, entities, text } = data;
@@ -98,8 +98,8 @@ const sendResult = async (data, state, ledLights) => {
 
       //Speak text
       const action = state.configuration[scenario].find((node) => {
-        console.log("witResponse.intent:",witResponse.intent)
-        console.log(`wit_${node.data.intent}: `,`wit_${node.data.intent}`)
+        console.log("witResponse.intent:", witResponse.intent)
+        console.log(`wit_${node.data.intent}: `, `wit_${node.data.intent}`)
         return `wit_${node.data.intent}` === witResponse.intent
       })
       console.log(action)
@@ -113,30 +113,25 @@ const sendResult = async (data, state, ledLights) => {
         state.videoName = department
       }
 
+
+      if (witResponse.intent === "wit_ready") {
+        const getKayPosition = async () => {
+          return await getPosition();
+        }
+        let position = await getKayPosition()
+        position = allLocations.data.find((elem) =>
+          (position.includes(elem.RFID))
+        )
+        state.position = position.locationName
+      }
+
       const text = await actions(action.data.action, entities, state);
       ledLights.kill("SIGINT");
       if (text && text.length > 0) {
         speak(text, state);
       }
       else speak(textToSpeak, state);
-      //Laser to the coordiantes
-      // if (witResponse.intent === "wit_consent") {
-      //   setTimeout(() => {
-      //     getLaser(60, 20);
-      //   }, 12000);
-      // }
-      //Get Kay's position with RFID
-      if (witResponse.intent === "wit_ready") {
-        const getKayPosition = async () => {
-          let position = await getPosition();
-          console.log('position wit ready:', position)
-          return position
-        }
-
-        const position = getKayPosition()
-
-
-      }
+      
       if (witResponse.intent === "wit_bye") {
         console.log("history: ", state.history);
         try {

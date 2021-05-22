@@ -1,13 +1,13 @@
 const mqtt = require('mqtt')
 const getEquipment = require("./googleActions/googleSheets");
 
-const displayVideo = (client, department) => {
-  client.subscribe(`KAY/${department}`, (err) => {
+const displayVideo = (client, department,position) => {
+  client.subscribe(`KAY/${position}/${department}`, (err) => {
     if (!err) console.log('subscribed to KAY/video');
-    client.publish(`KAY/${department}`, department);
+    client.publish(`KAY/${position}/${department}`, department);
   });
-  client.unsubscribe(`KAY/${department}`, (err) => {
-    if (!err) console.log(`unsubscribe from KAY/${department}`);
+  client.unsubscribe(`KAY/${position}/${department}`, (err) => {
+    if (!err) console.log(`unsubscribe from KAY/${position}/${department}`);
   });
 }
 
@@ -15,16 +15,19 @@ const actions = (action, payload, state) => {
   console.log('action bedore switch:', action)
   switch (action) {
     case "video":
+      console.log('state.position:',state.position)
       let department = state.videoName;
       console.log("video:", department)
       const client = mqtt.connect('wss://test.mosquitto.org:8081');
-
-      if (department.includes("software")) {
-        displayVideo(client, "software")
+      if (department) {
+        if (department.includes("software")) {
+          displayVideo(client, "software",state.position)
+        }
+        if (department.includes("industrial")) {
+          displayVideo(client, "industrial",state.position)
+        }
       }
-      if (department.includes("industrial")) {
-        displayVideo(client, "industrial")
-      }
+      return `Welcome to ${state.position}`
       console.log("Video!!!!");
       break;
     case "laser":

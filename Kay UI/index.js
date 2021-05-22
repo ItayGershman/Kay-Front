@@ -3,7 +3,9 @@ const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
 const witToken = process.env.WIT_ACCESS_TOKEN;
-const { exec, spawn } = require('child_process')
+const { exec, spawn } = require('child_process');
+const { getAllLocations } = require("./KayAPI.js");
+const { getPosition } = require("./Position.js");
 
 exec('python clientGUI.py')
 
@@ -23,6 +25,14 @@ const sleep = (ms) => {
 
 const WitAISpeechRecognition = async () => {
   let conversation = true;
+  let allLocations = await getAllLocations()
+  let rfid = await getPosition()
+  const currPosition = allLocations.data.find((elem) => {
+    if (rfid.includes(elem.RFID)) {
+      return elem.locationName
+    }
+  })
+
   const startRecording = async () => {
     let state = {
       isKaySpeaking: false,
@@ -30,7 +40,8 @@ const WitAISpeechRecognition = async () => {
       history: [],
       configuration: {},
       lastNode: {},
-      videoName:null
+      videoName: null,
+      position: currPosition.locationName
     }
     while (conversation) {
       if (!state.isKaySpeaking) {
@@ -54,7 +65,7 @@ const WitAISpeechRecognition = async () => {
             rec.start({
               recordProgram: "rec",
               // silence: "0.5",
-              threshold: 1,
+              threshold: 0.8,
               // channels: 4,
               // sampleRate: 48000,
               verbose: true
@@ -70,7 +81,7 @@ const WitAISpeechRecognition = async () => {
           .then(async (res) => {
             const { data } = res;
             if (data._text !== "") {
-              await sendResult(data, state, ledLights);
+              await sendResult(data, state, ledLights, allLocations);
               console.log(data)
             }
           })
