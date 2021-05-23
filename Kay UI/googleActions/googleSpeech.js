@@ -5,6 +5,7 @@ const player = require("play-sound")((opts = {}));
 // Import other required libraries
 const fs = require('fs');
 const util = require('util');
+const { headPosition } = require('../HeadPosition');
 // Creates a client
 const client = new textToSpeech.TextToSpeechClient();
 

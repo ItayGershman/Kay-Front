@@ -9,6 +9,7 @@ const {
   saveHistory,
   changeNode,
 } = require("./conversation-utils");
+const { headPosition } = require("./HeadPosition");
 
 const scenarioConfig = async (state, scenario) => {
   const { data } = await KayAPI.getScenarioConfig(scenario);
@@ -37,6 +38,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
     state.conversationStarted === false &&
     witResponse.intent === "wit_greetings"
   ) {
+    headPosition(60,20) // coord needs to be dynamic from admin ui (action) and parallel to the speak not before
     state.conversationStarted = true;
   }
   if (state.conversationStarted) {
@@ -84,7 +86,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
         })
       }
     }
-    if (intentObj && witResponse.confidence > 0.8) {
+    if (intentObj ) {
       //Get array of outputs
       const outputOptions = intentObj.outputTextIntent;
       //Random item from the array

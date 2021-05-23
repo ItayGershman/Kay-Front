@@ -3,11 +3,13 @@ const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
 const witToken = process.env.WIT_ACCESS_TOKEN;
+const googleJson = process.env.GOOGLE_JSON;
 const { exec, spawn } = require('child_process');
 const { getAllLocations } = require("./KayAPI.js");
 const { getPosition } = require("./Position.js");
 
 exec('python clientGUI.py')
+exec(`export GOOGLE_APPLICATION_CREDENTIALS="${googleJson}"`) 
 
 const reqData = {
   url: "https://api.wit.ai/speech?client=chromium&lang=en-us&output=json",
@@ -65,7 +67,7 @@ const WitAISpeechRecognition = async () => {
             rec.start({
               recordProgram: "rec",
               // silence: "0.5",
-              threshold: 0.8,
+              threshold: 1.5,
               // channels: 4,
               // sampleRate: 48000,
               verbose: true
