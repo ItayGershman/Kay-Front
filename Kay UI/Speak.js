@@ -1,5 +1,5 @@
 // const { getLaser } = require("./Laser");
-// const { getPosition } = require("./Position");
+const { getPosition } = require("./Position");
 const actions = require("./actions");
 const KayAPI = require("./KayAPI");
 const {
@@ -10,7 +10,20 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
+<<<<<<< HEAD
 const sendResult = async (data, state) => {
+=======
+const scenarioConfig = async (state, scenario) => {
+  const { data } = await KayAPI.getScenarioConfig(scenario);
+  state.configuration[scenario] = data.scenarioConfigData
+  return data.scenarioConfigData
+  // await KayAPI.getScenarioConfig(scenario).then(
+  //   (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
+  // );
+}
+
+const sendResult = async (data, state, ledLights, allLocations) => {
+>>>>>>> f7293c61604ea577014cdaa974cce438e1cd9c80
   //Extract Intent and entities
   let scenario = "Welcoming";
   let { intents, entities, text } = data;
@@ -20,9 +33,14 @@ const sendResult = async (data, state) => {
 
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
+<<<<<<< HEAD
     KayAPI.getScenarioConfig(scenario).then(
       (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
     );
+=======
+    await scenarioConfig(state, scenario)
+    console.log('inside if')
+>>>>>>> f7293c61604ea577014cdaa974cce438e1cd9c80
   }
   //check for hotword = wit_greetings
   if (
@@ -44,10 +62,21 @@ const sendResult = async (data, state) => {
       intentObj = intentsByScenrio.data.find((elem) => {
         return `wit_${elem.intentName}` === witResponse.intent;
       });
-      scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
+      // scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
+      if (intentObj === undefined) {
+        await speak(
+          "Sorry, I did not understand, can you please say that again?",
+          state
+        );
+        return true
+      }
+      scenario = intentObj ? intentObj.scenarioConnection : undefined
+      console.log("intentObj: ", intentObj);
+      await scenarioConfig(state, scenario)
+      console.log("changed scenario")
     }
-    console.log("intentObj: ", intentObj);
-    
+
+
     let currentNode = `${scenario}_${witResponse.intent}`;
     //Check if the intent returned itself
     const found = state.history.find((el) => el.intent === witResponse.intent);
@@ -57,7 +86,7 @@ const sendResult = async (data, state) => {
     //insert last node
     if (Object.keys(state.configuration).length !== 0) {
       let config = state.configuration[scenario];
-      if(config){
+      if (config) {
         state.lastNode = config.find((elem) => {
           if (elem.id && elem.id.includes(currentNode.replace("_wit", ""))) {
             return elem;
@@ -78,37 +107,47 @@ const sendResult = async (data, state) => {
       saveHistory("kay", textToSpeak, witResponse.intent, state);
 
       //Speak text
-      const action = state.configuration[scenario].find((node)=> {
-
+      const action = state.configuration[scenario].find((node) => {
+        console.log("witResponse.intent:", witResponse.intent)
+        console.log(`wit_${node.data.intent}: `, `wit_${node.data.intent}`)
         return `wit_${node.data.intent}` === witResponse.intent
       })
+      console.log(action)
       if (action.data.action) {
         console.log('action of action:', action.data.action)
       }
+      console.log(witResponse.intent)
+      if (witResponse.intent === "wit_getDepartment") {
+        const department = entities["department:department"][0].body
+        console.log(department)
+        state.videoName = department
+      }
 
 
-      const text = await actions(action.data.action,entities);
-      if(text && text.length > 0){
+      if (witResponse.intent === "wit_ready") {
+        const getKayPosition = async () => {
+          return await getPosition();
+        }
+        let position = await getKayPosition()
+        position = allLocations.data.find((elem) =>
+          (position.includes(elem.RFID))
+        )
+        state.position = position.locationName
+      }
+
+      const text = await actions(action.data.action, entities, state);
+      ledLights.kill("SIGINT");
+      if (text && text.length > 0) {
         speak(text, state);
       }
       else speak(textToSpeak, state);
-      //Laser to the coordiantes
-      // if (witResponse.intent === "wit_consent") {
-      //   setTimeout(() => {
-      //     getLaser(60, 20);
-      //   }, 12000);
-      // }
-      // //Get Kay's position with RFID
-      // if (witResponse.intent === "wit_ready") {
-      //   console.log("history: ", state.history);
-      //   getPosition();
-      // }
+      
       if (witResponse.intent === "wit_bye") {
         console.log("history: ", state.history);
         try {
           const res = KayAPI.saveConversationHistory(state.history);
           console.log(res);
-          
+
         } catch (e) {
           console.log(e);
         }

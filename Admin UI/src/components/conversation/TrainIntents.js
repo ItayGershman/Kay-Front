@@ -8,11 +8,12 @@ import { getWitEntities, ControlledTextFields } from './Drawer/Drawer-utils';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const CustomSearchField = ({ control, name, options }) => (
+const CustomSearchField = ({ control, name, options, defaultValues }) => (
   <Controller
     control={control}
     name={name}
-    render={({ onChange }) => {
+    defaultValue={defaultValues}
+    render={({ onChange, value }) => {
       return (
         <div
           style={{
@@ -24,6 +25,7 @@ const CustomSearchField = ({ control, name, options }) => (
           <Select
             maxMenuHeight={170}
             options={options}
+            value={value}
             onChange={(value) => {
               onChange(value);
             }}
@@ -50,17 +52,16 @@ const intentsOptions = (intents) => {
 const TrainIntents = () => {
   const { allIntents } = useSelector((state) => state.intent);
   const [witEntities, setWitEntities] = useState([]);
-  const { handleSubmit, control, reset } = useForm({
-    defaultValues: {
-      intent: { value: '', label: '' },
-      utterance: '',
-      entity: { value: '', label: '' },
-      entity_value: '',
-    },
+  const defaultValues = () => ({
+    intent: '',
+    utterance: '',
+    entity: '',
+    entity_value: '',
   });
+  const { handleSubmit, control, reset } = useForm({ defaultValues });
 
-  const notify = () =>
-    toast.info('🦄 Submitted!', {
+  const notify = (text, status) => {
+    const config = {
       position: 'bottom-left',
       autoClose: 5000,
       hideProgressBar: false,
@@ -68,11 +69,16 @@ const TrainIntents = () => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-    });
+    };
+    if (status === 'fail') {
+      toast.error(`${text}`, config);
+    } else toast.info(`🦄 ${text}`, config);
+  };
 
   const onSubmit = async (values, e) => {
     let start = values.utterance.indexOf(values.entity_value);
     let end = start + values.entity_value.length - 1;
+    console.log(values);
     const entities = values.entity
       ? [
           {
@@ -84,21 +90,29 @@ const TrainIntents = () => {
           },
         ]
       : [];
+    console.log('entitites', entities);
     const data = {
       text: values.utterance,
       intent: values.intent.value,
       entities: entities,
       traits: [],
     };
-    await axios.post(`https://api.wit.ai/utterances`, [data], config);
-    notify();
-    e.target.reset();
-    reset({
-      intent: '',
-      utterance: '',
-      entity: '',
-      entity_value: '',
-    });
+
+    try {
+      const res = await axios.post(
+        `https://api.wit.ai/utterances`,
+        [data],
+        config
+      );
+      console.log(res);
+      if (res.status === 200) notify('Submitted!', 'info');
+      else notify('Could train Kay at the moment', 'fail');
+    } catch (e) {
+      console.log(e);
+    }
+
+    // e.target.reset();
+    reset(defaultValues());
   };
 
   useEffect(async () => {
@@ -120,6 +134,7 @@ const TrainIntents = () => {
           control={control}
           name={'intent'}
           options={intentsOptions(allIntents)}
+          defaultValues={defaultValues().intent}
         />
         <ControlledTextFields
           control={control}
@@ -134,6 +149,7 @@ const TrainIntents = () => {
           control={control}
           name={'entity'}
           options={witEntities}
+          defaultValues={defaultValues().entity}
         />
         <ControlledTextFields
           control={control}

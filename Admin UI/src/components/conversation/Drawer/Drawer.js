@@ -19,6 +19,7 @@ import LeftDrawer from './LeftDrawer';
 import RightDrawer from './RightDrawer';
 import { useStoreActions } from 'react-flow-renderer';
 import { LaserAction } from './Drawer-utils';
+import CustomizedAccordion from './CustomAccordion';
 
 const SideDrawer = ({
   open,
@@ -99,13 +100,20 @@ const SideDrawer = ({
         ))}
       </List>
       {side === 'left' && open && (
-        <>
+        <div style={{ marginBottom: 60 }}>
+          <div style={{ marginBottom: 20 }}>
+            <Divider />
+          </div>
+          <CustomizedAccordion
+            isDrawerOpen={open}
+            setDrawer={handleDrawerOpen}
+          />
           <div
             style={{
               display: 'flex',
               marginRight: 15,
               marginLeft: 15,
-              marginTop: -10,
+              marginTop: 10,
               alignItems: 'center',
               flexDirection: 'row',
             }}
@@ -113,14 +121,26 @@ const SideDrawer = ({
             <TrackChangesIcon color='action' />
             <p style={{ marginLeft: 30, fontSize: 16 }}>Laser</p>
           </div>
+
           <LaserAction />
-        </>
+        </div>
       )}
       {side === 'left' && !open && (
-        <div
-          style={{ display: 'flex', justifyContent: 'center', marginRight: 15 }}
-        >
-          <TrackChangesIcon color='action' />
+        <div>
+          <CustomizedAccordion
+            isDrawerOpen={open}
+            setDrawer={handleDrawerOpen}
+          />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginRight: 15,
+              marginTop: 15,
+            }}
+          >
+            <TrackChangesIcon color='action' />
+          </div>
         </div>
       )}
     </Drawer>

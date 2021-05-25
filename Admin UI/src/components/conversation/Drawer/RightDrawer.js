@@ -224,10 +224,10 @@ const RightDrawer = ({
           </Button>
         </form>
       )}
-      <CustomizedAccordion
+      {/* <CustomizedAccordion
         isDrawerOpen={drawerState}
         setDrawer={handleDrawerOpen}
-      />
+      /> */}
       <ToastContainer
         position='bottom-left'
         autoClose={5000}

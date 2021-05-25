@@ -25,5 +25,4 @@ def getRFID():
 
 if __name__ == '__main__':
     position = getRFID()
-    print 'position:', position
-    # return position
+    # print('After getRFID position:', position)

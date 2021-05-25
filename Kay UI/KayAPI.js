@@ -24,6 +24,10 @@ class KayAPI {
   static getEquipments(){
     return axios.get(`https://spreadsheets.google.com/feeds/cells/1peROQvZeewIYwHBskuFl45f5jlJJvWADOSFhfoqqaaU/1/public/full?alt=json`)
   }
+
+  static getAllLocations(){
+    return axios.get(`${BACKEND_URL}/location`);
+  }
 }
 
 module.exports = KayAPI;

@@ -77,14 +77,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'none',
   },
   drawer: {
-    width: 240,
+    width: 300,
     flexShrink: 0,
     whiteSpace: 'nowrap',
     position: 'absolute',
   },
   drawerLeftOpen: {
     top: 65,
-    width: 240,
+    width: 370,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,

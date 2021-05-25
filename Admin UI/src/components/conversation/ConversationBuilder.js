@@ -83,8 +83,8 @@ const CustomNodeFlow = () => {
   const onDrawerOpen = (side) => {
     if (side === 'left') {
       setMainElementsSize((prevState) => {
-        if (prevState.leftDrawer === 2) return prevState;
-        return handleDrawer('left', prevState, true, 240, 2, -1);
+        if (prevState.leftDrawer === 3) return prevState;
+        return handleDrawer('left', prevState, true, 370, 3, -2);
       });
     } else {
       setMainElementsSize((prevState) => {
@@ -96,7 +96,7 @@ const CustomNodeFlow = () => {
   const onDrawerClose = (side) => {
     if (side === 'left') {
       setMainElementsSize((prevState) =>
-        handleDrawer('left', prevState, false, 0, 1, 1)
+        handleDrawer('left', prevState, false, 0, 1, 2)
       );
     } else {
       setMainElementsSize((prevState) =>
@@ -107,12 +107,14 @@ const CustomNodeFlow = () => {
 
   const onElementsRemove = useCallback((elementsToRemove) => {
     setElements((els) => removeElements(elementsToRemove, els));
+    onSave();
   }, []);
 
   const onAdd = useCallback(
     (node) => {
       const newNode = handleOnAdd(node);
       setElements((els) => els.concat(newNode));
+      onSave();
     },
     [setElements]
   );
@@ -277,7 +279,11 @@ const CustomNodeFlow = () => {
             elements={elements}
             setElements={setElements}
             side='right'
-            title={scenarioSelector && scenarioSelector.currentScenario && scenarioSelector.currentScenario.scenarioConfigName}
+            title={
+              scenarioSelector &&
+              scenarioSelector.currentScenario &&
+              scenarioSelector.currentScenario.scenarioConfigName
+            }
           />
         </Grid>
       </Grid>

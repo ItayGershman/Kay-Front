@@ -57,7 +57,7 @@ const CustomizedAccordion = ({isDrawerOpen,setDrawer}) => {
   };
 
   return (
-    <div>
+    <>
       <Accordion
         square
         expanded={expanded === 'panel1'}
@@ -85,7 +85,7 @@ const CustomizedAccordion = ({isDrawerOpen,setDrawer}) => {
           <TrainIntents />
         </AccordionDetails>
       </Accordion>
-    </div>
+    </>
   );
 };
 

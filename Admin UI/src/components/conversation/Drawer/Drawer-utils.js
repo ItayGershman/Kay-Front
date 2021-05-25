@@ -2,14 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 import axios from 'axios';
-import {
-  TextField,
-  Button,
-  Grid,
-  makeStyles,
-  IconButton,
-  Typography,
-} from '@material-ui/core';
 import './drawer.css';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -18,15 +10,25 @@ import {
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import mqtt from 'mqtt';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
-import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Tooltip from '@material-ui/core/Tooltip';
-import InfoIcon from '@material-ui/icons/Info';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import {
+  TextField,
+  Button,
+  Grid,
+  makeStyles,
+  IconButton,
+  Typography,
+  Tooltip,
+} from '@material-ui/core';
+import {
+  AddCircle as AddCircleIcon,
+  RemoveCircle as RemoveCircleIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  KeyboardArrowRight as KeyboardArrowRightIcon,
+  KeyboardArrowLeft as KeyboardArrowLeftIcon,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  Info as InfoIcon,
+  FiberManualRecord as FiberManualRecordIcon,
+} from '@material-ui/icons';
 
 export const useStyles = makeStyles((theme) => ({
   container: {
@@ -130,9 +132,11 @@ export const LaserAction = () => {
         <IconButton
           style={{ top: 0 }}
           onClick={() => {
-            let tempY = y + 1;
-            setY(tempY);
-            client.publish('KAY/move-y', `${--tempY}`);
+            if (y < 90) {
+              let tempY = y + 1;
+              setY(tempY);
+              client.publish('KAY/move-y', `${--tempY}`);
+            }
           }}
         >
           <KeyboardArrowUpIcon />
@@ -141,9 +145,11 @@ export const LaserAction = () => {
           <IconButton
             style={{ left: -10 }}
             onClick={() => {
-              let tempX = x - 1;
-              setX(tempX);
-              client.publish('KAY/move-x', `${tempX}`);
+              if (x > 0) {
+                let tempX = x - 1;
+                setX(tempX);
+                client.publish('KAY/move-x', `${tempX}`);
+              }
             }}
           >
             <KeyboardArrowLeftIcon />
@@ -157,9 +163,11 @@ export const LaserAction = () => {
           <IconButton
             style={{ right: -10 }}
             onClick={() => {
-              let tempX = x + 1;
-              setX(tempX);
-              client.publish('KAY/move-x', `${tempX}`);
+              if (x < 180) {
+                let tempX = x + 1;
+                setX(tempX);
+                client.publish('KAY/move-x', `${tempX}`);
+              }
             }}
           >
             <KeyboardArrowRightIcon />
@@ -310,7 +318,7 @@ export const ControlledTextFields = ({
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            defaultValue={value}
+            value={value}
           />
         );
       }}
@@ -424,7 +432,7 @@ export const AppendButton = ({ handler, classes, title }) => {
       variant='contained'
       color='primary'
       className={classes.button}
-      startIcon={<AddCircleIcon />}
+      startIcon={<AddCircleIcon as AddCircleIcon />}
     >
       {title}
     </Button>

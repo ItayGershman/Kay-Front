@@ -14,7 +14,7 @@ if __name__ == '__main__':
         #Test turning the laser on and off
         time.sleep(1)
         GPIO.output(GPIO_LASER, 1)
-        time.sleep(3)
+        time.sleep(4.5)
         # GPIO.output(GPIO_LASER, 0)
         # time.sleep(1)
         # GPIO.output(GPIO_LASER, 1)

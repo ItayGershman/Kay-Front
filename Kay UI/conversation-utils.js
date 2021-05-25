@@ -3,6 +3,7 @@ const gTTS = require("gtts");
 const player = require("play-sound")((opts = {}));
 // const Say = require("say").Say;
 const moment = require("moment");
+const { quickStart } = require("./googleActions/googleSpeech");
 
 const getWitResponse = (intents, text) => {
   if (intents.length > 0)
@@ -17,6 +18,7 @@ const getWitResponse = (intents, text) => {
 const speak = (text, state) => {
   state.isKaySpeaking = true;
   console.log(text);
+  // quickStart(text, state)
   const gtts = new gTTS(text, "en-us");
   gtts.save("result.mp3", async function (err, result) {
     if (err) {
@@ -68,9 +70,10 @@ const saveHistory = (speaker, text, intent, state) => {
 
 const changeNode = (state, currentNode, intentObj,scenario,witResponse) => {
   const sourceNode = state.configuration[scenario].find((elem) => {
-    const source = elem && elem.source;
-    if (state.lastNode.id === source) return elem;
+    const lastNode = state.lastNode
+    if (lastNode && lastNode.id === elem?.source) return elem;
   });
+  if(!sourceNode) return
   //only if sourceNode was found!
   //Change current Node with the same intent
   let config = state.configuration[scenario];
