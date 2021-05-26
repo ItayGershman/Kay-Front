@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const BACKEND_URL = "http://localhost:3030/routes";
+const BACKEND_URL = "https://kay-va.herokuapp.com/routes";
 
 class KayAPI {
   static getScenarioIntent(scenario) {

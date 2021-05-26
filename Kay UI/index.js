@@ -3,13 +3,14 @@ const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
 const witToken = process.env.WIT_ACCESS_TOKEN;
-const googleJson = process.env.GOOGLE_JSON;
+// const googleJson = process.env.GOOGLE_JSON;
 const { exec, spawn } = require('child_process');
 const { getAllLocations } = require("./KayAPI.js");
 const { getPosition } = require("./Position.js");
 
 exec('python clientGUI.py')
-exec(`export GOOGLE_APPLICATION_CREDENTIALS="${googleJson}"`) 
+// exec(`export GOOGLE_APPLICATION_CREDENTIALS="${googleJson}"`) 
+// exec('python googleCredentials')
 
 const reqData = {
   url: "https://api.wit.ai/speech?client=chromium&lang=en-us&output=json",
