@@ -38,7 +38,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
     state.conversationStarted === false &&
     witResponse.intent === "wit_greetings"
   ) {
-    headPosition(60,20) // coord needs to be dynamic from admin ui (action) and parallel to the speak not before
+    // headPosition(60,20) // coord needs to be dynamic from admin ui (action) and parallel to the speak not before
     state.conversationStarted = true;
   }
   if (state.conversationStarted) {

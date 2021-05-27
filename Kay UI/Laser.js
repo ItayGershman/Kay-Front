@@ -7,14 +7,15 @@ const getLaser = (x, y) => {
     var yPosition = y
 
     //Convert degrees to PWM degrees
+    console.log('x:', xPosition, 'y:', yPosition)
 
-    xPosition = ((xPosition/18)+2.5).toFixed(3)
-    yPosition = ((yPosition/18)+2.5).toFixed(3)
+    // xPosition = ((xPosition/18)+2.5).toFixed(3)
+    // yPosition = ((yPosition/18)+2.5).toFixed(3)
 
     console.log('x:', xPosition, 'y:', yPosition)
 
     // spawn new child process to call the python script
-    const python = spawn('python', ['Calibrate.py', xPosition, yPosition]);
+    const python = spawn('python', ['Calibrate1.py', xPosition, yPosition]);
     // collect data from script
     python.stdout.on('data', function (data) {
         console.log('Pipe data from python script ...');

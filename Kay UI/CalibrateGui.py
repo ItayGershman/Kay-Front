@@ -24,6 +24,7 @@ def laser ():
     return True
 
 def CalibrateGUI(x_position, y_position):
+	
     print(x_position, y_position)
     setServoAngle(pan, x_position) # 0 ==> 90 (middle point) ==> 180
     setServoAngle(tilt, y_position) # 0 ==> 90 (middle point) ==> 180
