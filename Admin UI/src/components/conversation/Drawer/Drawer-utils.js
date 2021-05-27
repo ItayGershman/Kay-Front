@@ -83,7 +83,6 @@ export const LaserAction = () => {
   const client = mqtt.connect('wss://test.mosquitto.org:8081');
   useEffect(() => {
     client.on('connect', function () {
-      console.log('connected');
       client.subscribe('KAY/move-x', (err) => {
         if (!err) console.log('subscribed to KAY/move-x');
       });
@@ -273,6 +272,7 @@ export const IntentField = ({
     <Controller
       control={control}
       name={name}
+      rules={{ required: true }}
       render={({ onChange }) => {
         return (
           <TextField
@@ -306,6 +306,7 @@ export const ControlledTextFields = ({
       control={control}
       name={name}
       defaultValue={defaultValue}
+      rules={{ required: true }}
       render={({ onChange, value, name }) => {
         return (
           <TextField
@@ -318,7 +319,7 @@ export const ControlledTextFields = ({
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            value={value}
+            value={defaultValue}
           />
         );
       }}
@@ -368,10 +369,13 @@ export const SpeakTextField = ({
               value={value}
             />
             {capturedEntity === 1 && (
-              <div style={{ padding: 10 }}>
+              <div style={{ padding: 10, zIndex: 1000 }}>
                 <Select
                   options={entitiesOptions}
-                  onChange={(val) => setValue(name, `${value}${val.label}}`)}
+                  onChange={(val) => {
+                    setValue(name, `${value}${val.label}}`);
+                    setCapturedEntity(0);
+                  }}
                 />
               </div>
             )}

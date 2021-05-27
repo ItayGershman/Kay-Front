@@ -69,15 +69,6 @@ const CustomNodeFlow = () => {
       icon: <SaveIcon />,
       isDraggable: false,
     },
-    {
-      name: 'restore',
-      title: 'Restore',
-      handler: () => {
-        console.log('should be onRestore');
-      },
-      icon: <RestoreIcon />,
-      isDraggable: false,
-    },
   ];
 
   const onDrawerOpen = (side) => {
@@ -189,6 +180,7 @@ const CustomNodeFlow = () => {
       reactflowInstance.fitView();
     }
   }, [reactflowInstance, elements.length]);
+
   useEffect(() => {
     const scenario = scenarioSelector.currentScenario;
     setElements(scenario ? scenario.scenarioConfigData : []);

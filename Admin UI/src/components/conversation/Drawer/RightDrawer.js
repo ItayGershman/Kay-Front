@@ -20,6 +20,7 @@ import {
   ActionField,
 } from './Drawer-utils';
 import CustomizedAccordion from './CustomAccordion';
+import { notify } from '../../generalUtils';
 
 const RightDrawer = ({
   node,
@@ -34,17 +35,12 @@ const RightDrawer = ({
   const dispatch = useDispatch();
   const { allIntents } = useSelector((state) => state.intent);
 
-  const notify = () =>
-    toast.info('🦄 Submitted!', {
-      position: 'bottom-left',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  const { control, handleSubmit, setValue } = useForm({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors, isDirty, isSubmitting, touched, submitCount },
+  } = useForm({
     defaultValues: setInitialValues(node),
   });
   const {
@@ -61,7 +57,6 @@ const RightDrawer = ({
   const onSubmit = (data) => {
     //set new node
     if (data.action) {
-      console.log(data.action)
       data['action'] = data.action.value;
     } else data['action'] = null;
     const keys = Object.keys(data);
@@ -81,13 +76,14 @@ const RightDrawer = ({
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));
+      notify('New intent created', 'success');
     } else dispatch(updateIntent(newNode, isExist));
     setElements((prevState) => {
       const elem = prevState.find((el) => el.id === node.id);
       elem.data = { ...elem.data, ...newNode };
       return [...prevState];
     });
-    notify('Submitted');
+    notify('Submitted!', 'info');
   };
 
   useEffect(() => {
@@ -100,6 +96,7 @@ const RightDrawer = ({
     speak.forEach((text) => speakAppend({ speak: text }));
     entities.forEach((entity) => entitiesAppend({ entity: entity }));
   }, [node]);
+
   useEffect(async () => {
     const witEntities = await getWitEntities();
     setEntities(witEntities);
@@ -127,6 +124,9 @@ const RightDrawer = ({
               setIntent={setIntent}
               intent={intent}
             />
+            {errors.intent && (
+              <p style={{ color: 'red' }}>Intent is required</p>
+            )}
           </div>
           <div className={classes.input}>
             {entitiesFields.map((item, index) => {
@@ -207,6 +207,7 @@ const RightDrawer = ({
               label={'Choose Action'}
               defaultValue={setInitialValues(node).action}
               options={[
+                { value: null, label: '' },
                 { value: 'laser', label: 'Laser' },
                 { value: 'video', label: 'Video' },
                 { value: 'calendar', label: 'Calendar' },
@@ -218,16 +219,12 @@ const RightDrawer = ({
             variant='contained'
             color='primary'
             type='submit'
-            style={{ marginTop: 20 }}
+            style={{ marginTop: 20, marginBottom: 100 }}
           >
             Submit
           </Button>
         </form>
       )}
-      {/* <CustomizedAccordion
-        isDrawerOpen={drawerState}
-        setDrawer={handleDrawerOpen}
-      /> */}
       <ToastContainer
         position='bottom-left'
         autoClose={5000}

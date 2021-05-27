@@ -42,11 +42,7 @@ const WitAISpeechRecognition = async () => {
           response = true;
           let tmp = false;
           tmp = await sendResult(data, timer);
-
-          // response = await sendResult(data);
-          console.log("data:", data);
           if (tmp) {
-            console.log("tmp");
             response = false;
             timer.reset(10000);
           }

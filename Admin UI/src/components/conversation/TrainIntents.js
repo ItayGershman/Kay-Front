@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux';
 import Select from 'react-select';
 import axios from 'axios';
 import { getWitEntities, ControlledTextFields } from './Drawer/Drawer-utils';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { notify } from '../generalUtils';
 
 const CustomSearchField = ({ control, name, options, defaultValues }) => (
   <Controller
@@ -49,6 +50,8 @@ const intentsOptions = (intents) => {
   return intents.map((intent) => ({ value: intent.name, label: intent.name }));
 };
 
+
+
 const TrainIntents = () => {
   const { allIntents } = useSelector((state) => state.intent);
   const [witEntities, setWitEntities] = useState([]);
@@ -60,25 +63,9 @@ const TrainIntents = () => {
   });
   const { handleSubmit, control, reset } = useForm({ defaultValues });
 
-  const notify = (text, status) => {
-    const config = {
-      position: 'bottom-left',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    };
-    if (status === 'fail') {
-      toast.error(`${text}`, config);
-    } else toast.info(`🦄 ${text}`, config);
-  };
-
   const onSubmit = async (values, e) => {
     let start = values.utterance.indexOf(values.entity_value);
     let end = start + values.entity_value.length - 1;
-    console.log(values);
     const entities = values.entity
       ? [
           {
@@ -90,7 +77,6 @@ const TrainIntents = () => {
           },
         ]
       : [];
-    console.log('entitites', entities);
     const data = {
       text: values.utterance,
       intent: values.intent.value,
@@ -104,14 +90,11 @@ const TrainIntents = () => {
         [data],
         config
       );
-      console.log(res);
-      if (res.status === 200) notify('Submitted!', 'info');
-      else notify('Could train Kay at the moment', 'fail');
+      if (res.status === 200) notify('Submitted!', 'success');
+      else notify('Could train Kay at the moment', 'error');
     } catch (e) {
       console.log(e);
     }
-
-    // e.target.reset();
     reset(defaultValues());
   };
 

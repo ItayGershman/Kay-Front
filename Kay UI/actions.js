@@ -12,12 +12,9 @@ const displayVideo = (client, department,position) => {
 }
 
 const actions = (action, payload, state) => {
-  console.log('action bedore switch:', action)
   switch (action) {
     case "video":
-      console.log('state.position:',state.position)
       let department = state.videoName;
-      console.log("video:", department)
       const client = mqtt.connect('wss://test.mosquitto.org:8081');
       if (department) {
         if (department.includes("software")) {
@@ -30,11 +27,10 @@ const actions = (action, payload, state) => {
       return `Welcome to ${state.position}`
       break;
     case "laser":
-      console.log("Laser!!!");
+      console.log("laser");
       break;
     case "equipment":
       const text = getEquipment(payload)
-      console.log("text in actions:", text);
       return text;
   }
 };

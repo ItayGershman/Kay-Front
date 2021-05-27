@@ -27,61 +27,60 @@ const config = {
   },
 };
 
-const createIntent = (
-  { name, intent, speak, entities, action },
-  isExist
-) => async (dispatch) => {
-  dispatch({ type: INTENT_CREATE_REQUEST });
-  try {
-    console.log('action:', action);
-    const { data } = await API.createIntent(
-      name,
-      intent,
-      speak,
-      entities,
-      action
-    );
-    dispatch({ type: INTENT_CREATE_SUCCESS, payload: data });
-    const intentName = `wit_${intent}`;
-    //Check if intent already exist in Wit.ai
-    if (!isExist) {
-      await API.createWitIntent(intentName, config)
-        .then((res) => console.log(res.data))
-        .catch((e) => console.log(e));
+const createIntent =
+  ({ name, intent, speak, entities, action }, isExist) =>
+  async (dispatch) => {
+    dispatch({ type: INTENT_CREATE_REQUEST });
+    try {
+      const { data } = await API.createIntent(
+        name,
+        intent,
+        speak,
+        entities,
+        action
+      );
+      dispatch({ type: INTENT_CREATE_SUCCESS, payload: data });
+      //set all intents plus the new one
+      dispatch(getAllIntents());
+      const intentName = `wit_${intent}`;
+      //Check if intent already exist in Wit.ai
+      if (!isExist) {
+        await API.createWitIntent(intentName, config)
+          // .then((res) => console.log(res.data))
+          // .catch((e) => console.log(e));
+      }
+      if (entities.length > 0) {
+        await API.createWitEntity(entities[0].entity, config)
+          // .then((data) => console.log(data))
+          // .catch((e) => console.log(e));
+      }
+    } catch (error) {
+      return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
     }
-    if (entities.length > 0) {
-      await API.createWitEntity(entities[0].entity, config)
-        .then((data) => console.log(data))
-        .catch((e) => console.log(e));
+  };
+const updateIntent =
+  ({ name, intent, speak, entities, action }, isExist) =>
+  async (dispatch) => {
+    dispatch({ type: INTENT_UPDATE_REQUEST }); //loading =>true
+    try {
+      const res = await API.updateIntent(name, intent, speak, entities, action);
+      dispatch({ type: INTENT_UPDATE_SUCCESS, payload: res });
+      const intentName = `wit_${intent}`;
+      //Check if intent already exist in Wit.ai
+      if (!isExist) {
+        await API.createWitIntent(intentName, config)
+          // .then((res) => console.log(res.data))
+          // .catch((e) => console.log(e));
+      }
+      if (entities.length > 0) {
+        await API.createWitEntity(entities[0].entity, config)
+          // .then((data) => console.log(data))
+          // .catch((e) => console.log(e));
+      }
+    } catch (error) {
+      dispatch({ type: INTENT_UPDATE_FAIL, payload: error.message });
     }
-  } catch (error) {
-    return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
-  }
-};
-const updateIntent = (
-  { name, intent, speak, entities, action },
-  isExist
-) => async (dispatch) => {
-  dispatch({ type: INTENT_UPDATE_REQUEST }); //loading =>true
-  try {
-    const res = await API.updateIntent(name, intent, speak, entities, action);
-    dispatch({ type: INTENT_UPDATE_SUCCESS, payload: res });
-    const intentName = `wit_${intent}`;
-    //Check if intent already exist in Wit.ai
-    if (!isExist) {
-      await API.createWitIntent(intentName, config)
-        .then((res) => console.log(res.data))
-        .catch((e) => console.log(e));
-    }
-    if (entities.length > 0) {
-      await API.createWitEntity(entities[0].entity, config)
-        .then((data) => console.log(data))
-        .catch((e) => console.log(e));
-    }
-  } catch (error) {
-    dispatch({ type: INTENT_UPDATE_FAIL, payload: error.message });
-  }
-};
+  };
 const getAllIntents = () => async (dispatch) => {
   dispatch({ type: INTENTS_GET_REQUEST });
   try {
@@ -95,7 +94,7 @@ const getAllIntents = () => async (dispatch) => {
     const { data } = await axios.get(`https://api.wit.ai/intents`, config);
     dispatch({ type: INTENTS_GET_SUCCESS, payload: data });
   } catch (error) {
-    dispatch({ type: INTENTS_GET_FAIL,payload:error });
+    dispatch({ type: INTENTS_GET_FAIL, payload: error });
   }
 };
 
