@@ -28,7 +28,6 @@ const actions = (action, payload, state) => {
         }
       }
       return `Welcome to ${state.position}`
-      console.log("Video!!!!");
       break;
     case "laser":
       console.log("Laser!!!");
