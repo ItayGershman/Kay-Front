@@ -18,24 +18,25 @@ const getWitResponse = (intents, text) => {
 const speak = (text, state) => {
   state.isKaySpeaking = true;
   console.log(text);
-  quickStart(text, state)
-  // const gtts = new gTTS(text, "en-us");
-  // gtts.save("result.mp3", async function (err, result) {
-  //   if (err) {
-  //     throw new Error(err);
-  //   }
-  //   console.log("Success! Open file result.mp3 to hear result.");
-  //   try {
+  // quickStart(text, state)
 
-  //     return await player.play("./result.mp3", () => {
-  //       state.isKaySpeaking = false;
-  //       console.log("finish playing");
-  //       return state.isKaySpeaking;
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // });
+  const gtts = new gTTS(text, "en-us");
+  gtts.save("result.mp3", async function (err, result) {
+    if (err) {
+      throw new Error(err);
+    }
+    console.log("Success! Open file result.mp3 to hear result.");
+    try {
+
+      return await player.play("./result.mp3", () => {
+        state.isKaySpeaking = false;
+        console.log("finish playing");
+        return state.isKaySpeaking;
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  });
 };
 
 const getTextToSpeak = (entities, randomElement) => {
