@@ -64,6 +64,7 @@ const TrainIntents = () => {
   const { handleSubmit, control, reset } = useForm({ defaultValues });
 
   const onSubmit = async (values, e) => {
+    console.log(values)
     let start = values.utterance.indexOf(values.entity_value);
     let end = start + values.entity_value.length - 1;
     const entities = values.entity
@@ -90,6 +91,7 @@ const TrainIntents = () => {
         [data],
         config
       );
+      console.log(res)
       if (res.status === 200) notify('Submitted!', 'success');
       else notify('Could train Kay at the moment', 'error');
     } catch (e) {
@@ -121,12 +123,13 @@ const TrainIntents = () => {
         />
         <ControlledTextFields
           control={control}
-          label=''
+          label={null}
           name={'utterance'}
-          defaultValue=''
+          defaultValue={""}
           isDisabled={false}
           isMultiline={true}
           placeholder={'Utterance: My name is John'}
+          rules={{ required: true }}
         />
         <CustomSearchField
           control={control}
@@ -138,7 +141,7 @@ const TrainIntents = () => {
           control={control}
           label=''
           name={'entity_value'}
-          defaultValue=''
+          defaultValue={""}
           isDisabled={false}
           isMultiline={true}
           placeholder={'Entity: John'}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import axios from 'axios';
 import './drawer.css';
 import 'date-fns';
@@ -292,6 +293,112 @@ export const IntentField = ({
   );
 };
 
+export const CustomCreatableDropdown = ({
+  options,
+  control,
+  name,
+  isMulti = false,
+  label,
+  rules,
+  error,
+  zIndex,
+  type,
+  defaultValue,
+}) => {
+  const createOption = (label) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ''),
+  });
+  const defaultOptions =
+    type === 'intent'
+      ? options.map((option) => createOption(option.name))
+      : options;
+
+  const [selected, setSelected] = useState({
+    isLoading: false,
+    options: defaultOptions,
+    value: '',
+  });
+
+  const handleChange = (newValue, onChange) => {
+    setSelected((prevState) => ({
+      ...prevState,
+      value: newValue,
+    }));
+    onChange(newValue);
+  };
+  const handleCreate = (inputValue, onChange) => {
+    setSelected((prevState) => ({ ...prevState, isLoading: true }));
+
+    setTimeout(() => {
+      const newOption = createOption(inputValue);
+      setSelected((prevState) => {
+        return {
+          isLoading: false,
+          options: [...prevState.options, newOption],
+          value: newOption,
+        };
+      });
+      onChange(newOption);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    console.log(defaultValue);
+    if (defaultValue) {
+      if (type === 'intent') {
+        setSelected((prevState) => ({
+          ...prevState,
+          value: createOption(defaultValue),
+        }));
+      } else if (type === 'entities') {
+        setSelected((prevState) => ({
+          ...prevState,
+          value: defaultValue.map((item) => createOption(item)),
+        }));
+      }
+    } else setSelected((prevState) => ({ ...prevState, value: null }));
+  }, [defaultValue]);
+
+  return (
+    <>
+      <Controller
+        name={name}
+        control={control}
+        // defaultValue={selected.value}
+        rules={rules}
+        render={({ onChange }) => {
+          return (
+            <>
+              <label>{label}</label>
+              <CreatableSelect
+                isMulti={isMulti}
+                isClearable
+                isDisabled={selected.isLoading}
+                isLoading={selected.isLoading}
+                onChange={(newValue) => handleChange(newValue, onChange)}
+                onCreateOption={(newValue) => handleCreate(newValue, onChange)}
+                options={selected.options}
+                // defaultInputValue={selected.value}
+                value={selected.value}
+                styles={{
+                  container: (base, state) => ({
+                    ...base,
+                    opacity: state.isDisabled ? '.5' : '1',
+                    backgroundColor: 'transparent',
+                    zIndex,
+                  }),
+                }}
+              />
+            </>
+          );
+        }}
+      />
+      <span className='text-danger'>{error && error.message}</span>
+    </>
+  );
+};
+
 export const ControlledTextFields = ({
   control,
   name,
@@ -300,13 +407,14 @@ export const ControlledTextFields = ({
   isDisabled,
   isMultiline,
   placeholder,
+  rules,
 }) => {
   return (
     <Controller
       control={control}
       name={name}
       defaultValue={defaultValue}
-      rules={{ required: true }}
+      rules={rules}
       render={({ onChange, value, name }) => {
         return (
           <TextField
@@ -319,7 +427,8 @@ export const ControlledTextFields = ({
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            value={defaultValue}
+            defaultValue={value}
+            value={value}
           />
         );
       }}
@@ -349,7 +458,7 @@ export const SpeakTextField = ({
             <TextField
               style={{
                 height: '100%',
-                width: '100%',
+                width: 240,
               }}
               disabled={isDisabled}
               multiline={isMultiline}
@@ -393,7 +502,6 @@ export const ActionField = ({
   options,
   defaultValue,
 }) => {
-  console.log('defaultValue:', defaultValue);
   const [action, setAction] = useState(defaultValue);
   return (
     <Controller
@@ -436,7 +544,7 @@ export const AppendButton = ({ handler, classes, title }) => {
       variant='contained'
       color='primary'
       className={classes.button}
-      startIcon={<AddCircleIcon as AddCircleIcon />}
+      startIcon={<addCircleIcon as AddCircleIcon />}
     >
       {title}
     </Button>

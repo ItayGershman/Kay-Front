@@ -18,17 +18,12 @@ import {
   setInitialValues,
   getWitEntities,
   ActionField,
+  CustomCreatableDropdown,
 } from './Drawer-utils';
 import CustomizedAccordion from './CustomAccordion';
 import { notify } from '../../generalUtils';
 
-const RightDrawer = ({
-  node,
-  setElements,
-  drawerState,
-  title,
-  handleDrawerOpen,
-}) => {
+const RightDrawer = ({ node, setElements, drawerState, title }) => {
   const [intent, setIntent] = useState(null);
   const [entities, setEntities] = useState(null);
   const classes = useStyles();
@@ -39,7 +34,7 @@ const RightDrawer = ({
     control,
     handleSubmit,
     setValue,
-    formState: { errors, isDirty, isSubmitting, touched, submitCount },
+    formState: { errors },
   } = useForm({
     defaultValues: setInitialValues(node),
   });
@@ -55,6 +50,7 @@ const RightDrawer = ({
   } = useFieldArray({ control, name: 'speak' });
 
   const onSubmit = (data) => {
+    console.log('data:', data);
     //set new node
     if (data.action) {
       data['action'] = data.action.value;
@@ -69,10 +65,22 @@ const RightDrawer = ({
     };
     keys.forEach((key) => (newNode[key] = data[key]));
     newNode.name = title;
-    if (newNode['intent'] === '') newNode['intent'] = intent;
+    let newIntent = data['intent'].value;
+
+    if (newIntent.includes('wit_'))
+      newNode['intent'] = newIntent.replace('wit_', '');
+    else newNode['intent'] = newIntent;
+    console.log(newNode.entities);
+    newNode.entities = newNode.entities.map((entity) => {
+      return { entity: entity.value };
+    });
+
+    if (newNode['intent'] === '')
+      newNode['intent'] = intent.value.replace('wit_', '');
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
+
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));
@@ -107,60 +115,52 @@ const RightDrawer = ({
       {drawerState && node && (
         <form onSubmit={handleSubmit(onSubmit)} className={classes.container}>
           <div className={classes.input}>
-            <ControlledTextFields
-              control={control}
-              name={'name'}
-              label={'Scenario Name'}
-              defaultValue={title}
-              isDisabled
-            />
+            <div>
+              <h2
+                style={{ wordBreak: 'break-word', width: 200}}
+              >
+                Scenario Name: {title}
+              </h2>
+            </div>
           </div>
           <div className={classes.input}>
-            <IntentField
+            <CustomCreatableDropdown
+              control={control}
+              name={'intent'}
+              label={'Intent Name'}
+              rules={{ required: true }}
+              options={allIntents}
+              isMulti={false}
+              zIndex={9999}
+              type={'intent'}
+              defaultValue={setInitialValues(node).intent}
+            />
+            {/* <IntentField
               control={control}
               name={'intent'}
               label={'Intent Name'}
               defaultValue={setInitialValues(node).intent}
               setIntent={setIntent}
               intent={intent}
-            />
+            /> */}
             {errors.intent && (
               <p style={{ color: 'red' }}>Intent is required</p>
             )}
           </div>
           <div className={classes.input}>
-            {entitiesFields.map((item, index) => {
-              return (
-                <div
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginBottom: 10,
-                  }}
-                >
-                  <ControlledTextFields
-                    control={control}
-                    name={`entities[${index}].entity`}
-                    label={'Entity'}
-                    defaultValue={setInitialValues(node).entities[index]}
-                    isDisabled={false}
-                    isMultiline={true}
-                  />
-                  <RemoveButton
-                    handler={entitiesRemove}
-                    index={index}
-                    classes={classes}
-                  />
-                </div>
-              );
-            })}
-            <AppendButton
-              handler={entitiesAppend}
-              title={'Add Entity'}
-              classes={classes}
-            />
+            <div style={{ marginBottom: 10 }}>
+              <CustomCreatableDropdown
+                control={control}
+                name={'entities'}
+                label={'Entity Name'}
+                rules={{ required: true }}
+                options={entities}
+                isMulti={true}
+                zIndex={9998}
+                type={'entities'}
+                defaultValue={setInitialValues(node).entities}
+              />
+            </div>
           </div>
           <div className={classes.input}>
             {speakFields.map((item, index) => {

@@ -7,6 +7,17 @@ import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import TrainIntents from '../TrainIntents';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  accordionSummary: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  trainKay: {
+    marginLeft:"30px"
+  }
+}));
 
 const Accordion = withStyles({
   root: {
@@ -51,7 +62,7 @@ const AccordionDetails = withStyles((theme) => ({
 
 const CustomizedAccordion = ({isDrawerOpen,setDrawer}) => {
   const [expanded, setExpanded] = useState('');
-
+  const classes = useStyles();
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
@@ -70,14 +81,11 @@ const CustomizedAccordion = ({isDrawerOpen,setDrawer}) => {
           expandIcon={isDrawerOpen && <ExpandMoreIcon />}
         >
           <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
+            className={classes.accordionSummary}
           >
-            <AccountCircleIcon style={{color:'#757575'}}  />
+            <AccountCircleIcon color="action"  />
             {isDrawerOpen && (
-              <Typography style={{ marginLeft: '30px' }}>Train Kay's Intents</Typography>
+              <Typography className={classes.trainKay}>Train Kay</Typography>
             )}
           </div>
         </AccordionSummary>

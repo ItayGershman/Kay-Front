@@ -82,28 +82,27 @@ const SideDrawer = ({
 
       <List>
         {buttons.map((button, index) => (
-          <ListItem
-            button
-            key={index}
-            draggable={button.isDraggable}
-            onClick={() => {
-              button.handler(button.name);
-            }}
-            onDragStart={(event) => {
-              onDragStart(event, button.name);
-            }}
-          >
-            <ListItemIcon>{button.icon}</ListItemIcon>
-            <ListItemText primary={button.title} />
-            {button.isDraggable && <DragIndicatorIcon color='action' />}
-          </ListItem>
+          <div style={{ cursor: 'grab' }}>
+            <ListItem
+              button={!button.isDraggable}
+              key={index}
+              draggable={button.isDraggable}
+              onClick={() => {
+                if (!button.isDraggable) button.handler();
+              }}
+              onDragStart={(event) => {
+                onDragStart(event, button.name);
+              }}
+            >
+              <ListItemIcon>{button.icon}</ListItemIcon>
+              <ListItemText primary={button.title} />
+              {button.isDraggable && <DragIndicatorIcon color='action' />}
+            </ListItem>
+          </div>
         ))}
       </List>
       {side === 'left' && open && (
         <div style={{ marginBottom: 60 }}>
-          <div style={{ marginBottom: 20 }}>
-            <Divider />
-          </div>
           <CustomizedAccordion
             isDrawerOpen={open}
             setDrawer={handleDrawerOpen}

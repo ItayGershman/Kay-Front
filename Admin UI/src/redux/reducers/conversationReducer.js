@@ -71,6 +71,7 @@ function scenarioReducer(state = initialState, action) {
     case SCENARIO_UPDATE_SUCCESS:
       return {
         loading: false,
+        ...state
       };
     case SCENARIO_UPDATE_FAIL:
       return { loading: false, error: action.payload };
@@ -80,6 +81,7 @@ function scenarioReducer(state = initialState, action) {
     case SCENARIO_DELETE_SUCCESS:
       return {
         loading: false,
+        ...state
       };
     case SCENARIO_DELETE_FAIL:
       return { loading: false, error: action.payload };

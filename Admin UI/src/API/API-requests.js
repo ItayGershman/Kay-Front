@@ -1,4 +1,3 @@
-import instance from './API-config';
 import axios from 'axios';
 class API {
   static login(userEmail, userPassword) {

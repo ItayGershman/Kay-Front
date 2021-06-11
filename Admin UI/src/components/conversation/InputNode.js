@@ -143,7 +143,7 @@ export default memo(({ data }) => {
                     className={`${classes.icon} ${classes.intentIcon}`}
                   />
                   <Typography className={classes.placeholder}>
-                    "Intent name"
+                    Intent name
                   </Typography>
                 </div>
                 <div className={`${classes.input}`}>
@@ -151,7 +151,7 @@ export default memo(({ data }) => {
                     className={`${classes.icon} ${classes.entityIcon}`}
                   />
                   <Typography className={classes.placeholder}>
-                    "Entity name"
+                    Entity name
                   </Typography>
                 </div>
 
@@ -164,7 +164,7 @@ export default memo(({ data }) => {
                       variant='caption'
                       className={classes.placeholder}
                     >
-                      "Speak"
+                      Speak
                     </Typography>
                   </div>
                   <div className={classes.input}>
@@ -172,7 +172,7 @@ export default memo(({ data }) => {
                       className={`${classes.icon} ${classes.actionIcon}`}
                     />
                     <Typography className={classes.placeholder}>
-                      "Action"
+                      Action
                     </Typography>
                   </div>
                 </div>

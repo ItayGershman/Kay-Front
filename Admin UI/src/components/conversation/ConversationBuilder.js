@@ -36,6 +36,8 @@ import SaveIcon from '@material-ui/icons/Save';
 import RestoreIcon from '@material-ui/icons/Restore';
 import WidgetsIcon from '@material-ui/icons/Widgets';
 
+
+
 const CustomNodeFlow = () => {
   const [mainElementsSize, setMainElementsSize] = useState(defaultLayout);
   const [reactflowInstance, setReactflowInstance] = useState(null);
@@ -54,8 +56,8 @@ const CustomNodeFlow = () => {
     {
       name: 'input',
       title: 'Add Node',
-      handler: () => {
-        onAdd();
+      handler: ()=>{
+        onAdd()
       },
       icon: <WidgetsIcon />,
       isDraggable: true,
@@ -126,13 +128,7 @@ const CustomNodeFlow = () => {
     },
     [reactflowInstance]
   );
-  const onLayout = useCallback(
-    (direction) => {
-      const layoutElements = getLayoutElements(elements, direction, isNode);
-      setElements(layoutElements);
-    },
-    [elements]
-  );
+
   const onDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
@@ -185,19 +181,6 @@ const CustomNodeFlow = () => {
     const scenario = scenarioSelector.currentScenario;
     setElements(scenario ? scenario.scenarioConfigData : []);
   }, [scenarioSelector]);
-
-  // const onRestore = useCallback(() => {
-  // const restoreFlow = async () => {
-  //restore from redux maybe?
-  // const flow = await localforage.getItem('flowKey');
-  //   if (flow) {
-  //     const [x = 0, y = 0] = flow.position;
-  //     setElements(flow.elements || []);
-  //     transform({ x, y, zoom: flow.zoom || 0 });
-  //   }
-  // };
-  //   restoreFlow();
-  // }, [setElements, transform]);
 
   return (
     <div className={classes.root}>
