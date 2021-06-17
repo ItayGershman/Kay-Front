@@ -52,7 +52,7 @@ const SideDrawer = ({
         paper: clsx({
           [drawerOpen]: open,
           [drawerClose]: !open,
-        },side === 'right' && classes.paperRightDrawer)
+        })
       }}
     >
       <div
