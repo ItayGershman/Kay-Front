@@ -82,7 +82,6 @@ const CustomNodeFlow = () => {
   const onSave = useCallback(() => {
     if (reactflowInstance) {
       const flow = reactflowInstance.toObject();
-      console.log(scenarioSelector)
       const { scenarioConfigName } = scenarioSelector.currentScenario;
 
       // Change nodes name for building strong relations between nodes
@@ -98,7 +97,6 @@ const CustomNodeFlow = () => {
           element.target = mappedElements[element.target];
         }
       });
-      console.log(scenarioConfigName)
       dispatch(updateConfiguration(scenarioConfigName, flow.elements));
     }
   }, [reactflowInstance, scenarioSelector]);
@@ -149,7 +147,6 @@ const CustomNodeFlow = () => {
       if (!reactflowInstance) {
         setReactflowInstance(rfi);
         rfi.fitView();
-        console.log('flow loaded:', rfi);
       }
     },
     [reactflowInstance]

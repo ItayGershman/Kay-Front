@@ -374,8 +374,6 @@ export const CustomCreatableDropdown = ({
   });
 
   const handleChange = (newValue, onChange) => {
-    console.log(newValue);
-    console.log('selected.value:', selected.value);
     setSelected((prevState) => ({
       ...prevState,
       value: newValue,

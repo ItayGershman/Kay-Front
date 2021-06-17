@@ -50,7 +50,6 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
   } = useFieldArray({ control, name: 'speak' });
 
   const onSubmit = (data) => {
-    console.log('data:', data);
     //set new node
     if (data.action) {
       //check if data.action.value is needed
@@ -82,10 +81,8 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
       (intent) => intent.name === `wit_${newNode.intent}`
     );
     // if (newNode['action'] && data.action === 'Laser') {
-    //   console.log("date.action",data.action)
     //   newNode['action'] = data['laser'];
     // }
-    console.log('new node:', newNode);
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));

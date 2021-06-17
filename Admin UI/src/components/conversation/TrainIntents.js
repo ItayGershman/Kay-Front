@@ -64,7 +64,6 @@ const TrainIntents = () => {
   const { handleSubmit, control, reset } = useForm({ defaultValues });
 
   const onSubmit = async (values, e) => {
-    console.log(values)
     let start = values.utterance.indexOf(values.entity_value);
     let end = start + values.entity_value.length - 1;
     const entities = values.entity
@@ -91,11 +90,10 @@ const TrainIntents = () => {
         [data],
         config
       );
-      console.log(res)
       if (res.status === 200) notify('Submitted!', 'success');
       else notify('Could train Kay at the moment', 'error');
     } catch (e) {
-      console.log(e);
+      notify(e, 'error')
     }
     reset(defaultValues());
   };

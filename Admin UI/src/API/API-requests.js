@@ -78,7 +78,6 @@ class API {
     });
   }
   static updateConfiguration(scenarioConfigName, configuration) {
-    console.log("scenarioConfigName:",scenarioConfigName)
     return axios.put(`/routes/scenario_config/${scenarioConfigName}`, {
       scenarioConfigData: configuration,
     });

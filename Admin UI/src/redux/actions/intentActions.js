@@ -33,7 +33,6 @@ const createIntent = (
 ) => async (dispatch) => {
   dispatch({ type: INTENT_CREATE_REQUEST });
   try {
-    console.log('action:', action);
     const { data } = await API.createIntent(
       name,
       intent,
@@ -47,12 +46,12 @@ const createIntent = (
     if (!isExist) {
       await API.createWitIntent(intentName, config)
         .then((res) => console.log(res.data))
-        .catch((e) => console.log(e));
+        .catch((e) => {throw new Error(e)});
     }
     if (entities.length > 0) {
       await API.createWitEntity(entities[0].entity, config)
         .then((data) => console.log(data))
-        .catch((e) => console.log(e));
+        .catch((e) => {throw new Error(e)});
     }
   } catch (error) {
     return dispatch({ type: INTENT_CREATE_FAIL, payload: error.message });
