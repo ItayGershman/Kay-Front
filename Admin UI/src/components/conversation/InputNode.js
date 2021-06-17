@@ -125,13 +125,15 @@ export default memo(({ data }) => {
                       </div>
                     );
                   })}
+
                 {data.action && (
                   <div className={classes.input}>
                     <GamesIcon
                       className={`${classes.icon} ${classes.actionIcon}`}
                     />
                     <Typography variant='caption'>
-                      action: {data.action}
+                      action:{' '}
+                      {data.action.label ? data.action.label : data.action}
                     </Typography>
                   </div>
                 )}

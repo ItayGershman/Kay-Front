@@ -53,7 +53,8 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
     console.log('data:', data);
     //set new node
     if (data.action) {
-      data['action'] = data.action.value;
+      //check if data.action.value is needed
+      data['action'] = data.action;
     } else data['action'] = null;
     const keys = Object.keys(data);
     let newNode = {
@@ -70,7 +71,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
     if (newIntent.includes('wit_'))
       newNode['intent'] = newIntent.replace('wit_', '');
     else newNode['intent'] = newIntent;
-    console.log(newNode.entities);
+
     newNode.entities = newNode.entities.map((entity) => {
       return { entity: entity.value };
     });
@@ -80,7 +81,11 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
-
+    // if (newNode['action'] && data.action === 'Laser') {
+    //   console.log("date.action",data.action)
+    //   newNode['action'] = data['laser'];
+    // }
+    console.log('new node:', newNode);
     if (node.data === undefined) {
       //need to send action also
       dispatch(createIntent(newNode, isExist));
@@ -116,9 +121,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
         <form onSubmit={handleSubmit(onSubmit)} className={classes.container}>
           <div className={classes.input}>
             <div>
-              <h2
-                style={{ wordBreak: 'break-word', width: 200}}
-              >
+              <h2 style={{ wordBreak: 'break-word', width: 200 }}>
                 Scenario Name: {title}
               </h2>
             </div>
@@ -129,20 +132,14 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
               name={'intent'}
               label={'Intent Name'}
               rules={{ required: true }}
+              setValue={setValue}
               options={allIntents}
               isMulti={false}
               zIndex={9999}
               type={'intent'}
               defaultValue={setInitialValues(node).intent}
+
             />
-            {/* <IntentField
-              control={control}
-              name={'intent'}
-              label={'Intent Name'}
-              defaultValue={setInitialValues(node).intent}
-              setIntent={setIntent}
-              intent={intent}
-            /> */}
             {errors.intent && (
               <p style={{ color: 'red' }}>Intent is required</p>
             )}
@@ -154,6 +151,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
                 name={'entities'}
                 label={'Entity Name'}
                 rules={{ required: true }}
+                setValue={setValue}
                 options={entities}
                 isMulti={true}
                 zIndex={9998}
@@ -171,6 +169,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
+                    alignItems:'center',
                     marginBottom: 10,
                   }}
                 >
@@ -204,6 +203,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
             <ActionField
               control={control}
               name={'action'}
+              setValue={setValue}
               label={'Choose Action'}
               defaultValue={setInitialValues(node).action}
               options={[

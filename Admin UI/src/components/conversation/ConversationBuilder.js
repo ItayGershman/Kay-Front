@@ -52,26 +52,7 @@ const CustomNodeFlow = () => {
     right: mainElementsSize.rightDrawerWidth,
   });
 
-  const leftButtons = [
-    {
-      name: 'input',
-      title: 'Add Node',
-      handler: ()=>{
-        onAdd()
-      },
-      icon: <WidgetsIcon />,
-      isDraggable: true,
-    },
-    {
-      name: 'save',
-      title: 'Save Layout',
-      handler: () => {
-        onSave();
-      },
-      icon: <SaveIcon />,
-      isDraggable: false,
-    },
-  ];
+  
 
   const onDrawerOpen = (side) => {
     if (side === 'left') {
@@ -97,6 +78,51 @@ const CustomNodeFlow = () => {
       );
     }
   };
+
+  const onSave = useCallback(() => {
+    if (reactflowInstance) {
+      const flow = reactflowInstance.toObject();
+      console.log(scenarioSelector)
+      const { scenarioConfigName } = scenarioSelector.currentScenario;
+
+      // Change nodes name for building strong relations between nodes
+      const mappedElements = {};
+      flow.elements.forEach((element, i) => {
+        if (element.data) {
+          mappedElements[
+            element.id
+          ] = `${element.data.name}_${element.data.intent}_${i}`;
+          element.id = `${element.data.name}_${element.data.intent}_${i}`;
+        } else {
+          element.source = mappedElements[element.source];
+          element.target = mappedElements[element.target];
+        }
+      });
+      console.log(scenarioConfigName)
+      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
+    }
+  }, [reactflowInstance, scenarioSelector]);
+
+  const leftButtons = [
+    {
+      name: 'input',
+      title: 'Add Node',
+      handler: ()=>{
+        onAdd()
+      },
+      icon: <WidgetsIcon />,
+      isDraggable: true,
+    },
+    {
+      name: 'save',
+      title: 'Save Layout',
+      handler: () => {
+        onSave();
+      },
+      icon: <SaveIcon />,
+      isDraggable: false,
+    },
+  ];
 
   const onElementsRemove = useCallback((elementsToRemove) => {
     setElements((els) => removeElements(elementsToRemove, els));
@@ -144,27 +170,7 @@ const CustomNodeFlow = () => {
     );
     setElements((es) => es.concat(newNode));
   };
-  const onSave = useCallback(() => {
-    if (reactflowInstance) {
-      const flow = reactflowInstance.toObject();
-      const { scenarioConfigName } = scenarioSelector.currentScenario;
-
-      // Change nodes name for building strong relations between nodes
-      const mappedElements = {};
-      flow.elements.forEach((element, i) => {
-        if (element.data) {
-          mappedElements[
-            element.id
-          ] = `${element.data.name}_${element.data.intent}_${i}`;
-          element.id = `${element.data.name}_${element.data.intent}_${i}`;
-        } else {
-          element.source = mappedElements[element.source];
-          element.target = mappedElements[element.target];
-        }
-      });
-      dispatch(updateConfiguration(scenarioConfigName, flow.elements));
-    }
-  }, [reactflowInstance, scenarioSelector]);
+  
 
   useEffect(() => {
     const scenarioName = location.pathname.replace('/conversation/', '');

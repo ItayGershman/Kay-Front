@@ -121,7 +121,7 @@ const SideDrawer = ({
             <p style={{ marginLeft: 30, fontSize: 16 }}>Laser</p>
           </div>
 
-          <LaserAction />
+          <LaserAction side="left"/>
         </div>
       )}
       {side === 'left' && !open && (
