@@ -1,7 +1,8 @@
 import axios from 'axios';
+const BACKEND_URL = 'https://kay-va.herokuapp.com'
 class API {
   static login(userEmail, userPassword) {
-    return axios.post(`/routes/signin`, {
+    return axios.post(`${BACKEND_URL}/routes/signin`, {
       userPassword,
       userEmail,
     });
