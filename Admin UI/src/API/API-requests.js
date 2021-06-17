@@ -8,7 +8,7 @@ class API {
     });
   }
   static createUser(firstName, lastName, userPassword, userEmail) {
-    return axios.post(`/routes/user`, {
+    return axios.post(`${BACKEND_URL}/routes/user`, {
       firstName,
       lastName,
       userPassword,
@@ -25,7 +25,7 @@ class API {
     action
   ) {
     const req = { scenarioConnection, intentName, outputTextIntent, entities,action };
-    return axios.post(`/routes/intent`, req);
+    return axios.post(`${BACKEND_URL}/routes/intent`, req);
   }
   static updateIntent(
     scenarioConnection,
@@ -35,7 +35,7 @@ class API {
     action
   ) {
     const req = { scenarioConnection, intentName, outputTextIntent, entities,action };
-    return axios.put(`/routes/intent/${scenarioConnection}/${intentName}`, req);
+    return axios.put(`${BACKEND_URL}/routes/intent/${scenarioConnection}/${intentName}`, req);
   }
 
   //Scenario
@@ -48,29 +48,29 @@ class API {
   //   });
   // }
   static getAllScenarios() {
-    return axios.get(`routes/scenario`);
+    return axios.get(`${BACKEND_URL}/routes/scenario`);
   }
   static getScenario(scenarioName) {
-    return axios.get(`routes/scenario/${scenarioName}`);
+    return axios.get(`${BACKEND_URL}/routes/scenario/${scenarioName}`);
   }
   static createScenario(name, description, image) {
-    return axios.post(`routes/scenario`, {
+    return axios.post(`${BACKEND_URL}/routes/scenario`, {
       scenarioName: name,
       scenarioImage: image,
       scenarioDescription: description,
     });
   }
   static updateScenario(currScenarioName, scenario) {
-    return axios.put(`routes/scenario/${currScenarioName}`, {
+    return axios.put(`${BACKEND_URL}/routes/scenario/${currScenarioName}`, {
       scenario,
     });
   }
   static deleteScenario(scenarioName) {
-    return axios.put(`routes/scenario/${scenarioName}`);
+    return axios.put(`${BACKEND_URL}/routes/scenario/${scenarioName}`);
   }
 
   static getConfiguration(scenarioName) {
-    return axios.get(`/routes/scenario_config/${scenarioName}`);
+    return axios.get(`${BACKEND_URL}/routes/scenario_config/${scenarioName}`);
   }
   static createConfiguration(name) {
     return axios.post(`/routes/scenario_config`, {
@@ -79,16 +79,16 @@ class API {
     });
   }
   static updateConfiguration(scenarioConfigName, configuration) {
-    return axios.put(`/routes/scenario_config/${scenarioConfigName}`, {
+    return axios.put(`${BACKEND_URL}/routes/scenario_config/${scenarioConfigName}`, {
       scenarioConfigName: scenarioConfigName,
       scenarioConfigData: configuration
     });
   }
   static deleteConfiguration(scenarioID) {
-    return axios.delete(`/routes/scenario_config/${scenarioID}`);
+    return axios.delete(`${BACKEND_URL}/routes/scenario_config/${scenarioID}`);
   }
   static getHistory() {
-    return axios.get(`routes/conversation`);
+    return axios.get(`${BACKEND_URL}/routes/conversation`);
   }
   static createWitIntent(intentName,config) {
     return axios.post(
