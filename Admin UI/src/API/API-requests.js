@@ -79,7 +79,8 @@ class API {
   }
   static updateConfiguration(scenarioConfigName, configuration) {
     return axios.put(`/routes/scenario_config/${scenarioConfigName}`, {
-      scenarioConfigData: configuration,
+      scenarioConfigName: scenarioConfigName,
+      scenarioConfigData: configuration
     });
   }
   static deleteConfiguration(scenarioID) {
