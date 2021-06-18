@@ -47,7 +47,7 @@ const config = {
 };
 
 const intentsOptions = (intents) => {
-  return intents.map((intent) => ({ value: intent.name, label: intent.name }));
+  return intents.length > 0 && intents.map((intent) => ({ value: intent.name, label: intent.name }));
 };
 
 
