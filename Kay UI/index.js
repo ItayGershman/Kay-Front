@@ -65,7 +65,7 @@ const WitAISpeechRecognition = async () => {
             rec.start({
               recordProgram: "rec",
               // silence: "0.5",
-              threshold: 0.8,
+              threshold: 1.2,
               // channels: 4,
               // sampleRate: 48000,
               verbose: true

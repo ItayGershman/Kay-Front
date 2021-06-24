@@ -7,9 +7,10 @@ const getLaser = (x, y) => {
     var yPosition = y
 
     //Convert degrees to PWM degrees
+    console.log('x:', xPosition, 'y:', yPosition)
 
-    xPosition = ((xPosition/18)+2.5).toFixed(3)
-    yPosition = ((yPosition/18)+2.5).toFixed(3)
+    // xPosition = ((xPosition/18)+2.5).toFixed(3)
+    // yPosition = ((yPosition/18)+2.5).toFixed(3)
 
     console.log('x:', xPosition, 'y:', yPosition)
 
