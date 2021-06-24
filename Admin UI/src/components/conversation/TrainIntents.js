@@ -47,7 +47,7 @@ const config = {
 };
 
 const intentsOptions = (intents) => {
-  return intents.map((intent) => ({ value: intent.name, label: intent.name }));
+  return intents.length > 0 && intents.map((intent) => ({ value: intent.name, label: intent.name }));
 };
 
 
@@ -93,7 +93,7 @@ const TrainIntents = () => {
       if (res.status === 200) notify('Submitted!', 'success');
       else notify('Could train Kay at the moment', 'error');
     } catch (e) {
-      console.log(e);
+      notify(e, 'error')
     }
     reset(defaultValues());
   };
@@ -121,12 +121,13 @@ const TrainIntents = () => {
         />
         <ControlledTextFields
           control={control}
-          label=''
+          label={null}
           name={'utterance'}
-          defaultValue=''
+          defaultValue={""}
           isDisabled={false}
           isMultiline={true}
           placeholder={'Utterance: My name is John'}
+          rules={{ required: true }}
         />
         <CustomSearchField
           control={control}
@@ -138,7 +139,7 @@ const TrainIntents = () => {
           control={control}
           label=''
           name={'entity_value'}
-          defaultValue=''
+          defaultValue={""}
           isDisabled={false}
           isMultiline={true}
           placeholder={'Entity: John'}

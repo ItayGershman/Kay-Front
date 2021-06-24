@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 import axios from 'axios';
 import './drawer.css';
 import 'date-fns';
@@ -58,7 +59,12 @@ export const setInitialValues = (node) => {
     const { name, intent, entities, speak, action } = node.data;
     const speakArray = speak.map((text) => text.speak);
     const entitiesArray = entities.map(({ entity }) => entity);
-    const defaultAction = action ? { value: action, label: action } : null;
+    let defaultAction = null;
+    if (action && action.value) {
+      defaultAction = { value: action.value, label: action.label };
+    } else {
+      defaultAction = action ? { value: action, label: action } : null;
+    }
     return {
       intent: intent,
       entities: entitiesArray,
@@ -77,7 +83,14 @@ export const setInitialValues = (node) => {
   }
 };
 
-export const LaserAction = () => {
+export const LaserAction = ({
+  side,
+  control,
+  name,
+  defaultValue,
+  setValue,
+}) => {
+  const [actionValue, setActionValue] = useState(null);
   const [x, setX] = useState(90);
   const [y, setY] = useState(0);
   const client = mqtt.connect('wss://test.mosquitto.org:8081');
@@ -106,127 +119,169 @@ export const LaserAction = () => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log("defaultValue:",defaultValue)
+    if (side === 'right') {
+      setActionValue({ label: defaultValue, value: defaultValue });
+      setValue(name, defaultValue);
+    }
+  }, [defaultValue]);
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        padding: 10,
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          marginTop: 10,
-          width: '100%',
-          border: '1px solid',
-          borderRadius: 25,
-        }}
-      >
-        <IconButton
-          style={{ top: 0 }}
-          onClick={() => {
-            if (y < 90) {
-              let tempY = y + 1;
-              setY(tempY);
-              client.publish('KAY/move-y', `${--tempY}`);
-            }
+    <div>
+      {side === 'left' ? (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            padding: 10,
           }}
         >
-          <KeyboardArrowUpIcon />
-        </IconButton>
-        <div>
-          <IconButton
-            style={{ left: -10 }}
-            onClick={() => {
-              if (x > 0) {
-                let tempX = x - 1;
-                setX(tempX);
-                client.publish('KAY/move-x', `${tempX}`);
-              }
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              // marginTop: 10,
+              width: '50%',
+              padding: 10,
+              border: '2px solid red',
+              borderRadius: 100,
             }}
           >
-            <KeyboardArrowLeftIcon />
-          </IconButton>
-          <IconButton style={{ left: 0 }}>
-            <FiberManualRecordIcon
-              className='tv-pulse-btn'
-              style={{ color: 'red' }}
-            />
-          </IconButton>
-          <IconButton
-            style={{ right: -10 }}
-            onClick={() => {
-              if (x < 180) {
-                let tempX = x + 1;
-                setX(tempX);
-                client.publish('KAY/move-x', `${tempX}`);
-              }
+            <IconButton
+              style={{ top: 0 }}
+              onClick={() => {
+                if (y < 90) {
+                  let tempY = y + 1;
+                  setY(tempY);
+                  client.publish('KAY/move-y', `${--tempY}`);
+                }
+              }}
+            >
+              <KeyboardArrowUpIcon />
+            </IconButton>
+            <div>
+              <IconButton
+                style={{ left: -10 }}
+                onClick={() => {
+                  if (x > 0) {
+                    let tempX = x - 1;
+                    setX(tempX);
+                    client.publish('KAY/move-x', `${tempX}`);
+                  }
+                }}
+              >
+                <KeyboardArrowLeftIcon />
+              </IconButton>
+              <IconButton style={{ left: 0 }}>
+                <FiberManualRecordIcon
+                  className='tv-pulse-btn'
+                  style={{ color: 'red' }}
+                />
+              </IconButton>
+              <IconButton
+                style={{ right: -10 }}
+                onClick={() => {
+                  if (x < 180) {
+                    let tempX = x + 1;
+                    setX(tempX);
+                    client.publish('KAY/move-x', `${tempX}`);
+                  }
+                }}
+              >
+                <KeyboardArrowRightIcon />
+              </IconButton>
+            </div>
+            <IconButton
+              style={{ bottom: 0 }}
+              onClick={() => {
+                if (y > 0) {
+                  let tempY = y - 1;
+                  setY(tempY);
+                  client.publish('KAY/move-y', `${tempY}`);
+                }
+              }}
+            >
+              <KeyboardArrowDownIcon />
+            </IconButton>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              width: 100,
+              marginTop: 10,
             }}
           >
-            <KeyboardArrowRightIcon />
-          </IconButton>
+            <span>x : {x}</span>|<span>y : {y}</span>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: 150,
+            }}
+          >
+            <Button
+              variant='contained'
+              color='primary'
+              type='submit'
+              style={{ marginTop: 10, marginLeft: 20 }}
+              onClick={() => {
+                client.publish('KAY/submit', '');
+                setX(90);
+                setY(0);
+              }}
+            >
+              Set Laser
+            </Button>
+            <Tooltip
+              title='This Laser tool assist in pointing and managing equipment location at the center'
+              style={{ marginTop: 15, fontSize: 16, fontWeight: 500 }}
+            >
+              <Typography>
+                <InfoIcon />
+              </Typography>
+            </Tooltip>
+          </div>
         </div>
-        <IconButton
-          style={{ bottom: 0 }}
-          onClick={() => {
-            if (y > 0) {
-              let tempY = y - 1;
-              setY(tempY);
-              client.publish('KAY/move-y', `${tempY}`);
-            }
-          }}
-        >
-          <KeyboardArrowDownIcon />
-        </IconButton>
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          width: 100,
-          marginTop: 10,
-        }}
-      >
-        <span>x : {x}</span>|<span>y : {y}</span>
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: 150,
-        }}
-      >
-        <Button
-          variant='contained'
-          color='primary'
-          type='submit'
-          style={{ marginTop: 10 }}
-          onClick={() => {
-            client.publish('KAY/submit', '');
-            setX(90);
-            setY(0);
-          }}
-        >
-          Set Laser
-        </Button>
-        <Tooltip
-          title='This Laser tool assist in pointing and managing equipment location at the center'
-          style={{ marginTop: 15, fontSize: 16, fontWeight: 500 }}
-        >
-          <Typography>
-            <InfoIcon />
-          </Typography>
-        </Tooltip>
-      </div>
+      ) : (
+        <div style={{ margin: '20px 0px' }}>
+          <h4>Choose a position you want to point at</h4>
+          <div style={{ marginTop: 10 }}>
+            <label>TO</label>
+            <Controller
+              control={control}
+              name={name}
+              render={({ onChange, value }) => {
+                return (
+                  <Select
+                    value={actionValue}
+                    options={[
+                      { label: 'Position A', value: 'a' },
+                      { label: 'Position B', value: 'b' },
+                      { label: 'Position C', value: 'c' },
+                    ]}
+                    onChange={(value) => {
+                      console.log(value)
+                      
+                      setActionValue(value)
+                      setValue(name, defaultValue);
+                    }}
+                  />
+                );
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -292,6 +347,121 @@ export const IntentField = ({
   );
 };
 
+export const CustomCreatableDropdown = ({
+  options,
+  control,
+  name,
+  isMulti = false,
+  label,
+  rules,
+  setValue,
+  error,
+  zIndex,
+  type,
+  defaultValue,
+}) => {
+  const createOption = (label) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ''),
+  });
+  const defaultOptions =
+    type === 'intent'
+      ? options.map((option) => createOption(option.name))
+      : options;
+
+  const [selected, setSelected] = useState({
+    isLoading: false,
+    options: defaultOptions,
+    value: '',
+  });
+
+  const handleChange = (newValue, onChange) => {
+    setSelected((prevState) => ({
+      ...prevState,
+      value: newValue,
+    }));
+    onChange(newValue);
+  };
+  const handleCreate = (inputValue, onChange) => {
+    setSelected((prevState) => ({ ...prevState, isLoading: true }));
+
+    setTimeout(() => {
+      const newOption = createOption(inputValue);
+      setSelected((prevState) => {
+        return {
+          isLoading: false,
+          options: [...prevState.options, newOption],
+          value: newOption,
+        };
+      });
+      onChange(newOption);
+    }, 1000);
+  };
+
+  useEffect(() => {
+    if (
+      defaultValue &&
+      (selected.value === '' || selected.value.length === 0)
+    ) {
+      if (type === 'intent') {
+        setSelected((prevState) => ({
+          ...prevState,
+          value: createOption(`wit_${defaultValue}`),
+        }));
+        setValue(name, createOption(`wit_${defaultValue}`));
+      } else if (type === 'entities') {
+        const values = defaultValue.map((item) => createOption(item));
+        setSelected((prevState) => ({
+          ...prevState,
+          value: values,
+        }));
+      }
+    } else
+      setSelected((prevState) => ({ ...prevState, value: selected.value }));
+  }, [defaultValue]);
+
+  useEffect(() => {
+    console.log('selected.value:', selected.value);
+  }, [control]);
+
+  return (
+    <>
+      <Controller
+        name={name}
+        control={control}
+        defaultValue={selected.value}
+        rules={rules}
+        render={({ onChange, value }) => {
+          return (
+            <>
+              <label>{label}</label>
+              <CreatableSelect
+                isMulti={isMulti}
+                isClearable
+                isDisabled={selected.isLoading}
+                isLoading={selected.isLoading}
+                onChange={(newValue) => handleChange(newValue, onChange)}
+                onCreateOption={(newValue) => handleCreate(newValue, onChange)}
+                options={selected.options}
+                value={selected.value}
+                styles={{
+                  container: (base, state) => ({
+                    ...base,
+                    opacity: state.isDisabled ? '.5' : '1',
+                    backgroundColor: 'transparent',
+                    zIndex,
+                  }),
+                }}
+              />
+            </>
+          );
+        }}
+      />
+      <span className='text-danger'>{error && error.message}</span>
+    </>
+  );
+};
+
 export const ControlledTextFields = ({
   control,
   name,
@@ -300,13 +470,14 @@ export const ControlledTextFields = ({
   isDisabled,
   isMultiline,
   placeholder,
+  rules,
 }) => {
   return (
     <Controller
       control={control}
       name={name}
       defaultValue={defaultValue}
-      rules={{ required: true }}
+      rules={rules}
       render={({ onChange, value, name }) => {
         return (
           <TextField
@@ -319,7 +490,8 @@ export const ControlledTextFields = ({
             onChange={(e) => {
               onChange(e.target.value);
             }}
-            value={defaultValue}
+            defaultValue={value}
+            value={value}
           />
         );
       }}
@@ -349,7 +521,7 @@ export const SpeakTextField = ({
             <TextField
               style={{
                 height: '100%',
-                width: '100%',
+                width: 240,
               }}
               disabled={isDisabled}
               multiline={isMultiline}
@@ -389,12 +561,40 @@ export const SpeakTextField = ({
 export const ActionField = ({
   control,
   name,
+  setValue,
   label,
   options,
   defaultValue,
+  node,
 }) => {
-  console.log('defaultValue:', defaultValue);
-  const [action, setAction] = useState(defaultValue);
+  const [action, setAction] = useState(null);
+  const [prevDefaultValue, setPrevDefaultValue] = useState(null);
+
+  useEffect(() => {
+    setAction(null);
+    setPrevDefaultValue(null);
+    setValue(name, null);
+  }, [node]);
+
+  useEffect(() => {
+    console.log('action:', action);
+    setValue(name, action);
+  }, [action]);
+
+  useEffect(() => {
+    //Verify if defaultValue exist on this node
+    if (defaultValue) {
+      if (!prevDefaultValue || defaultValue.label !== prevDefaultValue.label) {
+        setAction({ label: defaultValue.label, value: defaultValue.label });
+        setValue(name, defaultValue.label);
+        setPrevDefaultValue({
+          label: defaultValue.label,
+          value: defaultValue.label,
+        });
+      }
+    }
+  }, [defaultValue]);
+
   return (
     <Controller
       control={control}
@@ -403,14 +603,13 @@ export const ActionField = ({
         return (
           <div>
             <Select
-              value={defaultValue}
+              value={action}
               styles={{
                 container: (base, state) => ({
                   ...base,
                   zIndex: '999',
                 }),
               }}
-              placeholder='Action: Laser'
               maxMenuHeight={170}
               options={options}
               label={label}
@@ -419,9 +618,16 @@ export const ActionField = ({
                 setAction(value);
               }}
             />
-            {action && action.label === 'Laser' && <LaserAction />}
+            {action && action.label === 'Laser' && (
+              <LaserAction
+                side={'right'}
+                control={control}
+                setValue={setValue}
+                name={'laser'}
+                defaultValue={defaultValue ? defaultValue.value : null}
+              />
+            )}
             {action && action.label === 'Calendar' && <CalendarAction />}
-            {/* {action && action.label === 'Video' && <LaserAction />} */}
           </div>
         );
       }}
@@ -436,7 +642,7 @@ export const AppendButton = ({ handler, classes, title }) => {
       variant='contained'
       color='primary'
       className={classes.button}
-      startIcon={<AddCircleIcon as AddCircleIcon />}
+      startIcon={<addCircleIcon as AddCircleIcon />}
     >
       {title}
     </Button>
@@ -446,8 +652,8 @@ export const RemoveButton = ({ handler, index, classes, title }) => {
   return (
     <Button
       onClick={() => handler(index)}
-      variant='contained'
-      style={{ backgroundColor: 'red', color: 'white', marginBottom: 10 }}
+      variant='outlined'
+      style={{ color: 'red', borderColor: 'red', marginBottom: 10, height: 40 }}
       className={classes.button}
     >
       <RemoveCircleIcon />

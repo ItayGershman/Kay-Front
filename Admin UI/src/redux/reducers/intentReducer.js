@@ -33,9 +33,10 @@ function intentReducer(state = initialState, action) {
       return {
         loading: false,
         allIntents: action.payload,
+        ...state
       };
     case INTENTS_GET_FAIL:
-      return { loading: false, error: action.payload };
+      return { loading: false, error: action.payload,...state };
 
     case INTENT_GET_REQUEST:
       return { loading: true, allIntents: state.allIntents };

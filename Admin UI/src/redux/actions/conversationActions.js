@@ -54,6 +54,7 @@ const createConfiguration = (name) => async (dispatch) => {
 const updateConfiguration = (scenarioConfigName, elements) => async (dispatch) => {
   dispatch({ type: CONFIGURATION_UPDATE_REQUEST });
   try {
+    console.log("scenarioConfigName:",scenarioConfigName)
     const res = await API.updateConfiguration(scenarioConfigName, elements);
     dispatch({ type: CONFIGURATION_UPDATE_SUCCESS, payload: res.data });
   } catch (error) {
