@@ -34,6 +34,7 @@ const WitAISpeechRecognition = async () => {
   })
 
   const startRecording = async () => {
+    
     let state = {
       isKaySpeaking: false,
       conversationStarted: false,
@@ -41,7 +42,8 @@ const WitAISpeechRecognition = async () => {
       configuration: {},
       lastNode: {},
       videoName: null,
-      position: currPosition.locationName
+      position: currPosition.locationName,
+      repetitiveIntents: []
     }
     while (conversation) {
       if (!state.isKaySpeaking) {
@@ -64,11 +66,8 @@ const WitAISpeechRecognition = async () => {
             reqData.url,
             rec.start({
               recordProgram: "rec",
-              // silence: "0.5",
               threshold: 1.2,
-              // channels: 4,
-              // sampleRate: 48000,
-              verbose: true
+              // verbose: true,
             }),
             {
               headers: {

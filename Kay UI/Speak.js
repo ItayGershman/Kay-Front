@@ -27,15 +27,15 @@ const sendResult = async (data, state, ledLights, allLocations) => {
   let { intents, entities, text } = data;
 
   const witResponse = getWitResponse(intents, text);
-  let repetitiveIntents = []
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
     const res = await scenarioConfig(state, scenario)
     let allIntents = []
-    repetitiveIntents = res.filter((node) => {
+    state.repetitiveIntents = res.filter((node) => {
       if (node.data) {
-        if (allIntents.find((intent) => node.data.intent === intent)) { 
-          return true 
+
+        if (allIntents.find((intent) => node.data.intent === intent)) {
+          return true
         } else {
           allIntents.push(node.data.intent)
           return false
@@ -83,8 +83,8 @@ const sendResult = async (data, state, ledLights, allLocations) => {
 
     let currentNode = `${scenario}_${witResponse.intent}`;
     //Check if the intent returned itself
-    const found = state.history.find((el) => el.intent === witResponse.intent);
-    if (found && repetitiveIntents.find((intent) => intent === witResponse.intent)) {
+    const found = state.history.some((el) => el.intent === witResponse.intent);
+    if (found && state.repetitiveIntents.some((intent) => `wit_${intent}` === witResponse.intent)) {
       changeNode(state, currentNode, intentObj, scenario, witResponse);
     }
     //insert last node

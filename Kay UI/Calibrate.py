@@ -67,7 +67,6 @@ if __name__ == '__main__':
     flag_y = False
 	
     try:
-        os.system('./LaserGUI.py')
         # 0 ==> 90 (middle point) ==> 180
         flag_x = setServoAngle(pan, x_position)
         # 0 ==> 90 (middle point) ==> 180
