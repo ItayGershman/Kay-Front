@@ -1,63 +1,85 @@
-#!/usr/bin/env python
-
 import sys
-import RPi.GPIO as GPIO
-import time
 import os
-# import LaserTestDrive
+from time import sleep
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
-GPIO_X_SERVO = 4
-GPIO_Y_SERVO = 17
+pan = 4
+tilt = 17
+
+GPIO.setup(tilt, GPIO.OUT)  # white => TILT
+GPIO.setup(pan, GPIO.OUT)  # gray ==> PAN
 
 # Return to defult position
-def default_position():
-    x_servo = GPIO.PWM(GPIO_X_SERVO, 50)
-    y_servo = GPIO.PWM(GPIO_Y_SERVO, 50)
-        
-    x_servo.start(7.5) # Servo: 7.5 is 90 degrees
-    y_servo.start(2.5) # Servo: 2.5 is 0 degrees
-        
-        
-    time.sleep(1) # give the servos a chance to move
+
+
+def setDeafultPanAngle():
+    pwm = GPIO.PWM(pan, 50)
+    pwm.start(8)
+    dutyCycle = 90 / 18. + 3.
+    print('default pan:', dutyCycle)
+    pwm.ChangeDutyCycle(dutyCycle)
+    sleep(0.3)
+    pwm.stop()
+    # setDeafultTiltAngle()
+    return True
+
+
+def setDeafultTiltAngle():
+    pwm = GPIO.PWM(tilt, 50)
+    pwm.start(8)
+    dutyCycle = 0 / 18. + 3.
+    print('default tilt:', dutyCycle)
+    pwm.ChangeDutyCycle(dutyCycle)
+    sleep(0.3)
+    pwm.stop()
+    return True
+
 
 # Calibrate to the requested position
-def calibrate(coord_position):
+def setServoAngle(servo, angle):
+    assert angle >= 0 and angle <= 180
+    # print('inside')
+    pwm = GPIO.PWM(servo, 50)
+    pwm.start(8)
+    dutyCycle = angle / 18. + 3.
+    print(dutyCycle)
+    print(type(dutyCycle))
+    pwm.ChangeDutyCycle(dutyCycle)
+    sleep(0.3)
+    pwm.stop()
+    return True
 
-    x_servo = GPIO.PWM(GPIO_X_SERVO, 50)
-    y_servo = GPIO.PWM(GPIO_Y_SERVO, 50)
-  
-    x_servo.start(float(coord_position[0]))
-    y_servo.start(float(coord_position[1])) 
-        
-        
-    time.sleep(1) # give the servos a chance to move
-    
-# Active the laser for 3 sec with execute the laser scrypt 
-def laser ():
+
+# Active the laser for 3 sec with execute the laser scrypt
+def laser():
     os.system('./LaserTestDrive.py')
     return True
 
-if __name__ == '__main__':
-    GPIO.setmode(GPIO.BCM)
 
-    GPIO.setup(GPIO_X_SERVO, GPIO.OUT)
-    GPIO.setup(GPIO_Y_SERVO, GPIO.OUT)
+if __name__ == '__main__':
 
     # print('calibarating...')
-    x_position = sys.argv[1]
-    y_position = sys.argv[2]
-
-    coord_position = [x_position, y_position]
-    # print 'coord_position:', coord_position
-    # new_coord_position = get_pwd(coord_position)
-
+    x_position = int(sys.argv[1])
+    y_position = int(sys.argv[2])
+    flag_x = False
+    flag_y = False
+	
     try:
-        calibrate(coord_position)
+        # 0 ==> 90 (middle point) ==> 180
+        flag_x = setServoAngle(pan, x_position)
+        # 0 ==> 90 (middle point) ==> 180
+        flag_y = setServoAngle(tilt, y_position)
     finally:
-        active = laser()
-        if active:
-            # print('inside')
-            time.sleep(1)
-            default_position()
-            GPIO.cleanup()
-            print('Done!')
+        if flag_x is True and flag_y is True:
+            active = laser()
+            if active:
+                # print('inside')
+                sleep(1)
+                setDeafultPanAngle()
+                sleep(1)
+                setDeafultTiltAngle()
+                sleep(1)
+                GPIO.cleanup()
+                print('Done!')

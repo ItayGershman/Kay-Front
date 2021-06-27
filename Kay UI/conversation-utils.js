@@ -18,24 +18,24 @@ const getWitResponse = (intents, text) => {
 const speak = (text, state) => {
   state.isKaySpeaking = true;
   console.log(text);
-  // quickStart(text, state)
-  const gtts = new gTTS(text, "en-us");
-  gtts.save("result.mp3", async function (err, result) {
-    if (err) {
-      throw new Error(err);
-    }
-    console.log("Success! Open file result.mp3 to hear result.");
-    try {
+  quickStart(text, state)
+  // const gtts = new gTTS(text, "en-us");
+  // gtts.save("result.mp3", async function (err, result) {
+  //   if (err) {
+  //     throw new Error(err);
+  //   }
+  //   console.log("Success! Open file result.mp3 to hear result.");
+  //   try {
 
-      return await player.play("./result.mp3", () => {
-        state.isKaySpeaking = false;
-        console.log("finish playing");
-        return state.isKaySpeaking;
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  });
+  //     return await player.play("./result.mp3", () => {
+  //       state.isKaySpeaking = false;
+  //       console.log("finish playing");
+  //       return state.isKaySpeaking;
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // });
 };
 
 const getTextToSpeak = (entities, randomElement) => {
@@ -56,8 +56,6 @@ const getTextToSpeak = (entities, randomElement) => {
 };
 
 const saveHistory = (speaker, text, intent, state) => {
-  //date backend adds
-  let date = moment(new Date()).format("DD/MM/YYYY");
   let time = moment().format("h:mm:ss a");
   state.history.push({
     name: speaker,
@@ -70,20 +68,17 @@ const saveHistory = (speaker, text, intent, state) => {
 
 const changeNode = (state, currentNode, intentObj,scenario,witResponse) => {
   const sourceNode = state.configuration[scenario].find((elem) => {
-    const lastNode = state.lastNode
+    const lastNode = state.lastNode;
     if (lastNode && lastNode.id === elem?.source) return elem;
   });
   if(!sourceNode) return
-  //only if sourceNode was found!
+  //only if sourceNode was found
   //Change current Node with the same intent
   let config = state.configuration[scenario];
   //targetNode could be more than 1 node - maybe always
   const targetNodes = config.filter((el) => el.id === sourceNode.target);
-  console.log('targetNodes:',targetNodes)
-  console.log('targetNodes:',targetNodes[0].data)
   //check if it's a possibility that targetNoes is empty
   const targetNode = targetNodes.find((el) => `wit_${el.data.intent}` === witResponse.intent);
-  console.log('targetNode:',targetNode)
   currentNode = `${targetNode.data.name}_${targetNode.data.intent}`;
   //change just the speak in the new intent
   intentObj.outputTextIntent = targetNode.data.speak;
