@@ -45,7 +45,7 @@ const ConversationHeader = ({
               <MenuIcon />
             </IconButton>
           </Toolbar>
-          <Typography variant='h6'>Create Scenario</Typography>
+          <Typography variant='h6'>Scenario Builder</Typography>
           <Toolbar>
             <IconButton
               color='inherit'
