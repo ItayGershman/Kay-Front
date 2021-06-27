@@ -19,6 +19,10 @@ const sendResult = async (data, state, ledLights, allLocations) => {
   if (state.conversationStarted === true) {
     if (data._text === "") {
       ledLights && ledLights.kill("SIGINT");
+      await speak(
+        "Sorry, I did not understand, can you please say that again?",
+        state
+      );
       return true
     }
   }
