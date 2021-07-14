@@ -12,6 +12,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import useStyles from './HeaderStyle';
+import logo from "../../assets/logo.png"
 
 export default function MenuAppBar() {
   const classes = useStyles();
@@ -32,33 +33,35 @@ export default function MenuAppBar() {
     <div className={classes.root}>
       <AppBar position='static'>
         <Toolbar className={classes.toolbar}>
+          
           <div className={classes.logo}>
             <Link to='/dashboard' className={classes.link}>
-              <Typography variant='h6'>Logo</Typography>
+              <img src={logo}  style={{width:60,height:60}}/>
             </Link>
           </div>
           {userInfo ? (
             <div className={classes.nav}>
               <div className={classes.navItem}>
                 <Link to='/history' className={classes.link}>
-                  <Typography variant='h6'>History</Typography>
+                  <Typography variant='h5'>History</Typography>
                 </Link>
                 <Link to='/dashboard' className={classes.link}>
-                  <Typography variant='h6'>Dashboard</Typography>
+                  <Typography variant='h5'>Dashboard</Typography>
                 </Link>
               </div>
               <div className={classes.navItem}>
-                <IconButton
+                {/* <IconButton
                   aria-label='account of current user'
                   aria-controls='menu-appbar'
                   aria-haspopup='true'
                   onClick={handleMenu}
                   color='inherit'
                 >
-                  <AccountCircle />
-                </IconButton>
-                <Typography variant='h6'>{userInfo.firstName}</Typography>
-                <Menu
+                  <AccountCircle style={{marginRight:10,width:30,height:30}}/>
+                </IconButton> */}
+                <AccountCircle style={{marginRight:10,width:30,height:30}}/>
+                <Typography variant='h5'>{userInfo.firstName}</Typography>
+                {/* <Menu
                   id='menu-appbar'
                   anchorEl={anchorEl}
                   anchorOrigin={{
@@ -75,7 +78,7 @@ export default function MenuAppBar() {
                 >
                   <MenuItem onClick={handleClose}>Profile</MenuItem>
                   <MenuItem onClick={handleClose}>My account</MenuItem>
-                </Menu>
+                </Menu> */}
               </div>
             </div>
           ) : (
