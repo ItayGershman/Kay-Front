@@ -21,6 +21,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
   if (state.conversationStarted) {
     if (data._text === "") {
       ledLights && ledLights.kill("SIGINT");
+      state.isUserSpeaking = false
       await speak(
         "Sorry, I did not understand, can you please say that again?",
         state
@@ -76,6 +77,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
       // scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
       if (intentObj === undefined) {
         ledLights && ledLights.kill("SIGINT");
+        state.isUserSpeaking = true
         await speak(
           "I don't know how to answer that, I probably need more training time...",
           state
@@ -137,11 +139,12 @@ const sendResult = async (data, state, ledLights, allLocations) => {
 
       const text = await actions(action.data.action, entities, state);
       ledLights && ledLights.kill("SIGINT");
+      state.isUserSpeaking = true
       if (text && text.length > 0) {
         speak(text, state);
       }
       else speak(textToSpeak, state);
-
+      
       if (witResponse.intent === "wit_bye") {
         try {
           await KayAPI.saveConversationHistory(state.history);
@@ -152,6 +155,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
 
     } else {
       ledLights && ledLights.kill("SIGINT");
+      state.isUserSpeaking = true
       await speak(
         "Sorry, I did not understand, can you please say that again?",
         state

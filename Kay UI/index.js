@@ -6,6 +6,9 @@ const witToken = process.env.WIT_ACCESS_TOKEN;
 const { exec, spawn } = require('child_process');
 const { getAllLocations } = require("./KayAPI.js");
 const { getPosition } = require("./Position.js");
+const KayAPI = require("./KayAPI.js");
+
+const CONVERSATION_TIME_LIMIT = 30000;
 
 exec('python clientGUI.py')
 
@@ -22,6 +25,29 @@ const sleep = (ms) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
+const clearState = (state) => {
+  state.isKaySpeaking = false;
+  state.conversationStarted = false;
+  state.history = [];
+  state.configuration = {};
+  state.lastNode = {};
+  state.videoName = null;
+  state.repetitiveIntents = [];
+  state.isUserSpeaking = false;
+  state.userStopTalkingTime = null;
+}
+
+const finishConversation = async (state) =>{
+  let currentTime = new Date().getTime();
+  if (state.userStopTalkingTime) {
+    const compareTime = currentTime - state.userStopTalkingTime
+    if (compareTime > CONVERSATION_TIME_LIMIT) {
+      if (state.history.length > 2) await KayAPI.saveConversationHistory(state.history);
+      clearState(state)
+    }
+  }
+}
+
 
 const WitAISpeechRecognition = async () => {
   let conversation = true;
@@ -34,7 +60,7 @@ const WitAISpeechRecognition = async () => {
   })
 
   const startRecording = async () => {
-    
+
     let state = {
       isKaySpeaking: false,
       conversationStarted: false,
@@ -43,9 +69,12 @@ const WitAISpeechRecognition = async () => {
       lastNode: {},
       videoName: null,
       position: currPosition.locationName,
-      repetitiveIntents: []
+      repetitiveIntents: [],
+      isUserSpeaking: false,
+      userStopTalkingTime:null
     }
     while (conversation) {
+      if (state.conversationStarted && !state.isUserSpeaking && !state.userStopTalkingTime) state.userStopTalkingTime = new Date().getTime();
       if (!state.isKaySpeaking) {
         console.log("lisetning...");
         const ledLights = spawn("python", [
@@ -61,6 +90,7 @@ const WitAISpeechRecognition = async () => {
           console.log(`child process close all stdio with code ${code}`);
           // console.log("dataTosend:", dataToSend);
         });
+
         await axios
           .post(
             reqData.url,
@@ -80,6 +110,12 @@ const WitAISpeechRecognition = async () => {
           .then(async (res) => {
             const { data } = res;
             await sendResult(data, state, ledLights, allLocations);
+            if (state.isUserSpeaking) {
+              console.log("user speaks")
+            }
+            else {
+              finishConversation(state)
+            }
           })
           .catch((e) => console.log(e));
       }
