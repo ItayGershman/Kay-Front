@@ -49,7 +49,7 @@ const WitAISpeechRecognition = async () => {
       if (!state.isKaySpeaking) {
         console.log("lisetning...");
         const ledLights = spawn("python", [
-          "/home/pi/4mics_hat/pixels_demo.py",
+          "/home/pi/4mics_hat/pixels.py",
         ]);
         // collect data from script
         ledLights.stdout.on("data", function (data) {
@@ -66,8 +66,8 @@ const WitAISpeechRecognition = async () => {
             reqData.url,
             rec.start({
               recordProgram: "rec",
-              threshold: 1.2,
-              // verbose: true,
+              threshold: 1.7,
+              verbose: true,
             }),
             {
               headers: {
@@ -79,10 +79,7 @@ const WitAISpeechRecognition = async () => {
           )
           .then(async (res) => {
             const { data } = res;
-            if (data._text !== "") {
-              await sendResult(data, state, ledLights, allLocations);
-              console.log(data)
-            }
+            await sendResult(data, state, ledLights, allLocations);
           })
           .catch((e) => console.log(e));
       }

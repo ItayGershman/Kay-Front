@@ -17,7 +17,6 @@ const getWitResponse = (intents, text) => {
 
 const speak = (text, state) => {
   state.isKaySpeaking = true;
-  console.log(text);
   quickStart(text, state)
   // const gtts = new gTTS(text, "en-us");
   // gtts.save("result.mp3", async function (err, result) {
@@ -42,6 +41,7 @@ const getTextToSpeak = (entities, randomElement) => {
   let textToSpeak = "";
   for (let key in entities) {
     if (entities.hasOwnProperty(key)) {
+      if(entities[key][0].confidence < 0.8) continue;
       console.log(key + " -> " + entities[key][0].value);
       textToSpeak = randomElement.speak.replace(
         `{${key.split(":")[0]}}`,
@@ -69,6 +69,8 @@ const saveHistory = (speaker, text, intent, state) => {
 const changeNode = (state, currentNode, intentObj,scenario,witResponse) => {
   const sourceNode = state.configuration[scenario].find((elem) => {
     const lastNode = state.lastNode;
+    console.log({lastNode})
+    console.log(elem)
     if (lastNode && lastNode.id === elem?.source) return elem;
   });
   if(!sourceNode) return

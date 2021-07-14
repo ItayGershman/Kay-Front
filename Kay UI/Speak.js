@@ -9,6 +9,8 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
+const DEFAULT_SCENARIO = "Welcoming"
+
 const scenarioConfig = async (state, scenario) => {
   const { data } = await KayAPI.getScenarioConfig(scenario);
   state.configuration[scenario] = data.scenarioConfigData
@@ -16,18 +18,19 @@ const scenarioConfig = async (state, scenario) => {
 }
 
 const sendResult = async (data, state, ledLights, allLocations) => {
-  if (state.conversationStarted === true) {
+  if (state.conversationStarted) {
     if (data._text === "") {
       ledLights && ledLights.kill("SIGINT");
       await speak(
         "Sorry, I did not understand, can you please say that again?",
         state
       );
-      return true
+      return
     }
   }
+
   //Extract Intent and entities
-  let scenario = "Welcoming";
+  let scenario = DEFAULT_SCENARIO;
   let { intents, entities, text } = data;
 
   const witResponse = getWitResponse(intents, text);
@@ -55,16 +58,15 @@ const sendResult = async (data, state, ledLights, allLocations) => {
     state.conversationStarted === false &&
     witResponse.intent === "wit_greetings"
   ) {
-    // headPosition(60,20) // coord needs to be dynamic from admin ui (action) and parallel to the speak not before
     state.conversationStarted = true;
   }
   if (state.conversationStarted) {
     const intentsByScenrio = await KayAPI.getScenarioIntent(scenario);
 
     //Find the matched intent to the scenario
-    let intentObj = intentsByScenrio.data.find((elem) => {
-      return `wit_${elem.intentName}` === witResponse.intent;
-    });
+    let intentObj = intentsByScenrio.data.find((elem) =>
+      `wit_${elem.intentName}` === witResponse.intent
+    );
     if (intentObj === undefined) {
       const intentsByScenrio = await KayAPI.getAllIntents();
       //Find the matched intent to the scenario
@@ -78,7 +80,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
           "I don't know how to answer that, I probably need more training time...",
           state
         );
-        return true
+        return
       }
       scenario = intentObj ? intentObj.scenarioConnection : undefined
       await scenarioConfig(state, scenario)
@@ -118,15 +120,10 @@ const sendResult = async (data, state, ledLights, allLocations) => {
       const action = state.configuration[scenario].find((node) => {
         return `wit_${node.data.intent}` === witResponse.intent
       })
-      if (action.data.action) {
-        console.log('action of action:', action.data.action)
-      }
       if (witResponse.intent === "wit_getDepartment") {
         const department = entities["department:department"][0].body
         state.videoName = department
       }
-
-
       if (witResponse.intent === "wit_ready") {
         const getKayPosition = async () => {
           return await getPosition();
@@ -152,6 +149,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
           console.log(e);
         }
       }
+
     } else {
       ledLights && ledLights.kill("SIGINT");
       await speak(
@@ -159,8 +157,8 @@ const sendResult = async (data, state, ledLights, allLocations) => {
         state
       );
     }
-    return true;
+    return
   }
-  return false;
+  return
 };
 module.exports.sendResult = sendResult;
