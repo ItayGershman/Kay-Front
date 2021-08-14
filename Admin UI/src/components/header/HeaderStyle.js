@@ -10,6 +10,8 @@ const useStyles = makeStyles((theme) => ({
   toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
+    backgroundColor:'	#F8F8F8',
+    color:'#3f51b5'
   },
   logo: {
     display: 'flex',
@@ -29,9 +31,10 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   link: {
-    color: 'white',
+    color: '#3f51b5',
     textDecoration: 'none',
     marginLeft: '30px',
+    fontWeight:'bold'
   }
 }));
 export default useStyles;

@@ -1,4 +1,3 @@
-// const { getLaser } = require("./Laser");
 const { getPosition } = require("./Position");
 const actions = require("./actions");
 const KayAPI = require("./KayAPI");
@@ -10,37 +9,50 @@ const {
   changeNode,
 } = require("./conversation-utils");
 
-<<<<<<< HEAD
-const sendResult = async (data, state) => {
-=======
+const DEFAULT_SCENARIO = "Welcoming"
+
 const scenarioConfig = async (state, scenario) => {
   const { data } = await KayAPI.getScenarioConfig(scenario);
   state.configuration[scenario] = data.scenarioConfigData
   return data.scenarioConfigData
-  // await KayAPI.getScenarioConfig(scenario).then(
-  //   (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
-  // );
 }
 
 const sendResult = async (data, state, ledLights, allLocations) => {
->>>>>>> f7293c61604ea577014cdaa974cce438e1cd9c80
+  if (state.conversationStarted) {
+    if (data._text === "") {
+      ledLights && ledLights.kill("SIGINT");
+      state.isUserSpeaking = false
+      await speak(
+        "Sorry, I did not understand, can you please say that again?",
+        state
+      );
+      return
+    }
+  }
+
   //Extract Intent and entities
-  let scenario = "Welcoming";
+  let scenario = DEFAULT_SCENARIO;
   let { intents, entities, text } = data;
 
   const witResponse = getWitResponse(intents, text);
-  console.log("intent:", witResponse.intent);
-
   //set configuration for the current scenario
   if (!(scenario in state.configuration)) {
-<<<<<<< HEAD
-    KayAPI.getScenarioConfig(scenario).then(
-      (res) => (state.configuration[scenario] = res.data.scenarioConfigData)
-    );
-=======
-    await scenarioConfig(state, scenario)
-    console.log('inside if')
->>>>>>> f7293c61604ea577014cdaa974cce438e1cd9c80
+    const res = await scenarioConfig(state, scenario)
+    let allIntents = []
+    state.repetitiveIntents = res.filter((node) => {
+      if (node.data) {
+
+        if (allIntents.find((intent) => node.data.intent === intent)) {
+          return true
+        } else {
+          allIntents.push(node.data.intent)
+          return false
+        }
+      }
+      else return false;
+    }).map((intent) => {
+      return intent.data.intent
+    })
   }
   //check for hotword = wit_greetings
   if (
@@ -53,9 +65,9 @@ const sendResult = async (data, state, ledLights, allLocations) => {
     const intentsByScenrio = await KayAPI.getScenarioIntent(scenario);
 
     //Find the matched intent to the scenario
-    let intentObj = intentsByScenrio.data.find((elem) => {
-      return `wit_${elem.intentName}` === witResponse.intent;
-    });
+    let intentObj = intentsByScenrio.data.find((elem) =>
+      `wit_${elem.intentName}` === witResponse.intent
+    );
     if (intentObj === undefined) {
       const intentsByScenrio = await KayAPI.getAllIntents();
       //Find the matched intent to the scenario
@@ -64,23 +76,23 @@ const sendResult = async (data, state, ledLights, allLocations) => {
       });
       // scenario = intentObj.scenarioConnection ? intentObj.scenarioConnection : undefined
       if (intentObj === undefined) {
+        ledLights && ledLights.kill("SIGINT");
+        state.isUserSpeaking = true
         await speak(
-          "Sorry, I did not understand, can you please say that again?",
+          "I don't know how to answer that, I probably need more training time...",
           state
         );
-        return true
+        return
       }
       scenario = intentObj ? intentObj.scenarioConnection : undefined
-      console.log("intentObj: ", intentObj);
       await scenarioConfig(state, scenario)
-      console.log("changed scenario")
     }
 
 
     let currentNode = `${scenario}_${witResponse.intent}`;
     //Check if the intent returned itself
-    const found = state.history.find((el) => el.intent === witResponse.intent);
-    if (found) {
+    const found = state.history.some((el) => el.intent === witResponse.intent);
+    if (found && state.repetitiveIntents.some((intent) => `wit_${intent}` === witResponse.intent)) {
       changeNode(state, currentNode, intentObj, scenario, witResponse);
     }
     //insert last node
@@ -94,7 +106,7 @@ const sendResult = async (data, state, ledLights, allLocations) => {
         })
       }
     }
-    if (intentObj && witResponse.confidence > 0.8) {
+    if (intentObj) {
       //Get array of outputs
       const outputOptions = intentObj.outputTextIntent;
       //Random item from the array
@@ -108,22 +120,12 @@ const sendResult = async (data, state, ledLights, allLocations) => {
 
       //Speak text
       const action = state.configuration[scenario].find((node) => {
-        console.log("witResponse.intent:", witResponse.intent)
-        console.log(`wit_${node.data.intent}: `, `wit_${node.data.intent}`)
         return `wit_${node.data.intent}` === witResponse.intent
       })
-      console.log(action)
-      if (action.data.action) {
-        console.log('action of action:', action.data.action)
-      }
-      console.log(witResponse.intent)
       if (witResponse.intent === "wit_getDepartment") {
         const department = entities["department:department"][0].body
-        console.log(department)
         state.videoName = department
       }
-
-
       if (witResponse.intent === "wit_ready") {
         const getKayPosition = async () => {
           return await getPosition();
@@ -136,33 +138,31 @@ const sendResult = async (data, state, ledLights, allLocations) => {
       }
 
       const text = await actions(action.data.action, entities, state);
-      ledLights.kill("SIGINT");
+      ledLights && ledLights.kill("SIGINT");
+      state.isUserSpeaking = true
       if (text && text.length > 0) {
         speak(text, state);
       }
       else speak(textToSpeak, state);
       
       if (witResponse.intent === "wit_bye") {
-        console.log("history: ", state.history);
         try {
-          const res = KayAPI.saveConversationHistory(state.history);
-          console.log(res);
-
+          await KayAPI.saveConversationHistory(state.history);
         } catch (e) {
           console.log(e);
         }
-        //clean state
-        //maybe retrieve position to the entrace
-        //send history to backend
       }
+
     } else {
+      ledLights && ledLights.kill("SIGINT");
+      state.isUserSpeaking = true
       await speak(
         "Sorry, I did not understand, can you please say that again?",
         state
       );
     }
-    return true;
+    return
   }
-  return false;
+  return
 };
 module.exports.sendResult = sendResult;

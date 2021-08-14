@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { notify } from '../generalUtils';
 
-const CustomSearchField = ({ control, name, options, defaultValues }) => (
+const CustomSearchField = ({ control, name, options, defaultValues,placeholder }) => (
   <Controller
     control={control}
     name={name}
@@ -24,6 +24,7 @@ const CustomSearchField = ({ control, name, options, defaultValues }) => (
           }}
         >
           <Select
+            placeholder={placeholder ? placeholder : "Select..."}
             maxMenuHeight={170}
             options={options}
             value={value}
@@ -47,7 +48,7 @@ const config = {
 };
 
 const intentsOptions = (intents) => {
-  return intents.map((intent) => ({ value: intent.name, label: intent.name }));
+  return intents.length > 0 && intents.map((intent) => ({ value: intent.name, label: intent.name }));
 };
 
 
@@ -118,6 +119,7 @@ const TrainIntents = () => {
           name={'intent'}
           options={intentsOptions(allIntents)}
           defaultValues={defaultValues().intent}
+          placeholder={"Select Intent..."}
         />
         <ControlledTextFields
           control={control}
@@ -134,6 +136,7 @@ const TrainIntents = () => {
           name={'entity'}
           options={witEntities}
           defaultValues={defaultValues().entity}
+          placeholder={"Select Entity..."}
         />
         <ControlledTextFields
           control={control}

@@ -80,6 +80,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
     const isExist = allIntents.some(
       (intent) => intent.name === `wit_${newNode.intent}`
     );
+    console.log("newNode:",newNode)
     // if (newNode['action'] && data.action === 'Laser') {
     //   newNode['action'] = data['laser'];
     // }
@@ -203,6 +204,7 @@ const RightDrawer = ({ node, setElements, drawerState, title }) => {
               setValue={setValue}
               label={'Choose Action'}
               defaultValue={setInitialValues(node).action}
+              node={node}
               options={[
                 { value: null, label: '' },
                 { value: 'laser', label: 'Laser' },

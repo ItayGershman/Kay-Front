@@ -2,9 +2,12 @@ require("dotenv").config();
 const rec = require("node-mic-record");
 const axios = require("axios");
 const { sendResult } = require("./Speak.js");
-const { Timer } = require("./Timer");
-
 const witToken = process.env.WIT_ACCESS_TOKEN;
+const { exec, spawn } = require('child_process');
+const { getAllLocations } = require("./KayAPI.js");
+const { getPosition } = require("./Position.js");
+
+exec('python clientGUI.py')
 
 const reqData = {
   url: "https://api.wit.ai/speech?client=chromium&lang=en-us&output=json",
@@ -15,53 +18,81 @@ const reqData = {
   },
 };
 
+const sleep = (ms) => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+
 const WitAISpeechRecognition = async () => {
-  let response = false;
-  const startRecording = (timer) => {
-    axios
-      .post(
-        reqData.url,
-        rec.start({
-          recordProgram: "rec",
-          silence: "1.0",
-        }),
-        {
-          headers: {
-            Accept: "application/vnd.wit.20160202+json",
-            Authorization: `Bearer ${witToken}`,
-            "Content-Type": "audio/wav",
-          },
-        }
-      )
-      .then(async (res) => {
-        const { data } = res;
-        if (data._text === "") {
-          response = false;
-        } else {
-          timer.stop();
-          response = true;
-          let tmp = false;
-          tmp = await sendResult(data, timer);
-          if (tmp) {
-            response = false;
-            timer.reset(10000);
-          }
-        }
-      })
-      .catch((e) => console.log(e));
-    //After 5 seconds Kay stop recording
-    setTimeout(function () {
-      rec.stop();
-    }, 3000);
-  };
-  //Every 10 seconds Kay relistening
-  const timer = new Timer(function () {
-    if (!response) {
-      console.log("Listening...");
-      startRecording(timer);
+  let conversation = true;
+  let allLocations = await getAllLocations()
+  let rfid = await getPosition()
+  const currPosition = allLocations.data.find((elem) => {
+    if (rfid.includes(elem.RFID)) {
+      return elem.locationName
     }
-  }, 10000);
-  timer.start();
+  })
+
+  const startRecording = async () => {
+    
+    let state = {
+      isKaySpeaking: false,
+      conversationStarted: false,
+      history: [],
+      configuration: {},
+      lastNode: {},
+      videoName: null,
+      position: currPosition.locationName
+    }
+    while (conversation) {
+      if (!state.isKaySpeaking) {
+        console.log("lisetning...");
+        const ledLights = spawn("python", [
+          "/home/pi/4mics_hat/pixels_demo.py",
+        ]);
+        // collect data from script
+        ledLights.stdout.on("data", function (data) {
+          console.log("Pipe data from python script ...");
+          // dataToSend = data.toString();
+        });
+        // in close event we are sure that stream from child process is closed
+        ledLights.on("close", (code) => {
+          console.log(`child process close all stdio with code ${code}`);
+          // console.log("dataTosend:", dataToSend);
+        });
+        console.log({witToken})
+        await axios
+          .post(
+            reqData.url,
+            rec.start({
+              recordProgram: "rec",
+              threshold: 1.2,
+              verbose: true,
+              device: 'plughw:2'
+            }),
+            {
+              headers: {
+                Accept: "application/vnd.wit.20160202+json",
+                Authorization: `Bearer ${witToken}`,
+                "Content-Type": "audio/wav",
+              },
+            }
+          )
+          .then(async (res) => {
+            const { data } = res;
+            if (data._text !== "") {
+              await sendResult(data, state, ledLights, allLocations);
+              console.log(data)
+            }
+          })
+          .catch((e) => console.log(e));
+      }
+      else {
+        await sleep(100)
+      }
+    }
+  };
+  startRecording();
 };
 
 try {

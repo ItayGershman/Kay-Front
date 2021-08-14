@@ -52,7 +52,7 @@ const SideDrawer = ({
         paper: clsx({
           [drawerOpen]: open,
           [drawerClose]: !open,
-        }),
+        })
       }}
     >
       <div
@@ -121,7 +121,7 @@ const SideDrawer = ({
             <p style={{ marginLeft: 30, fontSize: 16 }}>Laser</p>
           </div>
 
-          <LaserAction side="left"/>
+          <LaserAction side='left' />
         </div>
       )}
       {side === 'left' && !open && (

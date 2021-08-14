@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     display: 'flex',
-    position: 'relative',    
+    position: 'relative',
   },
   appBar: {
     position: 'absolute',
@@ -80,7 +80,30 @@ const useStyles = makeStyles((theme) => ({
     width: 300,
     flexShrink: 0,
     whiteSpace: 'nowrap',
+    position: 'fixed',
+    height:'100%',
+    '& > .MuiDrawer-paper': {
+      position: 'relative',
+      top: 0,
+      flex: '1 0 auto',
+      height: '100%',
+      display: 'flex',
+      outline: 0,
+      zIndex: 1200,
+      overflowY: 'auto',
+      flexDirection: 'column',
+    },
+  },
+  paperRightDrawer: {
+    top: 0,
+    flex: '1 0 auto',
+    height: '100%',
+    display: 'flex',
+    outline: 0,
+    zIndex: 1200,
     position: 'absolute',
+    overflowY: 'auto',
+    flexDirection: 'column',
   },
   drawerLeftOpen: {
     top: 65,
@@ -111,7 +134,7 @@ const useStyles = makeStyles((theme) => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
-    paddingBottom:'65px'
+    paddingBottom: '65px',
   },
   drawerRightClose: {
     right: 0,

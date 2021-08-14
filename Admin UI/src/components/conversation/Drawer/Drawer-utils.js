@@ -120,6 +120,7 @@ export const LaserAction = ({
   }, []);
 
   useEffect(() => {
+    console.log("defaultValue:",defaultValue)
     if (side === 'right') {
       setActionValue({ label: defaultValue, value: defaultValue });
       setValue(name, defaultValue);
@@ -259,7 +260,6 @@ export const LaserAction = ({
             <Controller
               control={control}
               name={name}
-              defaultValue={actionValue}
               render={({ onChange, value }) => {
                 return (
                   <Select
@@ -270,7 +270,9 @@ export const LaserAction = ({
                       { label: 'Position C', value: 'c' },
                     ]}
                     onChange={(value) => {
-                      onChange(value);
+                      console.log(value)
+                      
+                      setActionValue(value)
                       setValue(name, defaultValue);
                     }}
                   />
@@ -563,19 +565,35 @@ export const ActionField = ({
   label,
   options,
   defaultValue,
+  node,
 }) => {
   const [action, setAction] = useState(null);
+  const [prevDefaultValue, setPrevDefaultValue] = useState(null);
 
   useEffect(() => {
-    if (defaultValue) {
-      setAction({ label: defaultValue.label, value: defaultValue.label });
-      setValue(name, defaultValue.label);
-    }
-  }, []);
+    setAction(null);
+    setPrevDefaultValue(null);
+    setValue(name, null);
+  }, [node]);
 
   useEffect(() => {
+    console.log('action:', action);
     setValue(name, action);
   }, [action]);
+
+  useEffect(() => {
+    //Verify if defaultValue exist on this node
+    if (defaultValue) {
+      if (!prevDefaultValue || defaultValue.label !== prevDefaultValue.label) {
+        setAction({ label: defaultValue.label, value: defaultValue.label });
+        setValue(name, defaultValue.label);
+        setPrevDefaultValue({
+          label: defaultValue.label,
+          value: defaultValue.label,
+        });
+      }
+    }
+  }, [defaultValue]);
 
   return (
     <Controller
